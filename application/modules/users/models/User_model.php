@@ -267,9 +267,15 @@ class User_model extends CI_Model
      */
     public function check_user($username, $password)
     {
+        die($username);
+
         $this->db->select('user_id, user_name, password, user_status');
         $this->db->where(" is_deleted='0' AND (user_name='$username') ");
         $result = $this->db->get('cb_users')->result_array();
+
+        echo 'result<pre>';
+        print_r($result);
+        die;        
 
         if (!empty($result)) {
             if (password_verify($password, $result[0]['password'])) {
@@ -313,10 +319,11 @@ class User_model extends CI_Model
 
         if ($post_data['user_name'] && ($post_data['password'] == $post_data['confirm_password'])) {
 
-            $user_data['user_name']  = $post_data['user_name'];
-            $user_data['password']   = password_hash($post_data['password'], PASSWORD_DEFAULT);
-            $user_data['created_on'] = date('y-m-d h:i:a');
-            $user_id                 = $this->insertRow('cb_users', $user_data);
+            $user_data['user_name']     = $post_data['user_name'];
+            $user_data['password']      = password_hash($post_data['password'], PASSWORD_DEFAULT);
+            $user_data['created_on']    = date('y-m-d h:i:a');
+            $user_data['user_status']   = 1;            
+            $user_id                    = $this->insertRow('cb_users', $user_data);
         } else {
             return false;
         }
@@ -353,7 +360,7 @@ class User_model extends CI_Model
             $user_details['photos']          = $file_names;
             $user_details['videos']          = $videos_urls;
             $user_details['links']           = '';
-            $user_details['experiance']      = '';
+            $user_details['experience']      = '';
             $user_details['subscription_id'] = '';
             $user_details['modified_on']     = date('y-m-d h:i:a');
             $user_details['modified_by']     = '';
@@ -377,7 +384,7 @@ class User_model extends CI_Model
                         $talentFlag = true;
                     }
                 }
-                $this->db->insert_batch('cb_user_meta', $user_meta);
+                // $this->db->insert_batch('cb_user_meta', $user_meta);
 
                 if ($talentFlag) {
 

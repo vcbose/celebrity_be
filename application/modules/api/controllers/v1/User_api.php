@@ -23,7 +23,7 @@ class User_api extends REST_Controller {
     * @param json post params
     * @return json  api response
     */
-    public function user_post()
+    public function register_post()
 	{
 		try{
 			$postParams  = $this->post();
