@@ -129,11 +129,12 @@ class User_model extends CI_Model
      */
     public function get_user_details($fields = null, $where = array(), $offset = null, $limit = null)
     {
-
         if ($fields) {
             $this->db->select($fields);
         }
-        return $this->db->get_where('cb_users', $where, $limit, $offset)->result();
+
+        $this->db->join('cb_user_details cbud', 'cbud.user_id = cbu.user_id', 'left');
+        return $this->db->get_where('cb_users cbu', $where, $limit, $offset)->result();
     }
 
 	/**
@@ -452,5 +453,27 @@ class User_model extends CI_Model
         $whereData['user_id'] = $userId;
 
         return $this->updateRow('cb_user_details', $updateData, $whereData);
+    }
+
+    /**
+     * Get media plan count
+     * @param integer userId
+     * @return boolean result
+     */
+    public function get_highlight_users($fields = null, $where = array(), $offset = null, $limit = null)
+    {
+        // Check specified fields list
+        if ($fields) {
+            $this->db->select($fields);
+        }
+
+        $this->db->join('cb_user_details cbud', 'cbud.user_id = cbs.user_id', 'left');
+        // $this->db->join('cb_user_details_meta cbum', 'cbum.user_id = cbud.user_id', 'left');
+        $this->db->join('cb_plan_meta cbpm', 'cbpm.plan_id = cbs.plan_id', 'left');
+        $this->db->where('cbpm.feature_type', HIGHLIGHT_USER_ID);
+        $this->db->where('cbpm.feature_value', 1);
+        // $result = $this->db->get('cb_subscriptions cbs')->result_array();
+
+        return $this->db->get_where('cb_subscriptions cbs', $where, $limit, $offset)->result_array();
     }
 }
