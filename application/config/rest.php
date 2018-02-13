@@ -167,6 +167,7 @@ $config['auth_library_function'] = '';
 */
 $config['auth_override_class_method']['Authenticate_api']['auth'] = 'basic';
 $config['auth_override_class_method']['User_api']['register'] 	  = 'none';
+$config['auth_override_class_method']['Setting_api']['setting']  = 'none';
 // $config['auth_override_class_method']['deals']['view'] = 'none';
 // $config['auth_override_class_method']['deals']['insert'] = 'digest';
 // $config['auth_override_class_method']['accounts']['user'] = 'basic';

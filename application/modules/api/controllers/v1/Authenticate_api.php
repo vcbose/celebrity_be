@@ -27,9 +27,6 @@ class Authenticate_api extends REST_Controller {
     public function auth_post()
 	{
 		try{
-
-			die('entering');
-
 			$userId   	 = $this->userDetails['user_id'];
 			$userName 	 = $this->userDetails['user_name'];
 
@@ -65,10 +62,6 @@ class Authenticate_api extends REST_Controller {
         }
 
 		$result = $this->User_model->check_user($username, $password);
-
-		echo 'result<pre>';
-		print_r($result);
-		die;
 
 		if($result){
 

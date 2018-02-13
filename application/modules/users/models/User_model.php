@@ -267,15 +267,9 @@ class User_model extends CI_Model
      */
     public function check_user($username, $password)
     {
-        die($username);
-
         $this->db->select('user_id, user_name, password, user_status');
         $this->db->where(" is_deleted='0' AND (user_name='$username') ");
         $result = $this->db->get('cb_users')->result_array();
-
-        echo 'result<pre>';
-        print_r($result);
-        die;        
 
         if (!empty($result)) {
             if (password_verify($password, $result[0]['password'])) {
@@ -384,7 +378,7 @@ class User_model extends CI_Model
                         $talentFlag = true;
                     }
                 }
-                // $this->db->insert_batch('cb_user_meta', $user_meta);
+                $this->db->insert_batch('cb_user_meta', $user_meta);
 
                 if ($talentFlag) {
 
@@ -406,5 +400,57 @@ class User_model extends CI_Model
 
             return false;
         }
+    }
+
+    /**
+     * Get media plan count
+     * @param integer userId
+     * @return boolean result
+     */
+    public function get_media_plan_count($userId)
+    {
+        $media_count = [];
+
+        $this->db->select('(CASE `cbpm`.`feature_type` 
+                            WHEN '.FEATURE_TYPE_IMAGE_ID.' THEN "image" 
+                            WHEN '.FEATURE_TYPE_VIDEO_ID.' THEN "video" END) AS media_type, 
+                        `cbpm`.`feature_value` AS media_count');
+        $this->db->join('cb_plan_meta cbpm', 'cbpm.plan_id = cbs.plan_id', 'left');
+        $this->db->where('cbs.user_id=', $userId);
+        $this->db->where_in('cbpm.feature_type', array(FEATURE_TYPE_IMAGE_ID, FEATURE_TYPE_VIDEO_ID));
+        $this->db->group_by('cbpm.feature_type');
+        $result = $this->db->get('cb_subscriptions cbs')->result_array();
+        
+        if(is_array($result) && !empty($result)){
+
+            foreach ($result as $key => $value) {
+                
+                if($value['media_type'] == 'image'){
+                    $media_count['image'] = $value['media_count'];
+                }
+
+                if($value['media_type'] == 'video'){
+                    $media_count['video'] = $value['media_count'];
+                }
+            }
+        }
+
+        return $media_count;
+    }
+
+    /**
+    * Update method for user's media
+    * @param integer userId
+    * @param array image names
+    * @param string video url
+    * @return boolean result
+    */
+    public function update_media_info($userId, $imgNames, $userVideoUrl)
+    {
+        $updateData['photos'] = (!empty($imgNames))     ? implode(',', $imgNames)     : '';
+        $updateData['videos'] = (!empty($userVideoUrl)) ? implode(',', $userVideoUrl) : '';
+        $whereData['user_id'] = $userId;
+
+        return $this->updateRow('cb_user_details', $updateData, $whereData);
     }
 }
