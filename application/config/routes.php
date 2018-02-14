@@ -49,27 +49,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'users/login';
+$route['default_controller']= 'users/login';
 
-$route['admin'] 		= 'admin/admin/index';
-$route['cb-login'] 		= 'users/login';
-$route['logout'] 		= 'users/logout';
-$route['auth-user'] 	= 'users/auth_user';
-$route['register'] 		= 'users/registration';
-$route['profiles'] 		= 'users/profiles';
+$route['admin'] 			= 'admin/admin/index';
+$route['cb-login'] 			= 'users/login';
+$route['logout'] 			= 'users/logout';
+$route['auth-user'] 		= 'users/auth_user';
+$route['register'] 			= 'users/registration';
+$route['profiles'] 			= 'users/profiles';
 $route['profile-detail/([a-z]+)/(\d+)'] 		= 'users/profile_detail/$1/id_$2';
-$route['getplandata']	= 'users/getplandata';
+$route['getplandata']		= 'users/getplandata';
 // $route['notifications']	= 'users/notifications';
 $route['checkUserName'] = 'users/checkUserName';
 $route['dashboard'] 		= 'users/dashboard/';
 $route['plans/(:num)'] 		= 'plans/index';
 $route['subscriptions/(:num)'] = 'plans/subscriptions/user_id/$1';
-$route['notifications']	= 'notifications/manage_notification';
+$route['notifications']		= 'notifications/manage_notification';
 $route['get-notifications']	= 'notifications/get_notifications';
-$route['get-interview']	= 'notifications/get_interview';
-$route['chat/(:num)'] = 'notifications/index/user_id/$1';
-$route['submit-chat'] = 'notifications/submit_chat';
-$route['get-chat'] = 'notifications/get_chat';
+$route['get-interview']		= 'notifications/get_interview';
+$route['chat/(:num)'] 		= 'notifications/index/user_id/$1';
+$route['submit-chat'] 		= 'notifications/submit_chat';
+$route['get-chat'] 			= 'notifications/get_chat';
 
 $route['404_override'] 	= '';
 $route['translate_uri_dashes'] = FALSE;
@@ -92,3 +92,5 @@ $route['api/v1/plans']         			= 'api/v1/Plans_api/plans';
 $route['api/v1/plans/(:num)']        	= 'api/v1/Plans_api/plans/plan_id/$1';
 $route['api/v1/subscriptions']         	= 'api/v1/Subscriptions_api/subscriptions';
 $route['api/v1/subscriptions/(:num)']   = 'api/v1/Subscriptions_api/subscriptions/subscription_id/$1';
+$route['api/v1/notifications']         	= 'api/v1/Notification_api/notifications';
+$route['api/v1/notifications/(:num)']   = 'api/v1/Notification_api/notifications/notify_id/$1';

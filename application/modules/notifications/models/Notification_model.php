@@ -248,7 +248,7 @@ class Notification_model extends CI_Model
     Get all user notifications
     Params : @user_id of talent, @triggerd_from is director is @map_id type of notification 
     */
-    public function get_notifications( $fields = null, $a_where = array(),  $limit = null, $offset = null )
+    public function get_notifications( $fields = null, $a_where = array(), $limit = null, $offset = null)
     {
         if ($fields) {
             $this->db->select($fields);
@@ -257,12 +257,14 @@ class Notification_model extends CI_Model
 
         if(isset($a_where['map_id'])){
             $this->db->where('cb_user_notifications.map_id =', $a_where['map_id']);
+            unset($a_where['map_id']);
         }
 
         if(isset($a_where['triggerd_from'])){
 
             $this->db->join('cb_user_details', 'cb_user_details.user_id = cb_user_notifications.user_id', 'left');
             $this->db->where('cb_user_notifications.triggerd_from =', $a_where['triggerd_from']);
+            unset($a_where['triggerd_from']);
         } else {
 
             $this->db->join('cb_user_details', 'cb_user_details.user_id = cb_user_notifications.triggerd_from', 'left');
@@ -270,11 +272,12 @@ class Notification_model extends CI_Model
 
         if (isset($a_where['user_id'])) {
             $this->db->where('cb_user_notifications.user_id =', $a_where['user_id']);
+            unset($a_where['user_id']);
         }
 
-        return $this->db->get('cb_user_notifications', $limit, $offset)->result_array();
+        return $result = $this->db->get_where('cb_user_notifications', $a_where, $limit, $offset)->result_array();
 
-        echo $this->db->last_query();
+        // echo $this->db->last_query();die;
     }
 
     public function check_notification_map( $fields = null, $a_where = array(),  $limit = null, $offset = null ){

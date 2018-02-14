@@ -56,7 +56,7 @@ class Setting_api extends REST_Controller {
 
 	public function setting_post()
 	{
-		echo json_encode(array('status'=>'hai'));
+		echo json_encode(array('status'=>'post method'));
 	}
 
 	public function setting_put()
