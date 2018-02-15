@@ -92,5 +92,5 @@ $route['api/v1/plans']         			= 'api/v1/Plans_api/plans';
 $route['api/v1/plans/(:num)']        	= 'api/v1/Plans_api/plans/plan_id/$1';
 $route['api/v1/subscriptions']         	= 'api/v1/Subscriptions_api/subscriptions';
 $route['api/v1/subscriptions/(:num)']   = 'api/v1/Subscriptions_api/subscriptions/subscription_id/$1';
-$route['api/v1/notifications']         	= 'api/v1/Notification_api/notifications';
-$route['api/v1/notifications/(:num)']   = 'api/v1/Notification_api/notifications/notify_id/$1';
+$route['api/v1/interests']         		= 'api/v1/Interest_api/interests';
+$route['api/v1/interests/(:num)']   	= 'api/v1/Interest_api/interests/notify_id/$1';
