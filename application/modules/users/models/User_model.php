@@ -127,9 +127,14 @@ class User_model extends CI_Model
     /**
      * This function is used to get users
      */
-    public function get_user_details($fields = null, $where = array(), $offset = null, $limit = null)
+    public function get_user_details($fields = null, $where = array(), $offset = null, $limit = null, $usermediaFlg = false)
     {
         if ($fields) {
+
+            if($usermediaFlg){
+                $fields .= ", CONCAT('".USER_IMAGE_URL."',cbu.user_id,'/') AS photo_dir_url";
+            }
+
             $this->db->select($fields);
         }
 

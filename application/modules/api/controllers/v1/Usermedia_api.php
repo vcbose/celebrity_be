@@ -81,6 +81,45 @@ class Usermedia_api extends REST_Controller {
     */
     public function usermedia_get()
 	{
+		try{
+			$fields 	 = null;
+			$offset 	 = null;
+			$limit 		 = null;
+			$getParams 	 = $this->get();
+
+			// Assign field values
+			$fields 	 = 'cbu.user_id, user_name, photos, videos';
+
+			if(isset($getParams['fields'])){
+				$fields = $getParams['fields'];
+				unset($getParams['fields']);
+			}
+
+			if(isset($getParams['offset'])){
+				$offset = $getParams['offset'];
+				unset($getParams['offset']);
+			}
+			if(isset($getParams['limit'])){
+				$limit  = $getParams['limit'];
+				unset($getParams['limit']);
+			}
+
+			$data 	  = $this->User_model->get_user_details($fields, $getParams, $limit, $offset, true);
+
+			if($data){
+				$response = array('status'=>'success', 'data' => $data);
+				$this->response($response, parent::HTTP_OK);
+			}else{
+				throw new Exception("Error on get user media", 1);
+			}
+
+		}catch(Exception $ex){
+			
+			$message = $ex->getMessage();
+
+			$response = array('status'=>'error', 'message'=> $message);
+			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**

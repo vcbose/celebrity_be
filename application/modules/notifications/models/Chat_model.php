@@ -54,11 +54,15 @@ class Chat_model extends CI_Model {
 		return true;
   	}
 
-    public function submit_chat( $chat_text = '', $user_id = null ){
+    /**
+    * Submit chat
+    */
+    public function submit_chat( $chat_text = '', $chat_to = null, $chat_from = null){
 
-    	$a_return = array();
+    	$a_return  = array();
+        $chat_from = ($chat_from) ? $chat_from : $this->user_id;
 
-    	if( $this->user_id == 1 ){
+    	if( $chat_from == 1 ){
 
     		$a_return['status'] = 0;
     		$a_return['msg'] = 'You are not logged in';
@@ -68,14 +72,14 @@ class Chat_model extends CI_Model {
     	if(!$chat_text){
 
     		$a_return['status'] = 0;
-    		$a_return['msg'] = 'You haven\' entered a chat message.';
+    		$a_return['msg'] = 'You haven\'t entered a chat message.';
     		return $a_return;
     	}
     
-    	$chat['chat_from'] = $this->user_id;
-    	$chat['chat_to'] = $user_id;
+    	$chat['chat_from'] = $chat_from;
+    	$chat['chat_to']   = $chat_to;
     	$chat['chat_text'] = $chat_text;
-    	$chat['chat_on'] = date('Y-m-d H:i:s');
+    	$chat['chat_on']   = date('Y-m-d H:i:s');
     	// The save method returns a MySQLi object
     	$insertID = $this->insertRow($this->table, $chat);
     	
@@ -98,22 +102,45 @@ class Chat_model extends CI_Model {
 
     }
     
-    public function get_chats( $user_id = null ){
+    public function get_chats( $chat_to = null, $chat_from = null ){
 
-    	$chats = array();
-    	if( $this->user_id == 1 ){
+    	$chats     = array();
+        $chat_from = ($chat_from) ? $chat_from : $this->user_id;
+
+    	if( $chat_from == 1 ){
 
     		$a_return['status'] = 0;
     		$a_return['msg'] = 'You are not logged in';
     		return $a_return;
     	}
         
-        $a_where = array('chat_from' => $this->user_id, 'chat_to' => $user_id, );     
+        $a_where = array('chat_from' => $chat_from, 'chat_to' => $chat_to, );     
 		$this->db->where( $a_where );
     	$this->db->join('cb_user_details', 'cb_user_chats.chat_from = cb_user_details.user_id', 'left');
     	$result = $this->db->order_by('chat_id', 'ASC')->get('cb_user_chats')->result();
 
     	return array('chats' => $result);
+    }
+
+    /**
+    * Get user chat
+    */
+    public function get_user_chats($fields = null, $where = array(), $offset = null, $limit = null){
+        
+        // $a_where = array('chat_from' => $chat_from, 'chat_to' => $chat_to, );     
+        
+        // $this->db->where( $a_where );
+        // $this->db->join('cb_user_details', 'cb_user_chats.chat_from = cb_user_details.user_id', 'left');
+        // $result = $this->db->order_by('chat_id', 'ASC')->get('cb_user_chats')->result();
+
+        if ($fields) {
+
+            $this->db->select($fields);
+        }
+
+        $this->db->join('cb_user_details', 'cb_user_chats.chat_from = cb_user_details.user_id', 'left');
+        $this->db->order_by('chat_id', 'ASC');
+        return $this->db->get_where('cb_user_chats', $where, $limit, $offset)->result_array();
     }
     
 }
