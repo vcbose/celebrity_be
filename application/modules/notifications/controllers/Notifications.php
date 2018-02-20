@@ -22,6 +22,11 @@ class Notifications extends MY_Controller {
     public function manage_notification(){
 
         $a_post = (isset($_POST) && !empty($_POST))?$_POST:array();
+
+        echo '<pre>';
+        print_r($a_post);
+        die;
+
         if( !empty($a_post) ){
             $j_response = $this->Notification_model->manage_notifications( $a_post );
         } else {

@@ -30,7 +30,7 @@ class Interest_api extends REST_Controller {
 	        if(is_array($a_post) && !empty($a_post) ){
 
 	        	$a_post['permission'] 		= 2;
-	        	$a_post['where']['map_id'] 	= 2;
+	        	$a_post['where']['map_id'] 	= INTEREST_MAP_ID;
 
 	            $j_response = $this->Notification_model->manage_notifications( $a_post );
 	        } else {
@@ -79,7 +79,11 @@ class Interest_api extends REST_Controller {
 				unset($getParams['limit']);
 			}
 
-			$data 	  = $this->Notification_model->get_notifications($fields, $getParams, $limit, $offset);
+			// Assign conditions for get notifications
+			$whereData 			 = $getParams;
+			$whereData['map_id'] = INTEREST_MAP_ID;
+
+			$data 	  = $this->Notification_model->get_notifications($fields, $whereData, $limit, $offset);
 			
 			if($data){
 				$response = array('status'=>'success', 'data' => $data);

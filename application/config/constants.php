@@ -96,3 +96,5 @@ defined('USER_IMAGE_URL')      		OR define('USER_IMAGE_URL', 'http://celebritybe
 defined('FEATURE_TYPE_IMAGE_ID')  	OR define('FEATURE_TYPE_IMAGE_ID', 41);
 defined('FEATURE_TYPE_VIDEO_ID')  	OR define('FEATURE_TYPE_VIDEO_ID', 42);
 defined('HIGHLIGHT_USER_ID')  		OR define('HIGHLIGHT_USER_ID', 	   55);
+defined('INTEREST_MAP_ID')  		OR define('INTEREST_MAP_ID', 	   2);
+defined('INTERVIEW_MAP_ID')  		OR define('INTERVIEW_MAP_ID', 	   5);

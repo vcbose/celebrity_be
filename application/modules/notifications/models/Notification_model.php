@@ -90,7 +90,7 @@ class Notification_model extends CI_Model
                 /*Check trigger notification is exists for user*/
                 $a_noty_trigger['user_id']       = $a_post['to'];
                 $a_noty_trigger['triggerd_from'] = $a_post['from'];
-                $a_noty_trigger['map_id']            = $map_id;
+                $a_noty_trigger['map_id']        = $map_id;
                 $check_exists                    = $this->get_notifications('map_id, notification_note', $a_noty_trigger);
 
                 /*Exists then update else insert*/
@@ -123,16 +123,25 @@ class Notification_model extends CI_Model
                                 $interview = $a_user_features[88]['Receive_interview'];
                                 $data['notification_status'] = ($interview == 0) ? 0 : 1;
 
-                                if (isset($a_post['form_data']) && !empty($a_post['form_data'])) {
+                                if ((isset($a_post['form_data']) && !empty($a_post['form_data']))
+                                    || (isset($a_post['interview_data']) && !empty($a_post['interview_data'])))
+                                {
+                                    $a_interview_data   = array();
 
-                                    $a_interview_data = array();
-                                    foreach ($a_post['form_data'] as $key => $fields) {
-                                        $a_interview_data[$fields['name']] = $fields['value'];
+                                    if(isset($a_post['form_data'])){
+                                        foreach ($a_post['form_data'] as $key => $fields) {
+                                            $a_interview_data[$fields['name']] = $fields['value'];
+                                        }
+
+                                    }else if(isset($a_post['interview_data'])){
+                                        $a_interview_data  = $a_post['interview_data'];    
                                     }
 
+                                    // Assign userid from post data
                                     $a_interview_data['user_id'] = $a_post['from'];
-                                    
-                                    $intrw_id                    = $this->schedule_interview( $a_interview_data );
+
+                                    // Schedule interview process
+                                    $intrw_id              = $this->schedule_interview( $a_interview_data );
 
                                     if ($intrw_id != 0) {
 
@@ -145,6 +154,7 @@ class Notification_model extends CI_Model
                                         $data['notification_status'] = 0;
                                         $message                     = getCBResponse('ER_INTRW_IN');
                                     }
+
                                 }
                             }
                         }
@@ -198,16 +208,26 @@ class Notification_model extends CI_Model
                                 $interview = $a_user_features[88]['Receive_interview'];
                                 $data['notification_status'] = ($interview == 0) ? 0 : 1;
 
-                                if (isset($a_post['form_data']) && !empty($a_post['form_data'])) {
+                                if (isset($a_post['form_data']) && !empty($a_post['form_data'])
+                                    || (isset($a_post['interview_data']) && !empty($a_post['interview_data']))) 
+                                {
 
-                                    $a_interview_data = array();
-                                    foreach ($a_post['form_data'] as $key => $fields) {
-                                        $a_interview_data[$fields['name']] = $fields['value'];
-                                    }
+                                    $a_interview_data   = array();
 
+                                    if(isset($a_post['form_data'])){
+                                        foreach ($a_post['form_data'] as $key => $fields) {
+                                            $a_interview_data[$fields['name']] = $fields['value'];
+                                        }
+
+                                    }else if(isset($a_post['interview_data'])){
+                                        $a_interview_data   = $a_post['interview_data'];    
+                                    } 
+
+                                    // Assign userid from post data
                                     $a_interview_data['user_id'] = $a_post['from'];
 
-                                    $intrw_id                    = $this->schedule_interview( $a_interview_data );
+                                    // Schedule interview process
+                                    $intrw_id               = $this->schedule_interview( $a_interview_data );
 
                                     if ($intrw_id != 0) {
 
@@ -216,9 +236,9 @@ class Notification_model extends CI_Model
                                         $message                       = getCBResponse('SUC_INTRW_IN');
                                     } else {
 
-                                        $b_status                    = false;
-                                        $data['notification_status'] = 0;
-                                        $message                     = getCBResponse('ER_INTRW_IN');
+                                        $b_status                      = false;
+                                        $data['notification_status']   = 0;
+                                        $message                       = getCBResponse('ER_INTRW_IN');
                                     }
                                 }
                             }
@@ -244,6 +264,7 @@ class Notification_model extends CI_Model
             return json_encode($a_return);
         }
     }
+
     /*
     Get all user notifications
     Params : @user_id of talent, @triggerd_from is director is @map_id type of notification 
@@ -275,7 +296,7 @@ class Notification_model extends CI_Model
             unset($a_where['user_id']);
         }
 
-        return $result = $this->db->get_where('cb_user_notifications', $a_where, $limit, $offset)->result_array();
+        return $this->db->get_where('cb_user_notifications', $a_where, $limit, $offset)->result_array();
 
         // echo $this->db->last_query();die;
     }
