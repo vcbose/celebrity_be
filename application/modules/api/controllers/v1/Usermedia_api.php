@@ -35,9 +35,12 @@ class Usermedia_api extends REST_Controller {
 			// Get image count from user plan
 			$media_count = $this->User_model->get_media_plan_count($userId);
 
+			if(!isset($media_count['image']) || $media_count['image'] == 0){
+				throw new Exception("User plan not support media upload", 1);
+			}
+
 			// Base64 to image convertion
-			if((is_array($userImageData) && !empty($userImageData)) 
-				&& (isset($media_count['image']) && $media_count['image'] > 0)){
+			if(is_array($userImageData) && !empty($userImageData)){
 
 				if($media_count['image'] >= count($userImageData)){
 
@@ -130,29 +133,32 @@ class Usermedia_api extends REST_Controller {
     */
 	private function base64_to_image($userId, $base64String)
 	{
+		$fileCount      = 0;
 		$imgExt 	 	= $this->get_image_extension($base64String);
 
 		$outputDir 		= USER_IMAGE_DIR.$userId.'/';
+
 		// Get file count of the directory
-		$fileCount 		= $this->get_file_count($outputDir);
+		if(file_exists($outputDir)){
+			$fileCount     	= $this->get_file_count($outputDir);  
+
+		}else{
+			mkdir($outputDir, 0777, true);
+		}
+
 		$outputFile 	= $userId.'_'. ++$fileCount .'.'.$imgExt;
 
-	    // Check base64 string contain comma separation
-	    if((strpos($base64String, ',') != -1) || (strpos($base64String, ';') != -1)){
-	    	$imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64String));	
-	    }else{
-	    	$imageData = base64_decode($base64String);
-	    }
+		// Check base64 string contain comma separation
+		if((strpos($base64String, ',') != -1) || (strpos($base64String, ';') != -1)){
+			$imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64String));	
+		}else{
+			$imageData = base64_decode($base64String);
+		}
 
-	    // Check and create directory if not exists
-	    if(!file_exists($outputDir)){
-	    	mkdir($outputDir, 0777, true);
-	    }
+		// Create file with base64 data
+		file_put_contents($outputDir.$outputFile, $imageData);
 
-	    // Create file with base64 data
-	    file_put_contents($outputDir.$outputFile, $imageData);
-
-	    return $outputFile; 
+		return $outputFile;
 	}
 
 	/**
@@ -182,9 +188,19 @@ class Usermedia_api extends REST_Controller {
     */
 	private function get_file_count($dirPath, $fileType = '*')
 	{
-		$iterator = new GlobIterator($dirPath.$fileType);
+		try{
 
-		return $iterator->count();
+			$count = 0;
+			foreach ( glob( $dirPath.$fileType ) as $file) {
+				$count++;
+			}
+
+			return $count;
+
+		}catch(Exception $ex){
+			
+			return 0;			
+		}
 	}
 }
 
