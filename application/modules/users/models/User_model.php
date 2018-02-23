@@ -225,7 +225,6 @@ class User_model extends CI_Model
      */
     public function updateRow($table, $data, $a_where)
     {
-
         // $this->db->where($col,$colVal);
         $this->db->update($table, $data, $a_where);
 
@@ -451,17 +450,24 @@ class User_model extends CI_Model
     * @param string video url
     * @return boolean result
     */
-    public function update_media_info($userId, $imgNames, $userVideoUrl)
+    public function update_media_info($userId, $imgNames = [], $userVideoUrl = [])
     {
-        $updateData['photos'] = (!empty($imgNames))     ? implode(',', $imgNames)     : '';
-        $updateData['videos'] = (!empty($userVideoUrl)) ? implode(',', $userVideoUrl) : '';
         $whereData['user_id'] = $userId;
 
-        return $this->updateRow('cb_user_details', $updateData, $whereData);
+        if(is_array($imgNames) && !empty($imgNames)){
+            $this->db->set('photos', "CONCAT( photos, '".implode(',', $imgNames)."', ',')", false);    
+        }
+        
+        if(is_array($userVideoUrl) && !empty($userVideoUrl)){
+            $this->db->set('videos', "CONCAT( videos, '".implode(',', $userVideoUrl)."', ',')", false);
+        }
+
+        $this->db->where($whereData);
+        return $this->db->update('cb_user_details');
     }
 
     /**
-     * Get media plan count
+     * Get highlighted users
      * @param integer userId
      * @return boolean result
      */
@@ -481,4 +487,81 @@ class User_model extends CI_Model
 
         return $this->db->get_where('cb_subscriptions cbs', $where, $limit, $offset)->result_array();
     }
+
+    /**
+     * Get existing video 
+     * @param integer userId
+     * @return boolean result
+     */
+    public function getMediaByUser($userId)
+    {
+        $whereData['user_id'] = $userId;
+
+        $this->db->select('photos,videos');
+        $result = $this->db->get_where('cb_user_details', $whereData)->result_array();
+
+        if($result && isset($result[0])){
+            return $result[0];
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * Get existing video count
+     * @param integer userId
+     * @return boolean result
+     */
+    public function getVideoCount($userId)
+    {
+        $result           = $this->getMediaByUser($userId);
+        $result['videos'] = rtrim($result['videos'], ',');
+
+        if(isset($result['videos']) && $result['videos'] != ''){
+            $videoCount = (count( explode(',', $result['videos']) ));
+        }else{
+            $videoCount = 0;
+        }
+        
+        return $videoCount;
+    }
+
+    /**
+     * Update video url from given index
+     * @param integer userId
+     * @param string newUserVideo
+     * @param integer oldVideoIndx
+     * @return boolean response
+     */
+    public function updateVideoUrl($userId, $newUserVideo, $oldVideoIndx)
+    {
+        $result = $this->getMediaByUser($userId);
+
+        if(isset($result['videos']) && $result['videos'] != ''){
+
+            $result['videos']   = rtrim($result['videos'], ',');
+            $videos             = explode(',', $result['videos']);
+
+            if(is_array($videos) && count($videos) > 0){
+                
+                if(isset($videos[ $oldVideoIndx ])){
+
+                    $videos[ $oldVideoIndx ] = $newUserVideo;
+
+                    $updateData['videos'] = implode(',', $videos);
+                    $whereData['user_id'] = $userId;
+
+                    return $this->updateRow('cb_user_details', $updateData, $whereData);
+                }else{
+                    throw new Exception("Provided video index not exists", 1);                    
+                }
+
+            }else{
+                throw new Exception("Videos not exists for the user id: ".$userId, 1);
+            }
+
+        }else{
+            throw new Exception("Could not read user video data", 1);
+        }
+    }    
 }
