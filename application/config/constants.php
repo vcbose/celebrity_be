@@ -91,8 +91,9 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 |--------------------------------------------------------------------------
 |
 */
-defined('USER_IMAGE_DIR')      		OR define('USER_IMAGE_DIR', 'D:\xampp\htdocs\celebrity_be\assets\admin\images\user-images\\'); 
-defined('USER_IMAGE_URL')      		OR define('USER_IMAGE_URL', 'http://celebritybe.local/assets/admin/images/user-images/');
+defined('USER_IMAGE_DIR')      		OR define('USER_IMAGE_DIR', getcwd().'/assets/admin/images/user-images/'); 
+defined('USER_IMAGE_URL')      		OR define('USER_IMAGE_URL', $_SERVER['SERVER_NAME'].'/assets/admin/images/user-images/');
+
 defined('FEATURE_TYPE_IMAGE_ID')  	OR define('FEATURE_TYPE_IMAGE_ID', 41);
 defined('FEATURE_TYPE_VIDEO_ID')  	OR define('FEATURE_TYPE_VIDEO_ID', 42);
 defined('HIGHLIGHT_USER_ID')  		OR define('HIGHLIGHT_USER_ID', 	   55);
