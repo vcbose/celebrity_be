@@ -49,7 +49,7 @@
 									<hr>
 										<div class="form-group">
 											<div class="col-md-3">
-												<label>Username <span class="mandatory">*</span></label>
+												<label>Email / Username <span class="mandatory">*</span></label>
 												<input type="text" name="user_name" class="form-control" placeholder="">
 											</div>
 											<div class="col-md-3">

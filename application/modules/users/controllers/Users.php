@@ -148,7 +148,6 @@ class Users extends MY_Controller
      */
     public function add_edit($id = '')
     {
-
         $data        = $this->input->post();
         $profile_pic = 'user.png';
         if ($this->input->post('users_id')) {
@@ -297,6 +296,7 @@ class Users extends MY_Controller
     {
         is_login();
         $permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : '';
+        // print_r($this->session->get_userdata()['user_details']);
 
         if (CheckPermission() || $permission == 2) {
             // $this->session->unset_userdata('user_deta ils');
@@ -309,35 +309,81 @@ class Users extends MY_Controller
             $b_edit          = ($action == 'view') ? false : true;
             $a_users         = array();
             $a_subscriptions = array();
+            $a_user_features = array();
+            $alrdy_notifyed  = array();
 
-            $a_users         = $this->User_model->get_users($user_id);
-            $a_subscriptions = $this->Subscriptions_model->get_user_subscriptions($user_id);
+            $a_users = $this->User_model->get_users($user_id);
 
-            /*Notification for profile visited*/
-            $a_post['permission']      = $permission;
-            $a_post['from']            = $this->user_id;
-            $a_post['to']              = $user_id;
-            $a_post['where']['map_id'] = 1;
-            /*$a_post['where']['action']            = 34;
-            $a_post['where']['notification_type'] = 40;*/
-            $this->Notification_model->manage_notifications($a_post);
-            unset($a_post['where']);
+            $a_post['permission'] = $permission;
+            $a_post['from']       = $this->user_id;
+            $a_post['to']         = $user_id;
 
-            /*Check profile is laredy interested*/
-            $alrdy_notifyed_where['user_id']       = $a_post['to'];
-            $alrdy_notifyed_where['triggerd_from'] = $a_post['from'];
-            $check_exists                          = $this->Notification_model->get_notifications('notify_id, map_id, notification_on, notification_note, notification_relation, notification_status, triggerd_from', $alrdy_notifyed_where);
+            if ($permission == 1) {
 
-            $a_sub_where['user_id'] = $a_post['to'];
-            $a_user_features        = $this->Plans_model->get_features('', $a_sub_where);
+                $alrdy_notifyed_where['triggerd_from'] = $user_id;
 
+                switch ($a_users[0]->user_type) {
+
+                    case '3':
+                        /*Get all subscription of talent*/
+                        $a_subscriptions = $this->Subscriptions_model->get_user_subscriptions($user_id);
+
+                        /*Get all talent features*/
+                        $a_feture_where['user_id'] = $user_id;
+                        $a_user_features           = $this->Plans_model->get_features('', $a_feture_where);
+
+                        $alrdy_notifyed_where['user_id'] = $user_id;
+                        break;
+                    case '2':
+                        /*Get all notification triggered from director*/
+                        $alrdy_notifyed_where['triggerd_from'] = $user_id;
+                        break;
+                    default:
+                        break;
+                }
+
+            } else if ($permission == 2) {
+
+                /*Notification for profile visited*/
+                if ($a_users[0]->user_type == 3) {
+
+                    $a_post['where']['map_id'] = 1;
+                    $this->Notification_model->manage_notifications($a_post);
+                    unset($a_post['where']);
+                }
+                /*Get all subscription of talent*/
+                $a_subscriptions = $this->Subscriptions_model->get_user_subscriptions($user_id);
+
+                /*Get all talent features*/
+                $a_feture_where['user_id'] = $user_id;
+                $a_user_features           = $this->Plans_model->get_features('', $a_feture_where);
+
+                /*Get all notification triggered from director to a talent*/
+                $alrdy_notifyed_where['triggerd_from'] = $this->user_id;
+            } else {
+
+                /*Get all subscription*/
+                $a_subscriptions = $this->Subscriptions_model->get_user_subscriptions($user_id);
+                /*Get all talent features*/
+                $a_feture_where['user_id'] = $user_id;
+                $a_user_features           = $this->Plans_model->get_features('', $a_feture_where);
+                /*Get all notification of a talent*/
+                $alrdy_notifyed_where['user_id'] = $user_id;
+            }
+
+            $check_exists = $this->Notification_model->get_notifications('', $alrdy_notifyed_where);
+            
             $alrdy_notifyed = array();
             if (!empty($check_exists)) {
+
+                $notifications = $this->Notification_model->render_notifications($check_exists);
+
                 foreach ($check_exists as $key => $value) {
                     $alrdy_notifyed[$value['map_id']] = array('notify_id' => $value['notify_id'], 'triggerd_from' => $value['triggerd_from'], 'notification_on' => $value['notification_on'], 'notification_relation' => $value['notification_relation'], 'notification_status' => $value['notification_status']);
                 }
             }
-            $this->load->admin_template('profile-detail', array('action' => $b_edit, 'settings' => $this->a_settings, 'userdata' => $a_users[0], 'subscription' => $a_subscriptions, 'features' => $a_user_features, 'triggers' => $a_post, 'notifyed' => $alrdy_notifyed));
+
+            $this->load->admin_template('profile-detail', array('action' => $b_edit, 'user_id' => $user_id, 'settings' => $this->a_settings, 'userdata' => $a_users[0], 'subscription' => $a_subscriptions, 'features' => $a_user_features, 'triggers' => $a_post, 'notifyed' => $alrdy_notifyed, 'notifications' => $notifications));
         } else {
 
             $this->session->set_flashdata('messagePr', 'You Don\'t have this autherity ');

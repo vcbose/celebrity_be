@@ -118,9 +118,11 @@ class User_model extends CI_Model
         }
 
         $this->db->join('cb_user_details', 'cb_users.user_id = cb_user_details.user_id', 'left');
+        $this->db->join('cb_user_details_meta', 'cb_users.user_id = cb_user_details_meta.user_id', 'left');
         $this->db->join('cb_subscriptions', 'cb_users.user_id = cb_subscriptions.user_id', 'left');
-        $this->db->where('cb_subscriptions.subscription_status !=', 0);
+        // $this->db->where('cb_subscriptions.subscription_status !=', 0);
         $result = $this->db->get('cb_users')->result();
+        // echo $this->db->last_query();
         return $result;
     }
 
