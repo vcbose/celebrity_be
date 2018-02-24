@@ -91,7 +91,7 @@ class Notification_model extends CI_Model
                 $a_noty_trigger['user_id']       = $a_post['to'];
                 $a_noty_trigger['triggerd_from'] = $a_post['from'];
                 $a_noty_trigger['map_id']        = $map_id;
-                $check_exists                    = $this->get_notifications('map_id, notification_note', $a_noty_trigger);
+                $check_exists                    = $this->get_notifications('', $a_noty_trigger);
 
                 /*Exists then update else insert*/
                 if (!empty($check_exists)) {
@@ -267,8 +267,9 @@ class Notification_model extends CI_Model
     Get all user notifications
     Params : @user_id of talent, @triggerd_from is director is @map_id type of notification
      */
-    public function get_notifications($fields = null, $a_where = array(), $limit = null, $offset = null)
+    public function get_all_notifications($fields = null, $a_where = array(), $limit = null, $offset = null, $permission = 0)
     {
+        // print_r($a_where);
         if ($fields == null) {
 
             $fields =  "un.user_id, un.triggerd_from, un.notify_id, un.map_id, un.notification_on, un.notification_note, un.notification_relation, un.notification_status, 
@@ -284,12 +285,15 @@ class Notification_model extends CI_Model
 
         /*Talent search, will list director details*/
         if (isset($a_where['triggerd_from'])) {
+            
+            if($permission != 2){
 
-            $fields .= ',  tu.user_id, tu.first_name, tu.middle_name, tu.last_name ';
-
-            $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
+                $fields .= ',  tu.user_id, tu.first_name, tu.middle_name, tu.last_name ';
+                $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
+                $this->db->group_by('tu.user_id, un.map_id');
+            }
+            
             $this->db->where('un.triggerd_from =', $a_where['triggerd_from']);
-            $this->db->group_by('tu.user_id, un.map_id'); 
             unset($a_where['triggerd_from']);
         } 
 
@@ -307,7 +311,68 @@ class Notification_model extends CI_Model
         $this->db->from('cb_user_notifications AS un');
         $this->db->order_by("un.notification_on", "desc");
         return $this->db->get_where('cb_user_notifications', $a_where, $limit, $offset)->result_array();
+        // echo $this->db->last_query();die;
+    }
 
+    /*
+    Get all user notifications
+    Params : @user_id of talent, @triggerd_from is director is @map_id type of notification
+     */
+    public function get_notifications($fields = null, $a_where = array(), $limit = null, $offset = null, $permission = 0)
+    {
+        // print_r($a_where);
+        if ($fields == null) {
+
+            $fields =  "un.user_id, un.triggerd_from, un.notify_id, un.map_id, un.notification_on, un.notification_note, un.notification_relation, un.notification_status, 
+            np.trigger, np.action, np.notification_type";    
+        }
+
+        $this->db->join('cb_notification_map AS np', 'np.id = un.map_id', 'left');
+
+        if( !empty($a_where) ){
+
+            if (isset($a_where['map_id'])) {
+                $this->db->where('un.map_id =', $a_where['map_id']);
+                unset($a_where['map_id']);
+            }
+
+            /*Talent search, will list director details*/
+            if (isset($a_where['triggerd_from'])) {
+                
+                if($permission != 2){
+
+                    $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name, " ", tu.middle_name, " ", tu.last_name) AS name ';
+                    $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
+                    $this->db->group_by('tu.user_id, un.map_id');
+                }
+                
+                $this->db->where('un.triggerd_from =', $a_where['triggerd_from']);
+                unset($a_where['triggerd_from']);
+            } 
+
+            /*Admin / director search, it will list talents details*/
+            if (isset($a_where['user_id'])) {
+
+                $fields .= ', fu.user_id AS d_id, CONCAT(fu.first_name, " ", fu.middle_name, " ", fu.last_name) AS name ';
+                $this->db->join('cb_user_details AS fu', 'fu.user_id = un.triggerd_from', 'left');
+                $this->db->where('un.user_id =', $a_where['user_id']);
+                $this->db->group_by('fu.user_id, un.map_id'); 
+                unset($a_where['user_id']);
+            }
+        } else {
+
+            $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name," ", tu.middle_name," ", tu.last_name) AS t_name ';
+            $fields .= ', fu.user_id AS d_id, CONCAT(fu.first_name," ", fu.middle_name," ", fu.last_name) AS d_name ';
+
+            $this->db->join('cb_user_details AS fu', 'fu.user_id = un.triggerd_from', 'left');
+            $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
+            $this->db->group_by('tu.user_id, un.map_id');
+        }
+
+        $this->db->select($fields);
+        $this->db->from('cb_user_notifications AS un');
+        $this->db->order_by("un.notification_on", "desc");
+        return $this->db->get('cb_user_notifications', $limit, $offset)->result_array();
         // echo $this->db->last_query();die;
     }
 
@@ -419,7 +484,22 @@ class Notification_model extends CI_Model
                     $notifaction_response[$key]['action']              = $action;
                     $notifaction_response[$key]['type']                = $type;
                     $notifaction_response[$key]['from']                = $notification['triggerd_from'];
-                    $notifaction_response[$key]['name']                = $notification['first_name'].' '.$notification['middle_name'].' '.$notification['last_name'];
+                    
+                    if (isset($notification['t_name'])) 
+                    {
+                        $notifaction_response[$key]['t_name']          = $notification['t_name'];
+                    } 
+                    
+                    if (isset($notification['d_name'])) 
+                    {
+                        $notifaction_response[$key]['d_name']          = $notification['d_name'];
+                    } 
+                    
+                    if (isset($notification['name']))  
+                    {
+                        $notifaction_response[$key]['name']            = $notification['name'];
+                    }
+                    
                     $notifaction_response[$key]['to']                  = $notification['user_id'];
                     $notifaction_response[$key]['notification_on']     = $notification['notification_on'];
                     $notifaction_response[$key]['notification_note']   = $notification['notification_note'];

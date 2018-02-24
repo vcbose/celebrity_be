@@ -279,10 +279,11 @@ class Users extends MY_Controller
      */
     public function profiles()
     {
-
         is_login();
+        $permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : '';
         // $this->session->unset_userdata('user_details');
-        $a_users    = $this->User_model->get_users();
+        $a_users    = $this->User_model->get_users('', $permission);
+
         $a_uf_plans = $this->Plans_model->get_plans('plan_id, plan_name', array('plan_status' => 1));
 
         foreach ($a_uf_plans as $key => $value) {
@@ -307,12 +308,19 @@ class Users extends MY_Controller
             $noty_where['map_id']        = 5;
 
             $b_edit          = ($action == 'view') ? false : true;
+
             $a_users         = array();
             $a_subscriptions = array();
             $a_user_features = array();
+            $alrdy_notifyed_where  = array();
             $alrdy_notifyed  = array();
+            $notifications   = array();
 
             $a_users = $this->User_model->get_users($user_id);
+            
+            /*echo "<pre>";
+            print_r($a_users);
+            echo "</pre>";*/
 
             $a_post['permission'] = $permission;
             $a_post['from']       = $this->user_id;
@@ -320,11 +328,9 @@ class Users extends MY_Controller
 
             if ($permission == 1) {
 
-                $alrdy_notifyed_where['triggerd_from'] = $user_id;
-
                 switch ($a_users[0]->user_type) {
 
-                    case '3':
+                    case 3:
                         /*Get all subscription of talent*/
                         $a_subscriptions = $this->Subscriptions_model->get_user_subscriptions($user_id);
 
@@ -334,7 +340,7 @@ class Users extends MY_Controller
 
                         $alrdy_notifyed_where['user_id'] = $user_id;
                         break;
-                    case '2':
+                    case 2:
                         /*Get all notification triggered from director*/
                         $alrdy_notifyed_where['triggerd_from'] = $user_id;
                         break;
@@ -359,6 +365,7 @@ class Users extends MY_Controller
                 $a_user_features           = $this->Plans_model->get_features('', $a_feture_where);
 
                 /*Get all notification triggered from director to a talent*/
+                $alrdy_notifyed_where['user_id'] =  $user_id;
                 $alrdy_notifyed_where['triggerd_from'] = $this->user_id;
             } else {
 
@@ -371,8 +378,8 @@ class Users extends MY_Controller
                 $alrdy_notifyed_where['user_id'] = $user_id;
             }
 
-            $check_exists = $this->Notification_model->get_notifications('', $alrdy_notifyed_where);
-            
+            $check_exists = $this->Notification_model->get_notifications('', $alrdy_notifyed_where, '', '', $permission);
+
             $alrdy_notifyed = array();
             if (!empty($check_exists)) {
 

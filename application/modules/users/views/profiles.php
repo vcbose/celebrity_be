@@ -55,8 +55,8 @@
 									foreach ($userdata as $key => $value) {	
 									?>
 									<tr class="odd gradeX">
-										<td><a href="/profile-detail/view/<?php echo $value->user_id; ?>"><?php echo $i; ?></a></td>
-										<td><a href="/profile-detail/view/<?php echo $value->user_id; ?>"><?php echo ucfirst($value->display_name); ?></a></td>
+										<td><a href="/profile-detail/view/<?php echo $value->u_id; ?>"><?php echo $i; ?></a></td>
+										<td><a href="/profile-detail/view/<?php echo $value->u_id; ?>"><?php echo ucfirst($value->display_name); ?></a></td>
 										<td><?php echo $value->gender; ?></td>
 										<td><?php $age = date_diff(date_create($value->dob), date_create('today'))->y; echo ($age <= 0)?'Baby':$age; ?></td>
 										<td class="center"><?php $a_tc = explode(',', $value->talent_category); foreach ($a_tc as $tc_ic) {
@@ -66,7 +66,7 @@
 										<td class="center"><?php echo $value->city; ?></td>
 										<td class="center"><?php echo $value->created_on; ?></td>
 										<!-- <td class="center"></td> -->
-										<td class="center"><a href="/subscriptions/<?php echo $value->user_id; ?>"><?php echo isset($plans[$value->plan_id])?$plans[$value->plan_id]:' -- '; ?></a></td>
+										<td class="center"><a href="/subscriptions/<?php echo $value->u_id; ?>"><?php echo isset($plans[$value->plan_id])?$plans[$value->plan_id]:' -- '; ?></a></td>
 										<td class="center"><?php echo ($value->user_status == 1)?'Active':'Deactive'; ?></td>
 									</tr>
 									<?php
