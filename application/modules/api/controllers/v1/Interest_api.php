@@ -26,14 +26,6 @@ class Interest_api extends REST_Controller {
 	{
 		try{
 			$a_post  	= $this->post();
-			
-			if(!empty($a_post)){
-				if (isset($a_post[0])) {
-					$a_post  	= json_decode($a_post[0], TRUE);
-				} 
-			} else {
-				throw new Exception("Invalid request!", 1);
-			}
 
 	        if(is_array($a_post) && !empty($a_post) ){
 
@@ -94,7 +86,7 @@ class Interest_api extends REST_Controller {
 			$data 	  = $this->Notification_model->get_notifications($fields, $whereData, $limit, $offset);
 			
 			if($data){
-				$response = array('status'=>'success', 'data' => $data);
+				$response = array('status'=> true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
 				throw new Exception("No activities found on this request!", 1);

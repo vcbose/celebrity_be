@@ -27,15 +27,7 @@ class User_api extends REST_Controller {
 	{
 		try{
 			$postParams  = $this->post();
-
-			if( !empty($postParams) ){
-
-				if( isset($postParams[0]) ){
-					$postParams = json_decode($postParams[0], TRUE);
-				}else{
-					$postParams = $postParams;
-				}
-			} 
+			
 			$user_id 	 = $this->User_model->registerUser($postParams, true);
 
 			if($user_id > 0){
