@@ -140,4 +140,22 @@ class Chat_model extends CI_Model {
         return $this->db->get_where('cb_user_chats', $where, $limit, $offset)->result_array();
         // echo $this->db->last_query();die;
     }
+
+    /**
+     * Get user's chats
+     * @param 
+     * @return 
+     */
+    public function get_chat_users($fields = null, $where = array(), $offset = null, $limit = null)
+    {
+        if ($fields) {
+            $this->db->select($fields);
+        }
+
+        $this->db->join('cb_user_details', 'cb_user_chats.chat_to = cb_user_details.user_id', 'left');
+        $this->db->group_by('user_id');
+        $this->db->order_by('chat_on', 'DESC');
+        return $this->db->get_where('cb_user_chats', $where, $limit, $offset)->result_array();
+        // echo $this->db->last_query();die;
+    }
 }

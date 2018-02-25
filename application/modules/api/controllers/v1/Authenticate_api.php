@@ -36,7 +36,7 @@ class Authenticate_api extends REST_Controller {
 			// Insert access token into keys table
 			$this->insert_access_token($userId, $accessToken);
 
-			$response 	 = array('status'=> TRUE, 'message'=>'Authentication successfull', 'access_token'=>$accessToken);
+			$response 	 = array('status'=> TRUE, 'message'=>'Authentication successfull', 'user_id'=> $userId, 'access_token'=>$accessToken);
 			$this->response($response, parent::HTTP_OK);
 
 		}catch(Exception $ex){

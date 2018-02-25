@@ -119,10 +119,6 @@ class Userchat_api extends REST_Controller {
 				throw new Exception("Could not find user_id with the request", 1);
 			}
 			
-			if(isset($getParams['fields'])){
-				$fields = $getParams['fields'];
-				unset($getParams['fields']);
-			}
 			if(isset($getParams['offset'])){
 				$offset = $getParams['offset'];
 				unset($getParams['offset']);
@@ -131,8 +127,10 @@ class Userchat_api extends REST_Controller {
 				$limit  = $getParams['limit'];
 				unset($getParams['limit']);
 			}
+
+			$fields   = 'user_id,first_name,middle_name,last_name,display_name,email,photos';
 			
-			$data 	  = $this->Chat_model->get_user_chats($fields, $getParams, $limit, $offset, true);
+			$data 	  = $this->Chat_model->get_chat_users($fields, $getParams, $limit, $offset);
 			
 			if($data){
 				$response = array('status'=>true, 'data' => $data);
