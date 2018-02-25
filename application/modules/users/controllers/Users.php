@@ -317,7 +317,7 @@ class Users extends MY_Controller
             $notifications   = array();
 
             $a_users = $this->User_model->get_users($user_id);
-            
+
             /*echo "<pre>";
             print_r($a_users);
             echo "</pre>";*/
@@ -331,9 +331,9 @@ class Users extends MY_Controller
                 switch ($a_users[0]->user_type) {
 
                     case 3:
+                        $a_post['from']       = $user_id;
                         /*Get all subscription of talent*/
                         $a_subscriptions = $this->Subscriptions_model->get_user_subscriptions($user_id);
-
                         /*Get all talent features*/
                         $a_feture_where['user_id'] = $user_id;
                         $a_user_features           = $this->Plans_model->get_features('', $a_feture_where);
@@ -341,6 +341,8 @@ class Users extends MY_Controller
                         $alrdy_notifyed_where['user_id'] = $user_id;
                         break;
                     case 2:
+                        $a_post['from']       = $user_id;
+                        // $a_post['to']       = '';
                         /*Get all notification triggered from director*/
                         $alrdy_notifyed_where['triggerd_from'] = $user_id;
                         break;
@@ -390,7 +392,7 @@ class Users extends MY_Controller
                 }
             }
 
-            $this->load->admin_template('profile-detail', array('action' => $b_edit, 'user_id' => $user_id, 'settings' => $this->a_settings, 'userdata' => $a_users[0], 'subscription' => $a_subscriptions, 'features' => $a_user_features, 'triggers' => $a_post, 'notifyed' => $alrdy_notifyed, 'notifications' => $notifications));
+            $this->load->admin_template('profile-detail', array('action' => $b_edit,  'permission' => $permission, 'user_id' => $user_id, 'user_type' => $a_users[0]->user_type, 'settings' => $this->a_settings, 'userdata' => $a_users[0], 'subscription' => $a_subscriptions, 'features' => $a_user_features, 'triggers' => $a_post, 'notifyed' => $alrdy_notifyed, 'notifications' => $notifications));
         } else {
 
             $this->session->set_flashdata('messagePr', 'You Don\'t have this autherity ');

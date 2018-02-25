@@ -68,7 +68,7 @@ $route['notifications']		= 'notifications/manage_notification';
 $route['get-notifications']	= 'notifications/get_notifications';
 $route['get-interview']		= 'notifications/get_interview';
 $route['user-notifications']= 'notifications/index/';
-// $route['chat/(:num)'] 		= 'notifications/index/user_id/$1';
+$route['chat/(:num)'] 		= 'notifications/chat/user_id/$1';
 $route['submit-chat'] 		= 'notifications/submit_chat';
 $route['get-chat'] 			= 'notifications/get_chat';
 
