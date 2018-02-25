@@ -281,15 +281,15 @@ class User_model extends CI_Model
     public function check_user($username, $password)
     {
         $this->db->select('user_id, user_name, password, user_status');
-        $this->db->where(" is_deleted='0' AND (user_name='$username') ");
+        $this->db->where(" (user_name='$username') ");
         $result = $this->db->get('cb_users')->result_array();
 
         if (!empty($result)) {
             if (password_verify($password, $result[0]['password'])) {
-
-                if ($result[0]['user_status'] != 1) {
+                
+                /*if ($result[0]['user_status'] != 1) {
                     return 'not_varified';
-                }
+                }*/
                 return $result[0];
             } else {
                 return false;
@@ -324,57 +324,65 @@ class User_model extends CI_Model
     {
         $user_id = '';
 
-        if ($post_data['user_name'] && ($post_data['password'] == $post_data['confirm_password'])) {
+        if ( isset($post_data['user_name']) && ($post_data['password'] == $post_data['confirm_password']) ) {
 
-            $user_data['user_name']     = $post_data['user_name'];
-            $user_data['password']      = password_hash($post_data['password'], PASSWORD_DEFAULT);
-            $user_data['created_on']    = date('y-m-d h:i:a');
-            $user_data['user_status']   = 1;            
-            $user_id                    = $this->insertRow('cb_users', $user_data);
+            if ( $this->check_exists($this->table, 'user_name', $post_data['user_name']) ) {
+        
+                $user_data['user_name']     = $post_data['user_name'];
+                $user_data['password']      = password_hash($post_data['password'], PASSWORD_DEFAULT);
+                $user_data['user_type']     = $post_data['user_type'];
+                $user_data['created_on']    = date('y-m-d h:i:a');
+                $user_data['user_status']   = 0;            
+                $user_id                    = $this->insertRow('cb_users', $user_data);
+            } else {
+
+                return false;
+            }
         } else {
+
             return false;
         }
 
         if ($user_id != '') {
 
             if ($api_flag) {
-                $file_names = $post_data['photos'];
+                $file_names = isset($post_data['photos'])?$post_data['photos']:'';
             } else {
                 $file_names = count($_FILES['photos']['name']) > 0 ? json_encode(cb_fileUpload('photos')) : '';
             }
 
-            $videos_urls = ($post_data['videos'] && !empty($post_data['videos'])) ? json_encode($post_data['videos']) : '';
+            $videos_urls = (isset($post_data['videos']) && !empty($post_data['videos'])) ? json_encode($post_data['videos']) : '';
 
             $user_details['user_id']         = $user_id;
-            $user_details['first_name']      = $post_data['first_name'];
-            $user_details['middle_name']     = $post_data['middle_name'];
-            $user_details['last_name']       = $post_data['last_name'];
-            $user_details['display_name']    = $post_data['first_name'] . ' ' . $post_data['middle_name'] . ' ' . $post_data['last_name'];
-            $dob                             = $post_data['dob'];
+            $user_details['first_name']      = isset($post_data['first_name'])?$post_data['first_name']:'';
+            $user_details['middle_name']     = isset($post_data['middle_name'])?$post_data['middle_name']:'';
+            $user_details['last_name']       = isset($post_data['last_name'])?$post_data['last_name']:'';
+            $user_details['display_name']    = isset($post_data['first_name'])?$post_data['first_name']:'cb-talent-'.$user_id;
+            $dob                             = isset($post_data['dob'])?$post_data['dob']:'';
             $user_details['dob']             = date("Y-m-d", strtotime($dob));
             $user_details['gender']          = $post_data['gender'];
-            $user_details['nationality']     = 'India';
-            $user_details['state']           = $post_data['state'];
-            $user_details['city']            = $post_data['city'];
-            $user_details['location']        = '';
-            $user_details['address']         = $post_data['address'];
-            $user_details['phone']           = $post_data['phone_num'];
-            $user_details['mobile']          = $post_data['mobile_num'];
-            $user_details['email']           = $post_data['email'];
-            $user_details['description']     = $post_data['description'];
-            $user_details['talent_category'] = implode(',', $post_data['talent_category']);
-            $user_details['tags_interest']   = '';
+            $user_details['nationality']     = isset($post_data['nationality'])?$post_data['nationality']:'Indian';
+            $user_details['state']           = isset($post_data['state'])?$post_data['state']:'';
+            $user_details['city']            = isset($post_data['city'])?$post_data['city']:'';
+            $user_details['location']        = isset($post_data['location'])?$post_data['location']:'';
+            $user_details['address']         = isset($post_data['address'])?$post_data['address']:'';
+            $user_details['phone']           = isset($post_data['phone_num'])?$post_data['phone_num']:'';
+            $user_details['mobile']          = isset($post_data['mobile_num'])?$post_data['mobile_num']:'';
+            $user_details['email']           = isset($post_data['email'])?$post_data['email']:'';
+            $user_details['description']     = isset($post_data['description'])?$post_data['description']:'';
+            $user_details['talent_category'] = is_array($post_data['talent_category'])?implode(',', $post_data['talent_category']):'';
+            $user_details['tags_interest']   = isset($post_data['tags_interest'])?$post_data['tags_interest']:'';
             $user_details['photos']          = $file_names;
             $user_details['videos']          = $videos_urls;
             $user_details['links']           = '';
-            $user_details['experience']      = '';
-            $user_details['subscription_id'] = '';
+            $user_details['experience']      = isset($post_data['experience'])?$post_data['experience']:'';
+            $user_details['subscription_id'] = isset($post_data['subscription_id'])?$post_data['subscription_id']:'';
             $user_details['modified_on']     = date('y-m-d h:i:a');
-            $user_details['modified_by']     = '';
+            $user_details['modified_by']     = ''; 
 
             $this->insertRow('cb_user_details', $user_details);
 
-            if ($post_data['register_type'] == 'talent' && $post_data['talent_category']) {
+            if ( $post_data['user_type'] == 3 && $post_data['talent_category'] ) {
 
                 $talentFlag   = false;
                 $talentFilter = [4, 5, 6];
@@ -396,16 +404,22 @@ class User_model extends CI_Model
                 if ($talentFlag) {
 
                     $user_meta_details['user_id']   = $user_id;
-                    $user_meta_details['hair']      = $post_data['hair_colour'];
-                    $user_meta_details['eye']       = $post_data['eye_colour'];
-                    $user_meta_details['colour']    = $post_data['body_colour'];
-                    $user_meta_details['body_type'] = $post_data['body_type'];
-                    $user_meta_details['weight']    = $post_data['weight'];
-                    $user_meta_details['height']    = $post_data['hight'];
+                    
+                    $user_meta_details['hair']      = isset($post_data['hair_colour'])?$post_data['hair_colour']:'';
+                    $user_meta_details['eye']       = isset($post_data['eye_colour'])?$post_data['eye_colour']:'';
+                    $user_meta_details['colour']    = isset($post_data['body_colour'])?$post_data['body_colour']:'';
+                    $user_meta_details['body_type'] = isset($post_data['body_type'])?$post_data['body_type']:'';
+                    $user_meta_details['weight']    = isset($post_data['weight'])?$post_data['weight']:'';
+                    $user_meta_details['height']    = isset($post_data['hight'])?$post_data['hight']:'';
 
                     $this->insertRow('cb_user_details_meta', $user_meta_details);
                 }
+                /*Chekc subscription_id is valid and insert 0 means director*/
+                if(isset($post_data['subscription_id']) && $post_data['subscription_id'] != 0){
+                    $this->Plans_model->add_user_plan($user_id, $post_data['subscription_id']);
+                }
             }
+
 
             return $user_id;
 

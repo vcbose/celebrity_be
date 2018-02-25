@@ -25,7 +25,15 @@ class Visit_api extends REST_Controller {
     public function visits_post()
 	{
 		try{
+
 			$a_post  	= $this->post();
+			if(!empty($a_post)){
+				if (isset($a_post[0])) {
+					$a_post  	= json_decode($a_post[0], TRUE);
+				} 
+			} else {
+				throw new Exception("Invalid request!", 1);
+			}
 
 	        if(is_array($a_post) && !empty($a_post) ){
 
@@ -88,7 +96,7 @@ class Visit_api extends REST_Controller {
 				$response = array('status'=>true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
-				throw new Exception("Error on get notifications", 1);
+				throw new Exception("No activities found on this request!", 1);
 			}
 
 		}catch(Exception $ex){

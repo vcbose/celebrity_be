@@ -97,7 +97,7 @@ class Usermedia_api extends REST_Controller {
 			$result = $this->User_model->update_media_info($userId, $imgNames, $userVideoUrl);
 
 			if($result){
-				$response 	= array('status'=>true, 'message'=>'User media upload successfull');
+				$response 	= array('status'=> true, 'message'=>'User media upload successfull');
 				$this->response($response, parent::HTTP_OK);
 			}else{
 				throw new Exception("User media upload failed", 1);
@@ -123,7 +123,7 @@ class Usermedia_api extends REST_Controller {
 			$resImage 		= true;
 			$resVideo 		= true;
 			$putParams  	= $this->get_put_data();
-
+			
 			$userId 		= isset($putParams['user_id'])    	   ? $putParams['user_id'] 	       : 0;
 			$oldImageName 	= isset($putParams['old_image_name'])  ? $putParams['old_image_name']  : null;
 			$newUserImage 	= isset($putParams['new_user_image'])  ? $putParams['new_user_image']  : null;

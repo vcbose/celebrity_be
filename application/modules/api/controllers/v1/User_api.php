@@ -28,12 +28,24 @@ class User_api extends REST_Controller {
 		try{
 			$postParams  = $this->post();
 
+			if( !empty($postParams) ){
+
+				if( isset($postParams[0]) ){
+					$postParams = json_decode($postParams[0], TRUE);
+				}else{
+					$postParams = $postParams;
+				}
+			} 
 			$user_id 	 = $this->User_model->registerUser($postParams, true);
 
 			if($user_id > 0){
-				$result 	= $this->Plans_model->add_user_plan($user_id, $postParams['plan']);
+				// $result 	= $this->Plans_model->add_user_plan($user_id, $postParams['plan']);
 
-				$response 	= array('status'=>'success', 'message'=>'User registration successfull', 'user_id'=>$user_id);
+				$response 	= array('status'=> true, 'message'=>'User registration successfull', 'user_id'=>$user_id);
+				$this->response($response, parent::HTTP_CREATED);
+			} else {
+
+				$response 	= array('status'=> false, 'message'=>'User registration failed! try after some times', 'user_id'=> 0);
 				$this->response($response, parent::HTTP_CREATED);
 			}			
 
@@ -114,12 +126,17 @@ class User_api extends REST_Controller {
 			}
 
 			$data 	  = $this->User_model->get_highlight_users($fields, $getParams, $offset, $limit);
-			$response = array('status'=>'success', 'data' => $data);
+			if(!empty($data)){
+				$response = array('status'=> TRUE, 'data' => $data);
+			} else {
+				$response = array('status'=> TRUE, 'data' => $data, 'message' => 'No hightlighted profiles matches!');
+			}
+			
 			$this->response($response, parent::HTTP_OK);
 
 		}catch(Exception $ex){
 			
-			$response = array('status'=>'error', 'message'=>'Unexpected error occurred');
+			$response = array('status'=> FALSE, 'message'=>'Unexpected error occurred');
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}

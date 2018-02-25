@@ -64,6 +64,7 @@ class Notifications extends MY_Controller
     {
 
         $a_post = (isset($_POST) && !empty($_POST)) ? $_POST : array();
+        
         if (!empty($a_post)) {
             $a_response = $this->Notification_model->check_interview_exists($a_post);
             $j_response = json_encode($a_response, true);

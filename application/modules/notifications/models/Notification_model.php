@@ -267,60 +267,8 @@ class Notification_model extends CI_Model
     Get all user notifications
     Params : @user_id of talent, @triggerd_from is director is @map_id type of notification
      */
-    public function get_all_notifications($fields = null, $a_where = array(), $limit = null, $offset = null, $permission = 0)
-    {
-        // print_r($a_where);
-        if ($fields == null) {
-
-            $fields =  "un.user_id, un.triggerd_from, un.notify_id, un.map_id, un.notification_on, un.notification_note, un.notification_relation, un.notification_status, 
-            np.trigger, np.action, np.notification_type";    
-        }
-        
-        $this->db->join('cb_notification_map AS np', 'np.id = un.map_id', 'left');
-
-        if (isset($a_where['map_id'])) {
-            $this->db->where('un.map_id =', $a_where['map_id']);
-            unset($a_where['map_id']);
-        }
-
-        /*Talent search, will list director details*/
-        if (isset($a_where['triggerd_from'])) {
-            
-            if($permission != 2){
-
-                $fields .= ',  tu.user_id, tu.first_name, tu.middle_name, tu.last_name ';
-                $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
-                $this->db->group_by('tu.user_id, un.map_id');
-            }
-            
-            $this->db->where('un.triggerd_from =', $a_where['triggerd_from']);
-            unset($a_where['triggerd_from']);
-        } 
-
-        /*Admin / director search, it will list talents details*/
-        if (isset($a_where['user_id'])) {
-
-            $fields .= ', fu.user_id, fu.first_name, fu.middle_name, fu.last_name ';
-            $this->db->join('cb_user_details AS fu', 'fu.user_id = un.triggerd_from', 'left');
-            $this->db->where('un.user_id =', $a_where['user_id']);
-            $this->db->group_by('fu.user_id, un.map_id'); 
-            unset($a_where['user_id']);
-        }
-
-        $this->db->select($fields);
-        $this->db->from('cb_user_notifications AS un');
-        $this->db->order_by("un.notification_on", "desc");
-        return $this->db->get_where('cb_user_notifications', $a_where, $limit, $offset)->result_array();
-        // echo $this->db->last_query();die;
-    }
-
-    /*
-    Get all user notifications
-    Params : @user_id of talent, @triggerd_from is director is @map_id type of notification
-     */
     public function get_notifications($fields = null, $a_where = array(), $limit = null, $offset = null, $permission = 0)
     {
-        // print_r($a_where);
         if ($fields == null) {
 
             $fields =  "un.user_id, un.triggerd_from, un.notify_id, un.map_id, un.notification_on, un.notification_note, un.notification_relation, un.notification_status, 
