@@ -56,29 +56,28 @@
 								<thead>
 									<tr>
 										<th>#</th>
-										<th>Name</th>
-										<th>Duration</th>
-										<th>Price</th>
-										<th>Offer</th>
-										<th>Updated On</th>
-										<!-- <th>Status</th> -->
+										<th>Action</th>
+										<th>From</th>
+										<th>To</th>
+										<th>On</th>
+										<th>User feture status</th>
 										<th>Status</th>
 									</tr>
 								</thead>
 								<tbody>
 									<?php 
 									$i = 1;
-									foreach ($plans as $key => $value) {
+									// print_r($notifications);
+									// die();
+									foreach ($notifications as $key => $value) {
 									?>
 									<tr class="odd gradeX">
 										<td><?php echo $i; ?></td>
-										<td><?php echo $value->plan_name; ?></td>
-										<td><?php echo $value->plan_duration; ?></td>
-										<td class="center"><?php echo $value->plan_price; ?></td>
-										<td class="center"><?php echo $value->plan_offer; ?></td>
-										<td class="center"><?php echo $value->plan_modified_on; ?></td>
-										<!-- <td class="center">X</td> -->
-										<td class="center"><?php echo ($value->plan_status == 1)?'active':'deactive'; ?></td>
+										<td><?php $feature = implode(',', array_keys($value['feature'])); echo ucwords(str_replace('_', 'd ', $feature)); ?></td>
+										<td><?php echo $value['d_name']; ?></td>
+										<td><?php echo $value['t_name']; ?></td>
+										<td><?php echo $value['notification_on']; ?></td>
+										<td class="center"><?php echo ($value['notification_status'] == 1)?'active':'deactive'; ?></td>
 									</tr>
 									<?php
 									$i ++;

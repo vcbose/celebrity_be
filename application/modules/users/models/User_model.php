@@ -14,7 +14,6 @@ class User_model extends CI_Model
      */
     public function auth_user()
     {
-
         $email    = $this->input->post('email');
         $password = $this->input->post('password');
 
@@ -105,22 +104,30 @@ class User_model extends CI_Model
     /**
      * This function is used to get users detail
      */
-    public function get_users($userID = null)
+    public function get_users( $userID = null, $permission = 0 )
     {
-
-        $this->db->where('is_deleted', '0');
-        if (isset($userID) && $userID != '') {
+        // $this->db->where('is_deleted', '0');
+        if ( isset($userID) && $userID != null ) {
             $this->db->where('cb_users.user_id', $userID);
-        } /*else if($this->session->userdata('user_details')[0]->user_type == 'admin') {
-        $this->db->where('user_type', 'admin');
-        }*/else {
+        } else {
             $this->db->where('cb_users.user_id !=', '1');
         }
 
+        $this->db->select('cb_users.user_id AS u_id, cb_users.user_type, cb_users.created_on, cb_users.user_status, cb_user_details.*, cb_user_details_meta.*, cb_subscriptions.*');
+
+        /*Apply permissions*/
+        if( $permission != 0){
+            $this->db->where( 'cb_users.user_type !=', $permission );
+        }
+
         $this->db->join('cb_user_details', 'cb_users.user_id = cb_user_details.user_id', 'left');
+        $this->db->join('cb_user_details_meta', 'cb_users.user_id = cb_user_details_meta.user_id', 'left');
         $this->db->join('cb_subscriptions', 'cb_users.user_id = cb_subscriptions.user_id', 'left');
         $this->db->where('cb_subscriptions.subscription_status !=', 0);
+
+        $this->db->order_by("u_id", "desc");
         $result = $this->db->get('cb_users')->result();
+        // echo $this->db->last_query();
         return $result;
     }
 

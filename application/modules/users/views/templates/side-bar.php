@@ -18,6 +18,18 @@
             </li>
             <li class="submenu">
                  <a href="/register">
+                    <i class="glyphicon glyphicon-list"></i> Notifications
+                    <span class="caret pull-right"></span>
+                 </a>
+                 <!-- Sub menu -->
+                 <ul>
+                    <li><a href="/profiles">All Notifications</a></li>
+                    <li><a href="/register">Add New</a></li>
+                    <!-- <li><a href="signup.html">Subscriptions</a></li> -->
+                </ul>
+            </li>
+            <li class="submenu">
+                 <a href="/register">
                     <i class="glyphicon glyphicon-list"></i> Subscriptions
                     <span class="caret pull-right"></span>
                  </a>
