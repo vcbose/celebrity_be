@@ -22,7 +22,7 @@ class Userchat_api extends REST_Controller {
     * @param string post params
     * @return json  api response
     */
-    public function userchat_post()
+    public function userchats_post()
 	{
 		try{
 			$a_post  	= $this->post();
@@ -39,7 +39,7 @@ class Userchat_api extends REST_Controller {
 	        }
 			
 			if($response['status']){
-				$a_response['status']  = 'success';
+				$a_response['status']  = true;
 				$a_response['message'] = 'Chat submitted successfully';
 				$this->response($a_response, parent::HTTP_OK);
 			}else{
@@ -51,7 +51,7 @@ class Userchat_api extends REST_Controller {
 			
 			$message = $ex->getMessage();
 
-			$response = array('status'=>'error', 'message'=> $message);
+			$response = array('status'=>false, 'message'=> $message);
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -61,7 +61,7 @@ class Userchat_api extends REST_Controller {
     * @param string get params
     * @return json  api response
     */
-    public function userchat_get()
+    public function userchats_get()
 	{
 		try{
 			$fields 	 = null;
@@ -82,14 +82,11 @@ class Userchat_api extends REST_Controller {
 				unset($getParams['limit']);
 			}
 			
-			// $chat_to 	= 2;
-			// $chat_from 	= 3;
-
 			$data 	  = $this->Chat_model->get_user_chats($fields, $getParams, $limit, $offset);
 			// $data 	  = $this->Chat_model->get_chats($chat_to, $chat_from);
 			
 			if($data){
-				$response = array('status'=>'success', 'data' => $data);
+				$response = array('status'=>true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
 				throw new Exception("Error on get chat", 1);
@@ -99,19 +96,58 @@ class Userchat_api extends REST_Controller {
 			
 			$message = $ex->getMessage();
 
-			$response = array('status'=>'error', 'message'=> $message);
+			$response = array('status'=>false, 'message'=> $message);
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}	
 
 	/**
-    * Put method for user chat
+    * Get method for chat users
     * @param string get params
     * @return json  api response
     */
-	public function userchat_put()
+	public function chatusers_get()
 	{
-		echo json_encode(array('status'=>'put method'));
+		try{
+			$fields 	 = null;
+			$offset 	 = null;
+			$limit 		 = null;
+			$getParams 	 = $this->get();
+
+			// Verify user id param exists
+			if(!isset($getParams['user_id'])){
+				throw new Exception("Could not find user_id with the request", 1);
+			}
+			
+			if(isset($getParams['fields'])){
+				$fields = $getParams['fields'];
+				unset($getParams['fields']);
+			}
+			if(isset($getParams['offset'])){
+				$offset = $getParams['offset'];
+				unset($getParams['offset']);
+			}
+			if(isset($getParams['limit'])){
+				$limit  = $getParams['limit'];
+				unset($getParams['limit']);
+			}
+			
+			$data 	  = $this->Chat_model->get_user_chats($fields, $getParams, $limit, $offset, true);
+			
+			if($data){
+				$response = array('status'=>true, 'data' => $data);
+				$this->response($response, parent::HTTP_OK);
+			}else{
+				throw new Exception("Error on get chat", 1);
+			}
+
+		}catch(Exception $ex){
+			
+			$message = $ex->getMessage();
+
+			$response = array('status'=>false, 'message'=> $message);
+			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
+		}
 	}
 }
 

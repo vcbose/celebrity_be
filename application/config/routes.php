@@ -96,9 +96,11 @@ $route['api/v1/subscriptions']         	= 'api/v1/Subscriptions_api/subscription
 $route['api/v1/subscriptions/(:num)']   = 'api/v1/Subscriptions_api/subscriptions/subscription_id/$1';
 $route['api/v1/interests']         		= 'api/v1/Interest_api/interests';
 $route['api/v1/interests/(:num)']   	= 'api/v1/Interest_api/interests/notify_id/$1';
-$route['api/v1/userchat']         		= 'api/v1/Userchat_api/userchat';
-$route['api/v1/userchat/(:num)']   		= 'api/v1/Userchat_api/userchat/chat_id/$1';
+$route['api/v1/chatusers']         		= 'api/v1/Userchat_api/chatusers';
+$route['api/v1/userchats']         		= 'api/v1/Userchat_api/userchats';
+$route['api/v1/userchats/(:num)']   	= 'api/v1/Userchat_api/userchats/chat_id/$1';
 $route['api/v1/interviews']         	= 'api/v1/Interview_api/interviews';
 $route['api/v1/interviews/(:num)']   	= 'api/v1/Interview_api/interviews/notify_id/$1';
 $route['api/v1/visits']         		= 'api/v1/Visit_api/visits';
 $route['api/v1/visits/(:num)']   		= 'api/v1/Visit_api/visits/notify_id/$1';
+
