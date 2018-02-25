@@ -36,12 +36,12 @@ class Authenticate_api extends REST_Controller {
 			// Insert access token into keys table
 			$this->insert_access_token($userId, $accessToken);
 
-			$response 	 = array('status'=>'success', 'message'=>'Authentication successfull', 'access_token'=>$accessToken);
+			$response 	 = array('status'=> TRUE, 'message'=>'Authentication successfull', 'access_token'=>$accessToken);
 			$this->response($response, parent::HTTP_OK);
 
 		}catch(Exception $ex){
 						
-			$response = array('status'=>'error', 'message'=> $message);
+			$response = array('status'=> FALSE, 'message'=> $message);
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -60,7 +60,7 @@ class Authenticate_api extends REST_Controller {
 		if ((empty($username)) || ($password === FALSE)){
             return FALSE;
         }
-
+        
 		$result = $this->User_model->check_user($username, $password);
 
 		if($result){

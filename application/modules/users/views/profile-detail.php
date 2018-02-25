@@ -490,7 +490,7 @@
 			  					<?php 
 			  					}
 			  				} else if(!empty($triggers) && $triggers['permission'] == 1){ ?>
-			  					<button class="btn btn-primary" data-toggle="modal" data-target="#interview" data-permission="<?php echo $triggers['permission']; ?>" data-to="<?php echo $triggers['to']; ?>" data-map_id="5" data-interview="<?php echo $notifyed[5]['notification_relation']; ?>" ><i class="glyphicon glyphicon-pencil"></i> Interviews </button>
+			  					<button class="btn btn-primary" data-toggle="modal" data-target="#interview" data-permission="<?php echo $triggers['permission']; ?>" data-to="<?php echo $triggers['to']; ?>" data-map_id="5" data-interview="<?php echo isset($notifyed[5])?$notifyed[5]['notification_relation']:''; ?>" ><i class="glyphicon glyphicon-pencil"></i> Interviews </button>
 			  				<?php
 			  				}
 			  				?>

@@ -88,7 +88,7 @@ class Visit_api extends REST_Controller {
 				$response = array('status'=>true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
-				throw new Exception("Error on get notifications", 1);
+				throw new Exception("No activities found on this request!", 1);
 			}
 
 		}catch(Exception $ex){

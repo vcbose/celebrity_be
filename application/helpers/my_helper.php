@@ -48,6 +48,10 @@ function CheckPermission($moduleName="", $method=""){
     }
 }
 
+function getPermission(){
+	return 0;
+}
+
 function setting_all($keys='')
 {  
 	$CI = get_instance();
