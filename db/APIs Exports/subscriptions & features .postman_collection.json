@@ -1,0 +1,61 @@
+{
+	"variables": [],
+	"info": {
+		"name": "subscriptions & features ",
+		"_postman_id": "d5c2aecb-afe0-6b5c-272f-c321e0665f29",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://celebritybe.local/api/v1/features/4",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/features/4",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"to\" : \"10\",\n\t\"from\" : \"3\",\n\t\"interview_data\" : {\n\t\t\"intrw_subject\" \t: \"Film casting\",\n\t\t\"intrw_on\" \t\t\t: \"2018-02-17 20:30\",\n\t\t\"intrw_due\" \t\t: \"2018-02-18 20:30\",\n\t\t\"intrw_location\" \t: \"Oberon mall, cochin\",\n\t\t\"intrw_description\" : \"Screen test for upcoming film\",\n\t\t\"oganizer_name\" \t: \"Test company\",\t\t\n\t\t\"oganizer_contact\" \t: \"Test contact\",\n\t\t\"oganizer_website\" \t: \"www.organization.com\"\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://celebritybe.local/api/v1/subscriptions/4",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/subscriptions/4",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"to\" : \"10\",\n\t\"from\" : \"3\",\n\t\"interview_data\" : {\n\t\t\"intrw_subject\" \t: \"Film casting\",\n\t\t\"intrw_on\" \t\t\t: \"2018-02-17 20:30\",\n\t\t\"intrw_due\" \t\t: \"2018-02-18 20:30\",\n\t\t\"intrw_location\" \t: \"Oberon mall, cochin\",\n\t\t\"intrw_description\" : \"Screen test for upcoming film\",\n\t\t\"oganizer_name\" \t: \"Test company\",\t\t\n\t\t\"oganizer_contact\" \t: \"Test contact\",\n\t\t\"oganizer_website\" \t: \"www.organization.com\"\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

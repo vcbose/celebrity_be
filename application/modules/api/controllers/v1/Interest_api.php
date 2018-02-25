@@ -38,7 +38,7 @@ class Interest_api extends REST_Controller {
 	        }
 			
 			if($j_response){
-				// $response 	= array('status'=>'success', 'message'=>'User media upload successfull');
+				// $response 	= array('status'=>true, 'message'=>'User media upload successfull');
 				$this->response(json_decode($j_response), parent::HTTP_OK);
 			}else{
 				throw new Exception("Notification processing error", 1);
@@ -86,7 +86,7 @@ class Interest_api extends REST_Controller {
 			$data 	  = $this->Notification_model->get_notifications($fields, $whereData, $limit, $offset);
 			
 			if($data){
-				$response = array('status'=>'success', 'data' => $data);
+				$response = array('status'=>true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
 				throw new Exception("Error on get notifications", 1);

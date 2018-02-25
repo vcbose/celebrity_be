@@ -1,0 +1,70 @@
+{
+	"variables": [],
+	"info": {
+		"name": "userchat & chatusers",
+		"_postman_id": "360e4459-838f-e9af-2523-ea1b302c4582",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://celebritybe.local/api/v1/chatusers?user_id=4",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/userchats",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://celebritybe.local/api/v1/userchats",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/userchats",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://celebritybe.local/api/v1/userchats",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/userchats",
+				"method": "POST",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"chat_from\":\"3\", \r\n \"chat_to\":\"4\",\r\n \"chat_text\": \"next new chat\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

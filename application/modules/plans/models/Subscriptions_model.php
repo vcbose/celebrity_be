@@ -20,12 +20,16 @@ class Subscriptions_model extends CI_Model {
 		return $this->db->get_where($this->table, $where, $limit, $offset)->result();
     }
 
-  	public function get_user_subscriptions( $userID, $status = null )
+  	public function get_user_subscriptions( $userID, $status = null, $fields = null )
   	{
   		$this->db->where('is_deleted', '0'); 
   		                 
 		if(isset($userID) && $userID !='') {
 			$this->db->where('cb_subscriptions.user_id', $userID); 
+		}
+
+		if($fields){
+			$this->db->select($fields);
 		} 
 
 		$this->db->join('cb_users', 'cb_users.user_id = cb_subscriptions.user_id', 'left');
