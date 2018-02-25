@@ -23,8 +23,8 @@
                  </a>
                  <!-- Sub menu -->
                  <ul>
-                    <li><a href="/profiles">All Notifications</a></li>
-                    <li><a href="/register">Add New</a></li>
+                    <li><a href="/user-notifications">All Notifications</a></li>
+                    <!-- <li><a href="/">Add New</a></li> -->
                     <!-- <li><a href="signup.html">Subscriptions</a></li> -->
                 </ul>
             </li>

@@ -5,6 +5,7 @@ var s, Notifications = {
         postInterview: $(".post-interview"),
         subMenu: $(".submenu > a"),
         intrwForm: $('#itrw_form'),
+        intrwTab: $('#intrw-tab'),
         intrwList: $('#intrw-list'),
         renderBody: $('.intrw-tbody')
     },
@@ -14,7 +15,9 @@ var s, Notifications = {
         this.bindUIActions();
     },
     bindUIActions: function() {
-        $('#profiles').dataTable();
+
+        $('#profiles, #tbl-notifications').dataTable();
+
         s.subMenu.on("click", function(e) {
             e.preventDefault();
             Notifications.subMenuBinding($(this));
@@ -62,9 +65,9 @@ var s, Notifications = {
             Notifications.manageNotification( $(this) );
         });
 
-        $('.reste-notification, .nav-tabs').on("click", function() {
+        /*$('.reste-notification, .nav-tabs').on("click", function() {
             s.intrwForm[0].reset();
-        });
+        });*/
 
         s.renderBody.on("click", "a.update-intrw", function() {
             Notifications.updateInterview( $(this) );
@@ -127,8 +130,9 @@ var s, Notifications = {
 
     renderInterviews: function (){
 
-        var aWhere = {}, from = s.intrwList.data('from'), to = s.intrwList.data('to');
-
+        var aWhere = {}, from = s.intrwTab.data('from'), to = s.intrwTab.data('to');
+        console.log(from);
+        console.log(to);
         /*All interviews of director*/
         if (typeof(from) != 'undefined') {
             aWhere['user_id'] = from;

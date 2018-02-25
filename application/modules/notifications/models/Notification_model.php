@@ -399,7 +399,7 @@ class Notification_model extends CI_Model
         }
 
         if (!empty($a_where)) {
-
+            
             if (isset($a_where['to'])) {
                 $this->db->join('cb_user_notifications', 'cb_user_notifications.notification_relation = cb_user_interview.id', 'left');
                 $this->db->where('cb_user_notifications.user_id =', $a_where['to']);

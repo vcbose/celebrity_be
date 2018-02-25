@@ -21,7 +21,7 @@ class Notifications extends MY_Controller
 
         // $to = $this->uri->segment('2');
         $check_exists  = $this->Notification_model->get_notifications(null, array(), 0, 100, $permission);
-       
+
         $notifications = $this->Notification_model->render_notifications($check_exists);
 
         $this->load->admin_template('notification', array('notifications' => $notifications));
@@ -64,7 +64,6 @@ class Notifications extends MY_Controller
     {
 
         $a_post = (isset($_POST) && !empty($_POST)) ? $_POST : array();
-
         if (!empty($a_post)) {
             $a_response = $this->Notification_model->check_interview_exists($a_post);
             $j_response = json_encode($a_response, true);
@@ -74,6 +73,12 @@ class Notifications extends MY_Controller
 
         echo $j_response;
         die();
+    }
+
+    public function chat(){
+
+        $to = $this->uri->segment('2'); 
+        $this->load->admin_template('chat', array('user_id' => $this->user_id, 'to_user' => $to));
     }
 
     public function submit_chat($chat_text = '', $user_id = null)
