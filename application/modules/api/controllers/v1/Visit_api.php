@@ -9,7 +9,7 @@ require_once(APPPATH.'/libraries/REST_Controller.php');
 * API class for Interests  
 *
 */
-class Interest_api extends REST_Controller {
+class Visit_api extends REST_Controller {
 
 	public function __construct()
     {
@@ -22,7 +22,7 @@ class Interest_api extends REST_Controller {
     * @param string post params
     * @return json  api response
     */
-    public function interests_post()
+    public function visits_post()
 	{
 		try{
 			$a_post  	= $this->post();
@@ -30,7 +30,7 @@ class Interest_api extends REST_Controller {
 	        if(is_array($a_post) && !empty($a_post) ){
 
 	        	$a_post['permission'] 		= 2;
-	        	$a_post['where']['map_id'] 	= INTEREST_MAP_ID;
+	        	$a_post['where']['map_id'] 	= VISITS_MAP_ID;
 
 	            $j_response = $this->Notification_model->manage_notifications( $a_post );
 	        } else {
@@ -38,27 +38,26 @@ class Interest_api extends REST_Controller {
 	        }
 			
 			if($j_response){
-				// $response 	= array('status'=>'success', 'message'=>'User media upload successfull');
 				$this->response(json_decode($j_response), parent::HTTP_OK);
 			}else{
-				throw new Exception("Notification processing error", 1);
+				throw new Exception( getCBResponse('ER_INTRW_IN'), 1);
 			}
 
 		}catch(Exception $ex){
 			
 			$message = $ex->getMessage();
 
-			$response = array('status'=>false, 'message'=> $message);
+			$response = array('status'=>true, 'message'=> $message);
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}
 
     /**
-    * Get method for setting
+    * Get method for interview
     * @param string get params
     * @return json  api response
     */
-    public function interests_get()
+    public function visits_get()
 	{
 		try{
 			$fields 	 = null;
@@ -81,12 +80,12 @@ class Interest_api extends REST_Controller {
 
 			// Assign conditions for get notifications
 			$whereData 			 = $getParams;
-			$whereData['map_id'] = INTEREST_MAP_ID;
+			$whereData['map_id'] = VISITS_MAP_ID;
 
 			$data 	  = $this->Notification_model->get_notifications($fields, $whereData, $limit, $offset);
 			
 			if($data){
-				$response = array('status'=>'success', 'data' => $data);
+				$response = array('status'=>true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
 				throw new Exception("Error on get notifications", 1);
@@ -101,7 +100,7 @@ class Interest_api extends REST_Controller {
 		}
 	}	
 
-	public function interests_put()
+	public function visits_put()
 	{
 		echo json_encode(array('status'=>'put method'));
 	}

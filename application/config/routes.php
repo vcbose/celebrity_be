@@ -100,4 +100,5 @@ $route['api/v1/userchat']         		= 'api/v1/Userchat_api/userchat';
 $route['api/v1/userchat/(:num)']   		= 'api/v1/Userchat_api/userchat/chat_id/$1';
 $route['api/v1/interviews']         	= 'api/v1/Interview_api/interviews';
 $route['api/v1/interviews/(:num)']   	= 'api/v1/Interview_api/interviews/notify_id/$1';
-
+$route['api/v1/visits']         		= 'api/v1/Visit_api/visits';
+$route['api/v1/visits/(:num)']   		= 'api/v1/Visit_api/visits/notify_id/$1';
