@@ -18,7 +18,7 @@ class Usermedia_api extends REST_Controller {
     }
 
     /**
-    * post method for user's media
+    * Create method for user's media
     * @param json post params
     * @return json  api response
     */
@@ -28,57 +28,142 @@ class Usermedia_api extends REST_Controller {
 			$postParams  	= $this->post();
 
 			$imgNames 		= [];
-			$userId 		= $postParams['user_id'];
-			$userImageData 	= isset($postParams['user_image']) ? $postParams['user_image'] : [];
-			$userVideoUrl 	= isset($postParams['user_video']) ? $postParams['user_video'] : [];			
+			$userId 		= isset($postParams['user_id'])    ? $postParams['user_id'] 	: 0;
+			$userImageData 	= isset($postParams['user_image']) ? $postParams['user_image']  : [];
+			$userVideoUrl 	= isset($postParams['user_video']) ? $postParams['user_video']  : [];
+
+			if(!$userId){
+				throw new Exception("Provided user id is invalid", 1);
+			}
 
 			// Get image count from user plan
-			$media_count = $this->User_model->get_media_plan_count($userId);
+			$planMediaCount = $this->User_model->get_media_plan_count($userId);
 
-			if(!isset($media_count['image']) || $media_count['image'] == 0){
-				throw new Exception("User plan not support media upload", 1);
+			if(isset($planMediaCount['image']) || $planMediaCount['image'] > 0){
+				
+				$existImageCount 	 = $this->get_file_count(USER_IMAGE_DIR.$userId.'/');
+				$availableImageCount = $planMediaCount['image'] - $existImageCount;
+
+				if($availableImageCount == 0){
+					throw new Exception("Could not upload images, all available images are uploaded", 1);
+				}
+
+			}else{
+				throw new Exception("User plan not support image upload", 1);
 			}
 
 			// Base64 to image convertion
 			if(is_array($userImageData) && !empty($userImageData)){
 
-				if($media_count['image'] >= count($userImageData)){
+				if($availableImageCount >= count($userImageData)){
 
 					foreach ($userImageData as $key => $imgData) {
-						
+
 						$imgNames[] = $this->base64_to_image($userId, $imgData);
 					}
 				}else{
-					throw new Exception("Image count is greater than plan count", 1);
+
+					if($availableImageCount == 0){
+						$message = "Could not upload images, all available images are uploaded";
+					}else{
+						$message = "Image count is greater than available images, only ".$availableImageCount." available";
+					}
+
+					throw new Exception($message, 1);
 				}
-			}else{
-				throw new Exception("Image data error", 1);
 			}
 
-			// Check video url count
-			if($media_count['video'] < count($userVideoUrl)){
-				throw new Exception("Video url count is greater than plan count", 1);
+			if(isset($planMediaCount['video']) && $planMediaCount['video'] > 0){
+
+				$existingVideoCount  = $this->User_model->getVideoCount($userId);
+				$availableVideoCount = $planMediaCount['video'] - $existingVideoCount;
+
+				// Check video url count
+				if($availableVideoCount < count($userVideoUrl)){
+
+					if($availableVideoCount == 0){
+						$message = "Could not upload videos, all available videos are uploaded";
+					}else{
+						$message = "Video count is greater than available videos, only ".$availableVideoCount." available";
+					}
+
+					throw new Exception($message, 1);
+				}
+			}else{
+				throw new Exception("User plan not support video upload", 1);
 			}
 
 			// Updating media information into user table
 			$result = $this->User_model->update_media_info($userId, $imgNames, $userVideoUrl);
 
 			if($result){
-				$response 	= array('status'=>'success', 'message'=>'User media upload successfull');
+				$response 	= array('status'=>true, 'message'=>'User media upload successfull');
 				$this->response($response, parent::HTTP_OK);
+			}else{
+				throw new Exception("User media upload failed", 1);
 			}
 
 		}catch(Exception $ex){
 			
 			$message = $ex->getMessage();
 
-			$response = array('status'=>'error', 'message'=> $message);
+			$response = array('status'=>false, 'message'=> $message);
+			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+    * Update method for user's media
+    * @param json post params
+    * @return json  api response
+    */
+    public function usermedia_put()
+	{
+		try{
+			$resImage 		= true;
+			$resVideo 		= true;
+			$putParams  	= $this->get_put_data();
+
+			$userId 		= isset($putParams['user_id'])    	   ? $putParams['user_id'] 	       : 0;
+			$oldImageName 	= isset($putParams['old_image_name'])  ? $putParams['old_image_name']  : null;
+			$newUserImage 	= isset($putParams['new_user_image'])  ? $putParams['new_user_image']  : null;
+			$oldVideoIndx 	= isset($putParams['old_video_indx'])  ? $putParams['old_video_indx']  : null;
+			$newUserVideo 	= isset($putParams['new_user_video'])  ? $putParams['new_user_video']  : null;
+			
+			if($userId > 0){
+
+				if($oldImageName && $newUserImage){
+
+					$resImage = $this->base64_to_image($userId, $newUserImage, $oldImageName);
+				}
+
+				if(($oldVideoIndx >= 0) && $newUserVideo){
+
+					$resVideo = $this->User_model->updateVideoUrl($userId, $newUserVideo, $oldVideoIndx);
+				}
+
+				if($resImage && $resVideo){
+					$response 	= array('status'=>true, 'message'=>'User media update successfull');
+					$this->response($response, parent::HTTP_OK);
+				}else{
+					throw new Exception("User media update failed", 1);
+				}
+				
+			}else{
+				throw new Exception("Provided user id is invalid", 1);
+			}
+
+		}catch(Exception $ex){
+			
+			$message = $ex->getMessage();
+
+			$response = array('status'=>false, 'message'=> $message);
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}
 
     /**
-    * Get method for user's media
+    * Read method for user's media
     * @param string get params
     * @return json  api response
     */
@@ -110,7 +195,7 @@ class Usermedia_api extends REST_Controller {
 			$data 	  = $this->User_model->get_user_details($fields, $getParams, $limit, $offset, true);
 
 			if($data){
-				$response = array('status'=>'success', 'data' => $data);
+				$response = array('status'=>true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
 				throw new Exception("Error on get user media", 1);
@@ -120,7 +205,7 @@ class Usermedia_api extends REST_Controller {
 			
 			$message = $ex->getMessage();
 
-			$response = array('status'=>'error', 'message'=> $message);
+			$response = array('status'=>false, 'message'=> $message);
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -131,22 +216,13 @@ class Usermedia_api extends REST_Controller {
     * @param string output file name
     * @return boolean result
     */
-	private function base64_to_image($userId, $base64String)
+	private function base64_to_image($userId, $base64String, $outputFileName = null)
 	{
-		$fileCount      = 0;
-		$imgExt 	 	= $this->get_image_extension($base64String);
-
 		$outputDir 		= USER_IMAGE_DIR.$userId.'/';
 
-		// Get file count of the directory
-		if(file_exists($outputDir)){
-			$fileCount     	= $this->get_file_count($outputDir);  
-
-		}else{
-			mkdir($outputDir, 0777, true);
+		if(!$outputFileName){
+			$outputFileName = $this->create_image_name($userId, $outputDir, $base64String);
 		}
-
-		$outputFile 	= $userId.'_'. ++$fileCount .'.'.$imgExt;
 
 		// Check base64 string contain comma separation
 		if((strpos($base64String, ',') != -1) || (strpos($base64String, ';') != -1)){
@@ -156,9 +232,34 @@ class Usermedia_api extends REST_Controller {
 		}
 
 		// Create file with base64 data
-		file_put_contents($outputDir.$outputFile, $imageData);
+		$result = file_put_contents($outputDir.$outputFileName, $imageData);
 
-		return $outputFile;
+		// Check file creation status
+		if($result) return $outputFileName;	
+		else return false;
+	}
+
+	/**
+    * Get image name
+    * @param string base64 image data
+    * @return string extension
+    */
+	private function create_image_name($userId, $outputDir, $base64String)
+	{
+		$fileCount      = 0;
+		$imgExt 	 	= $this->get_image_extension($base64String);
+
+		// Get file count of the directory
+		if(file_exists($outputDir)){
+			$fileCount     	= $this->get_file_count($outputDir);  
+
+		}else{
+			mkdir($outputDir, 0777, true);
+		}
+
+		$outputFileName 	= $userId.'_'. ++$fileCount .'.'.$imgExt;
+
+		return $outputFileName;
 	}
 
 	/**
@@ -201,6 +302,15 @@ class Usermedia_api extends REST_Controller {
 			
 			return 0;			
 		}
+	}
+
+	/**
+    * Get put requested data
+    * @return array put data
+    */
+	private function get_put_data()
+	{
+		return json_decode(file_get_contents("php://input"), true);
 	}
 }
 

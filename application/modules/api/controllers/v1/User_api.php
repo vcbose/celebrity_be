@@ -27,7 +27,6 @@ class User_api extends REST_Controller {
 	{
 		try{
 			$postParams  = $this->post();
-			$postParams  = json_decode($postParams[0], true);
 
 			$user_id 	 = $this->User_model->registerUser($postParams, true);
 
