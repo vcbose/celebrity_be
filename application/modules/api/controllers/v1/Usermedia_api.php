@@ -220,16 +220,18 @@ class Usermedia_api extends REST_Controller {
 	{
 		$outputDir 		= USER_IMAGE_DIR.$userId.'/';
 
+		// Check base64 string contain comma separation
+		if((strpos($base64String, ',') != -1) || (strpos($base64String, ';') != -1)){
+			$base64String   = preg_replace('#^data:image/\w+;base64,#i', '', $base64String);
+		}
+
+		// Create output file name
 		if(!$outputFileName){
 			$outputFileName = $this->create_image_name($userId, $outputDir, $base64String);
 		}
 
-		// Check base64 string contain comma separation
-		if((strpos($base64String, ',') != -1) || (strpos($base64String, ';') != -1)){
-			$imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64String));	
-		}else{
-			$imageData = base64_decode($base64String);
-		}
+		// Decode base64 data to image data
+		$imageData = base64_decode($base64String);
 
 		// Create file with base64 data
 		$result = file_put_contents($outputDir.$outputFileName, $imageData);
