@@ -1,0 +1,72 @@
+  <div class="container-fluid">
+            <div class="row bg-grey has-shadow">
+            <div class="col-md-12">
+                  <h2 class="main-headings">Plans</h2>
+    </div>
+            
+            <div class="col-xs-12 col-sm-6 col-md-3">
+							<ul class="pricing p-green">
+								<li>
+									<img src="http://bread.pp.ua/n/settings_g.svg" alt="">
+									<big>Basic	</big>
+								</li>
+								<li>Images</li>
+								<li>Videos</li>
+                                <li>Images</li>
+								<li>Videos</li>
+							
+								<li>
+									<h3>$199</h3>
+									<span>per month</span>
+								</li>
+								<li>
+									<button>subscribe now</button>
+								</li>
+							</ul>
+					</div>
+                    
+                     <div class="col-xs-12 col-sm-6 col-md-3">
+							<ul class="pricing p-green premim-style">
+								<li>
+									<img src="http://bread.pp.ua/n/settings_g.svg" alt="">
+									<big>Premium		</big>
+								</li>
+								<li>Images</li>
+								<li>Videos</li>
+                                <li>Images</li>
+								<li>Videos</li>
+							
+								<li>
+									<h3>$199</h3>
+									<span>per month</span>
+								</li>
+								<li>
+									<button>subscribe now</button>
+								</li>
+							</ul>
+					</div>
+                    
+                     <div class="col-xs-12 col-sm-6 col-md-3">
+							<ul class="pricing p-green">
+								<li>
+									<img src="http://bread.pp.ua/n/settings_g.svg" alt="">
+									<big>Normal	</big>
+								</li>
+								<li>Images</li>
+								<li>Videos</li>
+                                <li>Images</li>
+								<li>Videos</li>
+							
+							
+								<li>
+									<h3>$199</h3>
+									<span>per month</span>
+								</li>
+								<li>
+									<button>subscribe now</button>
+								</li>
+							</ul>
+					</div>
+                    
+            </div>
+            </div>
