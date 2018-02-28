@@ -2,6 +2,7 @@
 
 body {
   overflow-x: hidden;
+  font-family: 'Roboto', sans-serif;
 }
 
 .fa,
@@ -611,12 +612,12 @@ nav.side-navbar ul li a {
   display: block;
   font-weight: 300;
   border-left: 4px solid transparent;
-  text-transform: uppercase;
+ 
 }
 
 nav.side-navbar ul li a:hover {
-     background: #ffc107;
-    border-left: 4px solid #2a2d3e;
+     background: #f6f6f6;
+        border-left: 4px solid #f8bb08;
     color: #2a2d3e;
 }
 
@@ -627,13 +628,14 @@ nav.side-navbar ul li li a {
 
 nav.side-navbar ul li.active > a {
       color: #ffc107;
-    border-left: 4px solid #2a2d3e;
+    border-left: 4px solid #ffc107;
     font-weight: 500;
+    background: #f6f6f6;
 }
 
 nav.side-navbar ul li.active > a:hover {
-    background: #ffc107;
-    border-left: 4px solid #2a2d3e;
+    background: #f6f6f6;
+    border-left: 4px solid #f8bb08;
     color: #2a2d3e
 }
 
@@ -788,9 +790,9 @@ nav.side-navbar.shrinked .sidebar-header .title {
 * ==========================================================
 */
 nav.navbar {
-  background: #2a2d3e;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  background: #ffc825;
+  padding-top: 5px;
+  padding-bottom: 5px;
   color: #fff;
   position: relative;
   border-radius: 0;
@@ -821,14 +823,16 @@ nav.navbar .navbar-brand .brand-small {
   display: none;
   font-family: 'Shadows Into Light', cursive;
     font-size: 23px;
-    color: #FFC107;
+       color: #2f333e;
 }
+
+.footer-pading{     padding: 17px 0px 17px !important;}
 
 nav.navbar .brand-big {
  display: block;
     font-family: 'Shadows Into Light', cursive;
-    font-size: 26px;
-    color: #FFC107;
+    font-size: 20px;
+    color: #2f333e;
     font-weight: bold;
     letter-spacing: 2px;
 }
@@ -1146,7 +1150,7 @@ section.dashboard-counts .row {
 }
 
 section.dashboard-counts div[class*='col-'] .item {
-    border-right: 1px solid #ccc4c4;
+    border-right: 1px solid #e6e1e1;
 }
 
 
@@ -1687,12 +1691,12 @@ section.dashboard-counts div[class*='col-']:last-of-type .item {
 * ==========================================================
 */
 footer.main-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: #2f333e;
-  color: #fff;
- /* padding: 20px 10px;*/
+      position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #f4f3ef;
+
+    border-top: 1px solid #e4e4e4;
 }
 
 footer.main-footer a {
