@@ -1150,7 +1150,7 @@ section.dashboard-counts .row {
 }
 
 section.dashboard-counts div[class*='col-'] .item {
-    border-right: 1px solid #e6e1e1;
+   
 }
 
 
@@ -1506,6 +1506,7 @@ section.dashboard-counts div[class*='col-']:last-of-type .item {
   padding: 5px 10px;
   line-height: 1;
   margin-left: 10px;
+  color: #fff;
 }
 
 .articles .item {
@@ -2187,13 +2188,16 @@ STYLE SWITCHER FOR DEMO
 .profile-title{padding: 5px;}
 
 .profile-cnnt {     margin-top: 55px;}
-.img-names { background: #2f333e;
-    color: #fff;
+.img-names { background: #f4f3ef;
+    
     padding: 14px;
     font-size: 17px;
     line-height: 22px;
-    border-bottom: 3px solid #ffc107;}
+    border-bottom: 2px solid #efece1;}
 .img-names span{color: #adadad;}
+.new-bg{    background: #fff !important;}
+.intrest-section {padding: 10px; background: #f3f3f3;}
+.visitors-section{     background: #f3f3f3; padding: 10px; border-left: 1px solid #e2e2e2;}
 
 .navbar-brand {
   display: inline-block;
