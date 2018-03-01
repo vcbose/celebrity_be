@@ -85,6 +85,7 @@ $route['api/v1/settings']         		= 'api/v1/Setting_api/setting';
 $route['api/v1/settings/(:num)']        = 'api/v1/Setting_api/setting/setting_id/$1';
 $route['api/v1/register']         		= 'api/v1/User_api/register';
 $route['api/v1/users']         			= 'api/v1/User_api/user';
+$route['api/v1/usercount']         		= 'api/v1/User_api/usercount';
 $route['api/v1/users/(:num)']        	= 'api/v1/User_api/user/cbu.user_id/$1';
 $route['api/v1/highlightusers']       	= 'api/v1/User_api/hightlight_user';
 $route['api/v1/highlightusers/(:num)'] 	= 'api/v1/User_api/hightlight_user/cbs.user_id/$1';

@@ -494,17 +494,6 @@ class User_model extends CI_Model
         }
 
         return $imgRes + $videoRes;
-
-        /*if(is_array($imgNames) && !empty($imgNames)){
-            $this->db->set('photos', "CONCAT( photos, '".implode(',', $imgNames)."', ',')", false);    
-        }
-        
-        if(is_array($userVideoUrl) && !empty($userVideoUrl)){
-            $this->db->set('videos', "CONCAT( videos, '".implode(',', $userVideoUrl)."', ',')", false);
-        }*/
-
-        /*$this->db->where($whereData);
-        return $this->db->insert('cb_user_medias');*/
     }
 
     /**
@@ -607,6 +596,10 @@ class User_model extends CI_Model
         return $result[0]['user_id'];
     }
 
+    /**
+     * Get user medias
+     * @return <array> response
+     */
     public function getUserMedias($userId = null, $limit = null, $offset = null)
     {
         $condition   = "";
@@ -629,5 +622,25 @@ class User_model extends CI_Model
         $res = $this->db->query($query);
 
         return $res->result_array();
+    }
+
+    /**
+     * Get user count
+     * @return <array> response
+     */
+    public function get_user_count($where = [])
+    {
+        $this->db->select('count(user_id) AS user_count');
+
+        // $this->db->join('cb_user_details cbud', 'cbud.user_id = cbs.user_id', 'left');
+        $this->db->where($where);
+
+        $result = $this->db->get_where('cb_users', $where)->result_array();
+
+        if(!empty($result) && isset($result[0])){
+            return $result[0];
+        }else{
+            return false;
+        }
     }
 }
