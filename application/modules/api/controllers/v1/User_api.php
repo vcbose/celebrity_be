@@ -38,7 +38,7 @@ class User_api extends REST_Controller {
 			} else {
 
 				$response 	= array('status'=> false, 'message'=>'User registration failed! try after some times', 'user_id'=> 0);
-				$this->response($response, parent::HTTP_CREATED);
+				$this->response($response, parent::HTTP_BAD_REQUEST);
 			}			
 
 		}catch(Exception $ex){
@@ -121,14 +121,42 @@ class User_api extends REST_Controller {
 			if(!empty($data)){
 				$response = array('status'=> TRUE, 'data' => $data);
 			} else {
-				$response = array('status'=> TRUE, 'data' => $data, 'message' => 'No hightlighted profiles matches!');
+				throw new Exception('No hightlighted profiles matches!', 1);				
 			}
 			
 			$this->response($response, parent::HTTP_OK);
 
 		}catch(Exception $ex){
 			
-			$response = array('status'=> FALSE, 'message'=>'Unexpected error occurred');
+			$response = array('status'=> FALSE, 'message'=> $ex->getMessage());
+			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
+		}
+	}
+
+
+	/**
+    * Get method for user count
+    * @param string get params
+    * @return json  api response
+    */
+    public function usercount_get()
+	{
+		try{
+			$getParams 	 = $this->get();
+
+			$data 	  = $this->User_model->get_user_count( $getParams );
+			
+			if(!empty($data)){
+				$response = array('status'=> TRUE, 'data' => $data);
+			} else {
+				throw new Exception('Error getting user count', 1);
+			}
+			
+			$this->response($response, parent::HTTP_OK);
+
+		}catch(Exception $ex){
+			
+			$response = array('status'=> FALSE, 'message'=> $ex->getMessage());
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}

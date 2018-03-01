@@ -132,6 +132,12 @@ class Usermedia_api extends REST_Controller {
 			
 			if($userId > 0){
 
+				$imageDir = USER_IMAGE_DIR.$userId.'/';
+
+				if( !file_exists($imageDir.$oldImageName) ){
+					throw new Exception("Provided image file not exists", 1);
+				}
+
 				if($oldImageName && $newUserImage){
 
 					$resImage = $this->base64_to_image($userId, $newUserImage, $oldImageName);
@@ -142,7 +148,7 @@ class Usermedia_api extends REST_Controller {
 					$resVideo = $this->User_model->updateVideoUrl($userId, $newUserVideo, $oldVideoIndx);
 				}
 
-				if($resImage && $resVideo){
+				if($resImage || $resVideo){
 					$response 	= array('status'=>true, 'message'=>'User media update successfull');
 					$this->response($response, parent::HTTP_OK);
 				}else{
@@ -170,18 +176,23 @@ class Usermedia_api extends REST_Controller {
     public function usermedia_get()
 	{
 		try{
-			$fields 	 = null;
+			$userId 	 = null;
 			$offset 	 = null;
 			$limit 		 = null;
 			$getParams 	 = $this->get();
 
+			// Verify user id param exists
+			if(!isset($getParams['user_id'])){
+				throw new Exception("Could not find user_id with the request", 1);
+			}
+
 			// Assign field values
 			$fields 	 = 'cbu.user_id, user_name, photos, videos';
 
-			if(isset($getParams['fields'])){
-				$fields = $getParams['fields'];
-				unset($getParams['fields']);
-			}
+			if(isset($getParams['user_id'])){
+				$userId = $getParams['user_id'];
+				unset($getParams['user_id']);
+			}	
 
 			if(isset($getParams['offset'])){
 				$offset = $getParams['offset'];
@@ -192,7 +203,8 @@ class Usermedia_api extends REST_Controller {
 				unset($getParams['limit']);
 			}
 
-			$data 	  = $this->User_model->get_user_details($fields, $getParams, $limit, $offset, true);
+			// Get user media details from user model
+			$data 	  = $this->User_model->getUserMedias($userId, $limit, $offset);
 
 			if($data){
 				$response = array('status'=>true, 'data' => $data);

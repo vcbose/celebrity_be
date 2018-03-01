@@ -14,3 +14,15 @@ ALTER TABLE `cb_user_details` CHANGE `photos_moderate` `photos_moderate` TINYINT
 --vivek-- 23/02/2018 --
 -- Spelling correction experience field
 ALTER TABLE `cb_user_details` CHANGE `experiance` `experience` INT(11) NOT NULL
+
+--vivek-- 28/02/2018 --
+-- cb_user_medias table create query --
+CREATE TABLE `cb_user_medias` (
+ `media_id` int(11) NOT NULL AUTO_INCREMENT,
+ `user_id` int(11) NOT NULL,
+ `media_type` int(11) NOT NULL COMMENT '1: image, 2 : video',
+ `media_name` varchar(255) NOT NULL,
+ `moderate_status` int(11) NOT NULL DEFAULT '0',
+ `status` tinyint(4) NOT NULL DEFAULT '1',
+ PRIMARY KEY (`media_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8

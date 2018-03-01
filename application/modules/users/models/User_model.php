@@ -135,13 +135,9 @@ class User_model extends CI_Model
     /**
      * This function is used to get users
      */
-    public function get_user_details($fields = null, $where = array(), $offset = null, $limit = null, $usermediaFlg = false)
+    public function get_user_details($fields = null, $where = array(), $offset = null, $limit = null)
     {
         if ($fields) {
-
-            if($usermediaFlg){
-                $fields .= ", CONCAT('".USER_IMAGE_URL."',cbu.user_id,'/') AS photo_dir_url";
-            }
 
             $this->db->select($fields);
         }
@@ -474,18 +470,30 @@ class User_model extends CI_Model
     */
     public function update_media_info($userId, $imgNames = [], $userVideoUrl = [])
     {
-        $whereData['user_id'] = $userId;
+        $imgRes                     = true;
+        $videoRes                   = true;
+        $insertData['user_id']      = $userId;
+        $insertData['media_type']   = MEDIA_TYPE_IMAGE;
 
         if(is_array($imgNames) && !empty($imgNames)){
-            $this->db->set('photos', "CONCAT( photos, '".implode(',', $imgNames)."', ',')", false);    
-        }
-        
-        if(is_array($userVideoUrl) && !empty($userVideoUrl)){
-            $this->db->set('videos', "CONCAT( videos, '".implode(',', $userVideoUrl)."', ',')", false);
+            foreach ($imgNames as $key => $image) {
+
+                $insertData['media_name']  = $image;
+                $imgRes = $this->db->insert('cb_user_medias', $insertData);
+            }
         }
 
-        $this->db->where($whereData);
-        return $this->db->update('cb_user_details');
+        $insertData['media_type']   = MEDIA_TYPE_VIDEO;
+
+        if(is_array($userVideoUrl) && !empty($userVideoUrl)){
+            foreach ($userVideoUrl as $key => $video) {
+
+                $insertData['media_name']  = $video;
+                $videoRes = $this->db->insert('cb_user_medias', $insertData);
+            }
+        }
+
+        return $imgRes + $videoRes;
     }
 
     /**
@@ -514,15 +522,16 @@ class User_model extends CI_Model
      * @param integer userId
      * @return boolean result
      */
-    public function getMediaByUser($userId)
+    public function getMediaByUser($userId, $mediaType)
     {
-        $whereData['user_id'] = $userId;
+        $whereData['user_id']    = $userId;
+        $whereData['media_type'] = $mediaType;
 
-        $this->db->select('photos,videos');
-        $result = $this->db->get_where('cb_user_details', $whereData)->result_array();
+        // $this->db->select('photos,videos');
+        $result = $this->db->get_where('cb_user_medias', $whereData)->result_array();
 
-        if($result && isset($result[0])){
-            return $result[0];
+        if($result && isset($result)){
+            return $result;
         }else{
             return false;
         }
@@ -535,15 +544,12 @@ class User_model extends CI_Model
      */
     public function getVideoCount($userId)
     {
-        $result           = $this->getMediaByUser($userId);
-        $result['videos'] = rtrim($result['videos'], ',');
+        $whereData['user_id']    = $userId;
+        $whereData['media_type'] = MEDIA_TYPE_VIDEO;
 
-        if(isset($result['videos']) && $result['videos'] != ''){
-            $videoCount = (count( explode(',', $result['videos']) ));
-        }else{
-            $videoCount = 0;
-        }
-        
+        $result           = $this->db->get_where('cb_user_medias', $whereData)->result_array();
+
+        $videoCount = count($result);
         return $videoCount;
     }
 
@@ -556,33 +562,84 @@ class User_model extends CI_Model
      */
     public function updateVideoUrl($userId, $newUserVideo, $oldVideoIndx)
     {
-        $result = $this->getMediaByUser($userId);
+        $videos = $this->getMediaByUser($userId, MEDIA_TYPE_VIDEO);
 
-        if(isset($result['videos']) && $result['videos'] != ''){
+        if(is_array($videos) && !empty($videos)){
 
-            $result['videos']   = rtrim($result['videos'], ',');
-            $videos             = explode(',', $result['videos']);
+            if(isset($videos[ $oldVideoIndx ]['media_name'])){
 
-            if(is_array($videos) && count($videos) > 0){
-                
-                if(isset($videos[ $oldVideoIndx ])){
+                $updateData['media_name'] = $newUserVideo;
+                $whereData['user_id']     = $userId;
+                $whereData['media_id']    = $videos[ $oldVideoIndx ]['media_id'];
 
-                    $videos[ $oldVideoIndx ] = $newUserVideo;
-
-                    $updateData['videos'] = implode(',', $videos);
-                    $whereData['user_id'] = $userId;
-
-                    return $this->updateRow('cb_user_details', $updateData, $whereData);
-                }else{
-                    throw new Exception("Provided video index not exists", 1);                    
-                }
-
+                return $this->updateRow('cb_user_medias', $updateData, $whereData);
             }else{
-                throw new Exception("Videos not exists for the user id: ".$userId, 1);
+                throw new Exception("Provided video index not exists", 1);                    
             }
 
         }else{
             throw new Exception("Could not read user video data", 1);
         }
     }    
+
+    /**
+     * Get user id by current token
+     * @return boolean response
+     */
+    public function getUserByToken()
+    {
+        $whereData['key'] = $this->input->server('HTTP_ACCESS_TOKEN');
+
+        $result = $this->db->get_where('keys', $whereData)->result_array();
+
+        return $result[0]['user_id'];
+    }
+
+    /**
+     * Get user medias
+     * @return <array> response
+     */
+    public function getUserMedias($userId = null, $limit = null, $offset = null)
+    {
+        $condition   = "";
+        $currentUser = $this->getUserByToken();
+
+        if(($currentUser != ADMIN_USER_ID) && ($userId != $currentUser)){
+            $condition = " AND moderate_status = 1";
+        }
+
+        $query = "SELECT `cbu`.`user_id`, `user_name`, 
+                (SELECT GROUP_CONCAT(media_name SEPARATOR ',') FROM cb_user_medias WHERE media_type=".MEDIA_TYPE_IMAGE.$condition." AND user_id=cbu.user_id) AS photos, 
+                (SELECT GROUP_CONCAT(media_name SEPARATOR ',') FROM cb_user_medias WHERE media_type=".MEDIA_TYPE_VIDEO.$condition." AND user_id=cbu.user_id) AS videos, 
+                CONCAT('".USER_IMAGE_URL."', `cbu`.`user_id`, '/') AS photo_dir_url
+                FROM `cb_users` `cbu`";
+        
+        $query .= ($userId) ? " WHERE cbu.user_id = ".$userId : '';
+        $query .= ($limit)  ? " limit ".$limit : '';
+        $query .= ($offset) ? " offset ".$offset : '';
+
+        $res = $this->db->query($query);
+
+        return $res->result_array();
+    }
+
+    /**
+     * Get user count
+     * @return <array> response
+     */
+    public function get_user_count($where = [])
+    {
+        $this->db->select('count(user_id) AS user_count');
+
+        // $this->db->join('cb_user_details cbud', 'cbud.user_id = cbs.user_id', 'left');
+        $this->db->where($where);
+
+        $result = $this->db->get_where('cb_users', $where)->result_array();
+
+        if(!empty($result) && isset($result[0])){
+            return $result[0];
+        }else{
+            return false;
+        }
+    }
 }
