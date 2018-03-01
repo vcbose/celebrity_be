@@ -52,7 +52,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller']= 'users/login';
 
 $route['admin'] 			= 'admin/admin/index';
-$route['cb-login'] 			= 'users/login';
+$route['cb-admin'] 			= 'users/login';
+$route['signin'] 			= 'users/login';
 $route['logout'] 			= 'users/logout';
 $route['auth-user'] 		= 'users/auth_user';
 $route['register'] 			= 'users/registration';
@@ -61,7 +62,7 @@ $route['profile-detail/([a-z]+)/(\d+)'] 		= 'users/profile_detail/$1/id_$2';
 $route['getplandata']		= 'users/getplandata';
 // $route['notifications']	= 'users/notifications';
 $route['checkUserName'] = 'users/checkUserName';
-$route['dashboard'] 		= 'users/dashboard/';
+$route['dashboard'] 		= 'users/talents/dashboard/';
 $route['plans/(:num)'] 		= 'plans/index';
 $route['subscriptions/(:num)'] = 'plans/subscriptions/user_id/$1';
 $route['notifications']		= 'notifications/manage_notification';
