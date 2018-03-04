@@ -120,7 +120,7 @@ class Notification_model extends CI_Model
                             if (isset($a_user_features[INTERVIEW_ID])) {
 
                                 /*Check interview status of plan*/
-                                $interview                   = $a_user_features[INTERVIEW_ID]['Receive_interview'];
+                                $interview                   = $a_user_features[INTERVIEW_ID]['Interview'];
                                 $data['notification_status'] = ($interview == 0) ? 0 : 1;
 
                                 if ((isset($a_post['form_data']) && !empty($a_post['form_data']))
@@ -188,7 +188,7 @@ class Notification_model extends CI_Model
 
                             if (isset($a_user_features[INTERSTS_ID])) {
                                 /*Check interest status of plan*/
-                                $interests                   = $a_user_features[INTERSTS_ID]['Receive_interests'];
+                                $interests                   = $a_user_features[INTERSTS_ID]['Interests'];
                                 $data['notification_status'] = ($interests == 0) ? 0 : 1;
                                 $message                     = getCBResponse('SUC_INTR_IN');
                                 $b_status                    = true;
@@ -204,7 +204,7 @@ class Notification_model extends CI_Model
                             if (isset($a_user_features[INTERVIEW_ID])) {
 
                                 /*Check interview status of plan*/
-                                $interview                   = $a_user_features[INTERVIEW_ID]['Receive_interview'];
+                                $interview                   = $a_user_features[INTERVIEW_ID]['Interview'];
                                 $data['notification_status'] = ($interview == 0) ? 0 : 1;
 
                                 if (isset($a_post['form_data']) && !empty($a_post['form_data'])
@@ -319,7 +319,7 @@ class Notification_model extends CI_Model
 
         $this->db->select($fields);
         $this->db->from('cb_user_notifications AS un');
-        $this->db->order_by("un.notification_on", "desc");
+        $this->db->order_by("un.notification_on", "DESC");
         return $this->db->get('cb_user_notifications', $limit, $offset)->result_array();
         // echo $this->db->last_query();die;
     }

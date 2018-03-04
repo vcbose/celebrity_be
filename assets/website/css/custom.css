@@ -1,0 +1,99 @@
+  .login-page {
+  background: #2a2d3e;
+  }
+  .login-page .login-header { position: relative; background: #272a3a;  padding: 70px 0;}
+  .login-page .login-content {
+  position: relative;
+  width: 320px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px 0;
+  -moz-transition: all 550ms ease-in-out;
+  -webkit-transition: all 550ms ease-in-out;
+  -o-transition: all 550ms ease-in-out;
+  transition: all 550ms ease-in-out;
+  }
+  
+  .login-page .login-header.login-caret:after {
+  position: absolute;
+  content: '';
+  left: 50%;
+  bottom: 0;
+  margin-left: -12.5px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 13px 12.5px 0 12.5px;
+  border-color: #272a3a transparent transparent transparent;
+	bottom: -13px;
+  -moz-transition: all 550ms ease-in-out;
+  -webkit-transition: all 550ms ease-in-out;
+  -o-transition: all 550ms ease-in-out;
+  transition: all 550ms ease-in-out;
+  }
+  
+  .login-page .login-header.login-caret:after {
+  position: absolute;
+  content: '';
+  left: 50%;
+  bottom: 0;
+  margin-left: -12.5px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 13px 12.5px 0 12.5px;
+  border-color: #272a3a transparent transparent transparent;
+  bottom: -13px;
+  -moz-transition: all 550ms ease-in-out;
+  -webkit-transition: all 550ms ease-in-out;
+  -o-transition: all 550ms ease-in-out;
+  transition: all 550ms ease-in-out;
+  }
+  
+  .login-content h1 {
+  font-size: 39px;
+  color: #FFC107;
+  font-family: 'Shadows Into Light', cursive;
+  font-weight: bold;
+  }
+  
+  .login-content p {
+  color: #686d86;
+  font-size: 13px;
+  }
+  
+  .login-contentn { position: relative;
+  width: 320px;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px 0;  height:150px;}
+  
+  .custom-formstyle{     background: #272a3a;
+  border: 1px solid #373a50;}
+  
+  .custm-icon {  background: #272a3a;
+  border: 1px solid #373a50;     padding: .375rem 1.2rem;}
+  .custom-formstyle:focus { background: #2a2d3e !important; border: 1px solid #373a50;  box-shadow: 0 0 0 0.09rem rgba(255, 193, 7, .5);     }
+  .margin-bottom-20 { margin-bottom:20px;}
+  .input-group-cs { height:50px;}
+  button.btn.btn-block.btn-login {
+  background: #272a3a;
+  border: 1px solid #373a50;
+  margin-top: 20px;
+  height: 50px;
+  color: #fff;
+  text-align: left;
+  }
+  
+  button.btn.btn-block.btn-login.custom-formstyle:hover {
+  background: #232635;}
+  
+  .login-bottom-links {
+  margin-top: 40px; 
+  line-height: 30px;}
+  
+  .login-bottom-links a {
+  text-decoration: none;
+  color: #c7c4c4;
+  }

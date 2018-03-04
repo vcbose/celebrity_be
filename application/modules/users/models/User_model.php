@@ -507,7 +507,6 @@ class User_model extends CI_Model
         if ($fields) {
             $this->db->select($fields);
         }
-
         $this->db->join('cb_user_details cbud', 'cbud.user_id = cbs.user_id', 'left');
         // $this->db->join('cb_user_details_meta cbum', 'cbum.user_id = cbud.user_id', 'left');
         $this->db->join('cb_plan_meta cbpm', 'cbpm.plan_id = cbs.plan_id', 'left');

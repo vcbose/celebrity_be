@@ -17,9 +17,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link href="<?php echo asset_url('admin/vendors/form-helpers/css/bootstrap-formhelpers.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo asset_url('admin/vendors/select/bootstrap-select.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo asset_url('admin/vendors/tags/css/bootstrap-tags.css'); ?>" rel="stylesheet">
-    <link href="<?php echo asset_url('admin/vendors/jScrollPane/jScrollPane.css'); ?>" rel="stylesheet">
 
-    <link href="<?php echo asset_url('admin/css/chat.css'); ?>" rel="stylesheet">
     <link href="<?php echo asset_url('admin/css/forms.css'); ?>" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

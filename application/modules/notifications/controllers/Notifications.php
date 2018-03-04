@@ -18,7 +18,6 @@ class Notifications extends MY_Controller
     public function index()
     {
         $permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : 0;
-
         // $to = $this->uri->segment('2');
         $check_exists  = $this->Notification_model->get_notifications(null, array(), 0, 100, $permission);
 
