@@ -1,0 +1,79 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Count-APIs",
+		"_postman_id": "f0fb4665-8346-1480-aff7-af7374f3402c",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://celebritybe.local/api/v1/interestcount/3",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/interestcount/4",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://celebritybe.local/api/v1/visitcount/3",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/visitcount/4",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://celebritybe.local/api/v1/interviewcount/3",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/interviewcount/2",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://celebritybe.local/api/v1/chatusercount/3",
+			"request": {
+				"url": "http://celebritybe.local/api/v1/chatusercount/4",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "66f7aea530c668dc4afec20c564f9510",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

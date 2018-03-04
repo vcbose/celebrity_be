@@ -458,4 +458,17 @@ class Notification_model extends CI_Model
         }
         return $notifaction_response;
     }
+
+    public function get_notification_count($where = []){
+
+        $this->db->select('count(notify_id) as count');
+
+        $result = $this->db->get_where('cb_user_notifications', $where)->result_array();
+
+        if(is_array($result) && isset($result[0])){
+            return $result[0];
+        }else{
+            return false;
+        }
+    }
 }

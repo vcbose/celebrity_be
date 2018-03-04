@@ -115,7 +115,7 @@ class Userchat_api extends REST_Controller {
 			$getParams 	 = $this->get();
 
 			// Verify user id param exists
-			if(!isset($getParams['user_id'])){
+			if(!isset($getParams['chat_to'])){
 				throw new Exception("Could not find user_id with the request", 1);
 			}
 			
@@ -137,6 +137,38 @@ class Userchat_api extends REST_Controller {
 				$this->response($response, parent::HTTP_OK);
 			}else{
 				throw new Exception("Error on get chat", 1);
+			}
+
+		}catch(Exception $ex){
+			
+			$message = $ex->getMessage();
+
+			$response = array('status'=>false, 'message'=> $message);
+			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+    * Get method for user_chat_
+    * @param string get params
+    * @return json  api response
+    */
+    public function chatuser_count_get()
+	{
+		try{
+			$getParams 	 = $this->get();
+						
+			// Assign conditions for get notifications
+			$whereData 	= $getParams;
+
+			// Get chat count for the given user
+			$data 	    = $this->Chat_model->get_chat_count($whereData);
+			
+			if($data !== false){
+				$response = array('status'=> true, 'data' => $data);
+				$this->response($response, parent::HTTP_OK);
+			}else{
+				throw new Exception("No chats found on this user!", 1);
 			}
 
 		}catch(Exception $ex){

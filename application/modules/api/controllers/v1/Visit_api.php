@@ -100,6 +100,38 @@ class Visit_api extends REST_Controller {
 		}
 	}	
 
+	/**
+    * Get method for visit
+    * @param string get params
+    * @return json  api response
+    */
+    public function visit_count_get()
+	{
+		try{			
+			$getParams 	 = $this->get();
+						
+			// Assign conditions for get notifications
+			$whereData 			 = $getParams;
+			$whereData['map_id'] = VISITS_MAP_ID;
+
+			$data 	  = $this->Notification_model->get_notification_count($whereData);
+			
+			if($data !== false){
+				$response = array('status'=> true, 'data' => $data);
+				$this->response($response, parent::HTTP_OK);
+			}else{
+				throw new Exception("No activities found on this request!", 1);
+			}
+
+		}catch(Exception $ex){
+			
+			$message = $ex->getMessage();
+
+			$response = array('status'=>false, 'message'=> $message);
+			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	public function visits_put()
 	{
 		echo json_encode(array('status'=>'put method'));
