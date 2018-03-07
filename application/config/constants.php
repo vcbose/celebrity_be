@@ -107,4 +107,3 @@ defined('INTERVIEW_ID')  		OR define('INTERVIEW_ID', 		88);
 defined('MEDIA_TYPE_IMAGE')  	OR define('MEDIA_TYPE_IMAGE', 	1);
 defined('MEDIA_TYPE_VIDEO')  	OR define('MEDIA_TYPE_VIDEO', 	2);
 defined('ADMIN_USER_ID')  		OR define('ADMIN_USER_ID', 		1);
-

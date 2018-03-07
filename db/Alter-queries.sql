@@ -26,3 +26,7 @@ CREATE TABLE `cb_user_medias` (
  `status` tinyint(4) NOT NULL DEFAULT '1',
  PRIMARY KEY (`media_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8
+
+--vivek-- 07/03/2018 --
+-- cb_user_medias table added dp_image field --
+ALTER TABLE `cb_user_medias`  ADD `dp_image` TINYINT NOT NULL DEFAULT '0'  AFTER `media_name`;

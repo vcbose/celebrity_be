@@ -125,6 +125,7 @@ class Usermedia_api extends REST_Controller {
 			$putParams  	= $this->get_put_data();
 			
 			$userId 		= isset($putParams['user_id'])    	   ? $putParams['user_id'] 	       : 0;
+			$dpImage 		= isset($putParams['dp_image'])    	   ? $putParams['dp_image'] 	   : null;			
 			$oldImageName 	= isset($putParams['old_image_name'])  ? $putParams['old_image_name']  : null;
 			$newUserImage 	= isset($putParams['new_user_image'])  ? $putParams['new_user_image']  : null;
 			$oldVideoIndx 	= isset($putParams['old_video_indx'])  ? $putParams['old_video_indx']  : null;
@@ -132,13 +133,23 @@ class Usermedia_api extends REST_Controller {
 			
 			if($userId > 0){
 
+				// User images directory path
 				$imageDir = USER_IMAGE_DIR.$userId.'/';
 
-				if( !file_exists($imageDir.$oldImageName) ){
-					throw new Exception("Provided image file not exists", 1);
+				if($dpImage){
+
+					if( !file_exists($imageDir.$dpImage) ){
+						throw new Exception("Provided image ".$dpImage." not exists", 1);
+					}
+
+					$resDpUpdate = $this->User_model->dpImageUpdate($userId, $dpImage);
 				}
 
 				if($oldImageName && $newUserImage){
+					
+					if( !file_exists($imageDir.$oldImageName) ){
+						throw new Exception("Provided image ".$oldImageName." not exists", 1);
+					}
 
 					$resImage = $this->base64_to_image($userId, $newUserImage, $oldImageName);
 				}
@@ -148,7 +159,7 @@ class Usermedia_api extends REST_Controller {
 					$resVideo = $this->User_model->updateVideoUrl($userId, $newUserVideo, $oldVideoIndx);
 				}
 
-				if($resImage || $resVideo){
+				if($resDpUpdate || $resImage || $resVideo){
 					$response 	= array('status'=>true, 'message'=>'User media update successfull');
 					$this->response($response, parent::HTTP_OK);
 				}else{
