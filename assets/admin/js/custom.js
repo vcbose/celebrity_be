@@ -16,7 +16,7 @@ var s, Notifications = {
     },
     bindUIActions: function() {
 
-        $('#profiles, #tbl-notifications').dataTable();
+        $('#profiles').dataTable();
 
         s.subMenu.on("click", function(e) {
             e.preventDefault();
@@ -206,6 +206,7 @@ var s, Notifications = {
                                 i++;
                             });
                             if(row != ''){
+                                console.log($selector);
                                 $('#'+$selector).html(row);
                             }
                         } else if ( action == 'update' ){

@@ -71,13 +71,16 @@ var r,register = {
 		});
 
 		$('#photos').on('change', function(){
-			if($('#image_count').val() == ''){
+
+			if($('#remain_image_count').val() == ''){
 				r.notify.showNotification('Select Plan','error', 'bottom right');
 				return false;
 			}
 			var files = $(this)[0].files;
-		    if(files.length > $('#image_count').val()){
-		        r.notify.showNotification('Only '+$('#image_count').val()+' image you can upload','error', 'bottom right');
+
+		    if(files.length > $('#remain_image_count').val()){
+		        r.notify.showNotification('Only '+$('#remain_image_count').val()+' image you can upload','error', 'bottom right');
+		        $(this).val('');
 		        return false;
 		    }
 		});

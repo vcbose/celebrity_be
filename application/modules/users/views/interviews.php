@@ -1,7 +1,6 @@
 <!-- Modal -->
-<div id="interview" class="modal fade" role="dialog">
+<div id="interview-model" class="modal fade" role="dialog">
   <div class="modal-dialog" style="width: 75%;">
-
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
@@ -14,11 +13,7 @@
       	<ul class="nav nav-tabs">
       	  	
       	  	<li class="active"><a data-toggle="pill" href="#intrw-user">User's interviews</a></li>
-
-      	  	<?php //if( $user_type == 2){ ?>
       	  	<li><a data-toggle="pill" href="#intrw-list">All</a></li>
-      	  	<?php //} ?>
-
       	  	<?php if($permission == 2){ ?>
       	  	<li><a data-toggle="pill" href="#new-intrw">Schedule</a></li>
       	  	<?php } ?>
@@ -49,7 +44,6 @@
 				</table>
 			</div>
 
-			<?php //if($user_type == 2){ ?>
 			<div id="intrw-list" class="tab-pane fade" data-from="<?php echo $triggers['from']; ?>" data-to="<?php echo $triggers['to']; ?>">
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-hover" id="intrw">
 					<thead>
@@ -71,9 +65,9 @@
 					</tbody>
 				</table>
 			</div>
-			<?php //} ?>
 
       		<?php if($permission == 2){ ?>
+
 	      	<div id="new-intrw" class="tab-pane fade">
 		      	<form action="#" class="form-horizontal" id="itrw_form" method="post" enctype="multipart/form-data">
 		      		<fieldset>

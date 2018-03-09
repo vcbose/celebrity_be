@@ -31,10 +31,16 @@
     <script src="<?php echo asset_url('admin/js/custom.js'); ?>"></script>
     <script src="<?php echo asset_url('admin/js/forms.js'); ?>"></script>
     <?php
-    $msg = $this->session->flashdata('messagePr');
-    if(isset($msg) && $msg != ''){
-        echo '<script type="text/javascript">notification.showNotification( "'.$msg.'", "error", "bottom right");</script>';
-    }   
+    $e_msg = $this->session->flashdata('messagePr');
+    $s_msg = $this->session->flashdata('messageSucces');
+    echo '<script type="text/javascript">';
+    if(isset($e_msg) && $e_msg != ''){
+        echo 'notification.showNotification( "'.$e_msg.'", "error", "top right");';
+    }
+    if( isset($s_msg) && $s_msg != '') {
+        echo 'notification.showNotification( "'.$s_msg.'", "success", "top right");';
+    }
+    echo '</script>';
     ?>
     </body>
 </html>

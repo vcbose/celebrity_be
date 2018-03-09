@@ -21,8 +21,7 @@ function CheckPermission($moduleName="", $method=""){
 
 			$getPermission = array();
 			$getPermission = json_decode(getRowByTableColomId('cb_user_roles_permissions', $permission,'user_type', 'data'));
-			
-			
+
 			if (isset($getPermission->$moduleName)) 
 			{	
 			 
@@ -231,7 +230,7 @@ function is_login()
   	if(isset($_SESSION['user_details'])){
       	return true;
   	}else{
-     	redirect( base_url().'cb-login', 'refresh');
+     	redirect( base_url().'cb-admin', 'refresh');
   	}
 }
 
@@ -240,7 +239,7 @@ function current_user(){
 	if(isset($_SESSION['user_details'])){
     	return $_SESSION['user_details'];
 	}else{
-   		redirect( base_url().'cb-login', 'refresh');
+   		redirect( base_url().'cb-admin', 'refresh');
 	}
 }
 

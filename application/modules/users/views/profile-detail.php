@@ -34,12 +34,17 @@
 
 		  				<h4>&raquo; User Info</h4>
 		  				<hr>
-		  				<div class="">
-		  					<?php //print_r($userdata); ?>
+		  				
+		  				<div>
 		  					<fieldset>
-		  						<?php 
-		  						// echo "<pre>"; print_r($userdata); echo "</pre>";
-		  						if(!empty($userdata)) { ?> 
+		  						<form action="<?php echo site_url(); ?>profile-update" id="registion_form" method="post" enctype="multipart/form-data">
+		  						<?php
+		  						if(!empty($userdata)) 
+		  						{
+		  						/*echo "<pre>";
+		  						print_r($plans);
+		  						echo "</pre>";*/
+		  						?> 
 		  						<div class="row">
 		  							<div class="form-group">
 		  								<div class="col-sm-6">
@@ -105,8 +110,9 @@
 												<?php
 												if(!empty($settings['state'])){
 													foreach ($settings['state'] as $state_id => $state) {
+														$selected_state = ($userdata->state == $state_id)?'selected':'';
 												?>
-												<option value="<?php echo $state_id; ?>"><?php echo $state; ?></option>
+												<option <?php echo $selected_state; ?> value="<?php echo $state_id; ?>"><?php echo $state; ?></option>
 												<?php } 
 												} ?>
 		  									</select>
@@ -171,12 +177,16 @@
 		  							<div class="form-group">
 		  								<div class="col-sm-4">
 		  									<label>Talet Category</label>
-		  									<?php if($b_edit): ?>
+		  									<?php if($b_edit):
+
+		  									$a_tc = explode(',', $userdata->talent_category);
+		  									?>
 		  									<select multiple="multiple" name="talent_category[]" id="talent-category" class="form-control custom-scroll" title="Click to Select a Category">
 		  									<?php
 												if(!empty($settings['talents_category'])){
 													foreach ($settings['talents_category'] as $talent_key => $talent_value) {
-														echo "<option value=".$talent_key.">".$talent_value."</option>";
+														$selected_tc = (in_array($talent_key, $a_tc))?'selected':'';
+														echo "<option ".$selected_tc." value=".$talent_key.">".$talent_value."</option>";
 													}
 												}
 		  									?>
@@ -270,7 +280,9 @@
 		  									<?php endif; ?>
 		  								</div>
 		  							</div>
-
+		  						</div>
+		  						<hr>
+		  						<div class="row">
 		  							<div class="form-group speciality">
 		  								<div class="col-md-4">
 		  									<label>Body Type</label>
@@ -311,27 +323,66 @@
 		  							</div>
 
 		  						</div>
-		  						<!-- <hr> -->
+		  						
 		  						<?php if($b_edit): ?>
+		  						<hr>
+
 		  						<div class="row">
 		  							<div class="form-group">
-		  								<div class="col-sm-4">
-		  									<label class="control-label">File input</label>
-		  										<input type="file" class="btn btn-default" id="exampleInputFile1" name="photos">
-		  										<p class="help-block">
-		  											<!-- You can upload 3 phots. -->
-		  										</p>
+
+		  								<div class="col-md-6" id="plan_div">
+		  									<label>Plan <span class="mandatory">*</span></label>
+		  									<select name="plan" id="plan" class="form-control custom-scroll">
+		  									<option value="">Selct Plan</option>											
+		  									<?php
+		  									if(!empty($plans)){
+		  										foreach ($plans as $p_key => $p_value) {
+		  											$selected_plan = ($p_key == $userdata->plan_id)?'selected':'';
+		  											echo "<option ".$selected_plan." value=".$p_key.">".ucwords($p_value)."</option>";
+		  										}
+		  									}
+		  									?>
+		  									</select>
 		  								</div>
-		  								<div class="col-sm-8">
-		  									<label>Embedded Videos</label>
-		  									<input type="text" name="videos" class="form-control" placeholder="https://youtu.be/YicuKTFPxX0">
+
+		  								<div class="col-md-6">
+		  									<br>
+			  								<div class="checkbox">
+			  								<label id="approve">
+				  								<input type="checkbox" name="approve" class="btn btn-primary" id="approve" checked="checked" value="1">
+				  								Profile Status. If, it is checked then profile is active
+				  							</label>
+				  							</div>
 		  								</div>
+
 		  							</div>
 		  						</div>
 
 		  						<?php endif; ?>
+		  						
+		  						<hr>
+
+		  						<div>
+		  							<div>
+		  								<i class="fa fa-save"></i>
+		  								<!-- <button class="btn btn-primary" id="save-reg">Submit</button> -->
+		  								<?php
+		  								// print_r($userdata);
+		  								?>
+		  								<?php if($b_edit): ?>
+		  								<input type="submit" name="update" class="btn btn-default" id="save-reg" value="Update Profile">
+		  								<?php endif; ?>
+		  								<a class="btn btn-success" href="/media/<?php echo $userdata->user_id; ?>">Media</a>
+		  								<input type="hidden" name="user_id" id="user_id" value="<?php echo $userdata->user_id; ?>">
+		  								<input type="hidden" name="user_type" id="user_type" value="<?php echo $userdata->user_type; ?>">
+		  								<input type="hidden" name="plan_id" id="plan_id" value="<?php echo $userdata->plan_id; ?>">
+		  								<input type="hidden" name="subscription_id" id="subscription_id" value="<?php echo $userdata->subscription_id; ?>">
+		  							</div>
+		  						</div>
+
 		  						<hr>
 		  					<?php } ?> 
+		  					</form>
 		  					</fieldset>
 		  				</div>
 
@@ -406,7 +457,7 @@
 								<tr class="odd gradeX">
 									<td><?php echo $j; ?></td>
 									<td><?php echo $f_key; ?></td>
-									<td><?php $fkey =  strtolower($f_key); echo (in_array($f_key, $a_count_filter))?$f_value:(($f_value == 0)?'<input type="checkbox" id="'.$fkey.'" name="feature_status['.$fkey.']" value="0"><lable for="'.$fkey.'">Avilable</label>':'<input type="checkbox" id="'.$fkey.'" name="feature_status['.$fkey.']" checked  value="1"><lable for="'.$fkey.'">Avilable</label>'); ?></td>
+									<td><?php $fkey =  strtolower($f_key); echo (in_array($f_key, $a_count_filter))?$f_value.' no.s':(($f_value == 0)?'Unavilable':'Avilable'); ?></td>
 									<!-- <td class="center">X</td> -->
 								</tr>
 								<?php
@@ -468,7 +519,7 @@
 		  				<hr>
 			  			<div class="row">
 			  				<?php
-			  				if( !empty($triggers) && $triggers['permission'] == 2 ){
+			  				if( $permission == 2 ){
 			  					
 			  					if($notifyed) {
 			  					?>
@@ -478,9 +529,9 @@
 			  					<button class="btn btn-default" ><i class="glyphicon glyphicon-star"></i> Interest Sent</button>
 			  					<?php } ?>
 			  					<?php if(!isset($notifyed[5])) { ?>
-			  					<button class="btn btn-primary send-interview" data-toggle="modal" data-target="#interview" data-permission="<?php echo $triggers['permission']; ?>" data-from="<?php echo $triggers['from']; ?>" data-to="<?php echo $triggers['to']; ?>" data-map_id="5" ><i class="glyphicon glyphicon-pencil"></i> Interview letter</button>
+			  					<button class="btn btn-primary send-interview" data-toggle="modal" data-target="#interview-model" data-permission="<?php echo $triggers['permission']; ?>" data-from="<?php echo $triggers['from']; ?>" data-to="<?php echo $triggers['to']; ?>" data-map_id="5" ><i class="glyphicon glyphicon-pencil"></i> Interview letter</button>
 			  					<?php } else { ?>
-			  					<button class="btn btn-primary" data-toggle="modal" data-target="#interview" data-permission="<?php echo $triggers['permission']; ?>" data-from="<?php echo $triggers['from']; ?>" data-to="<?php echo $triggers['to']; ?>" data-map_id="5" data-interview="<?php echo $notifyed[5]['notification_relation']; ?>" ><i class="glyphicon glyphicon-pencil"></i> Interview Scheduled</button>
+			  					<button class="btn btn-primary" data-toggle="modal" data-target="#interview-model" data-permission="<?php echo $triggers['permission']; ?>" data-from="<?php echo $triggers['from']; ?>" data-to="<?php echo $triggers['to']; ?>" data-map_id="5" data-interview="<?php echo $notifyed[5]['notification_relation']; ?>" ><i class="glyphicon glyphicon-pencil"></i> Interview Scheduled</button>
 			  					<?php } ?>
 			  					<a href="/chat/<?php echo $user_id; ?>" class="btn btn-success chat" ><i class="glyphicon glyphicon-comment"></i> Chat </a>
 
@@ -489,21 +540,18 @@
 			  					<button class="btn btn-info interview" data-permission="<?php echo $triggers['permission']; ?>" data-from="<?php echo $triggers['from']; ?>" data-to="<?php echo $triggers['to']; ?>" data-map_id="2" ><i class="glyphicon glyphicon-star-empty"></i> Send interest</button>
 			  					<?php 
 			  					}
-			  				} else if(!empty($triggers) && $triggers['permission'] == 1){ ?>
-			  					<button class="btn btn-primary" data-toggle="modal" data-target="#interview" data-permission="<?php echo $triggers['permission']; ?>" data-to="<?php echo $triggers['to']; ?>" data-map_id="5" data-interview="<?php echo isset($notifyed[5])?$notifyed[5]['notification_relation']:''; ?>" ><i class="glyphicon glyphicon-pencil"></i> Interviews </button>
+			  				} else if($permission == 1){ ?>
+
+			  					<button class="btn btn-primary" data-toggle="modal" data-target="#interview-model" data-permission="<?php echo $user_type; ?>" <?php if($user_type == 3){ ?> data-to="<?php echo $triggers['to']; ?>" <?php } ?> <?php if($user_type == 2){ ?> data-from="<?php echo $triggers['from']; ?>" <?php } ?> data-map_id="5" data-interview="" ><i class="glyphicon glyphicon-pencil"></i> Interviews </button>
 			  				<?php
 			  				}
 			  				?>
-
-			  				<?php require_once('interviews.php') ?>
-			  				
+			  				<?php require_once('interviews.php') ?>	
 			  			</div>
 		  			</div>
-		  			<?php //} ?>
 				</div>
-
 			</div>
-
 		</div>
 	</div>
 </div>
+

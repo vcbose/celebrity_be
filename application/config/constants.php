@@ -101,9 +101,12 @@ defined('INTEREST_MAP_ID')  		OR define('INTEREST_MAP_ID', 	   2);
 defined('VISITS_MAP_ID')  			OR define('VISITS_MAP_ID', 	   	   1);
 defined('INTERVIEW_MAP_ID')  		OR define('INTERVIEW_MAP_ID', 	   5);
 
+defined('TALENT_RESTRICTION')  		OR define('TALENT_RESTRICTION', serialize( array(4, 5, 6) ));
+
 defined('INTERSTS_ID')  		OR define('INTERSTS_ID', 		87);
 defined('VISITS_ID')  			OR define('VISITS_ID', 	   		89);
 defined('INTERVIEW_ID')  		OR define('INTERVIEW_ID', 		88);
+
 defined('MEDIA_TYPE_IMAGE')  	OR define('MEDIA_TYPE_IMAGE', 	1);
 defined('MEDIA_TYPE_VIDEO')  	OR define('MEDIA_TYPE_VIDEO', 	2);
 defined('ADMIN_USER_ID')  		OR define('ADMIN_USER_ID', 		1);

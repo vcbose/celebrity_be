@@ -23,7 +23,7 @@ class Notifications extends MY_Controller
 
         $notifications = $this->Notification_model->render_notifications($check_exists);
 
-        $this->load->admin_template('notification', array('notifications' => $notifications));
+        $this->load->admin_template('notification', '', array('notifications' => $notifications));
     }
 
     public function manage_notification()
@@ -78,7 +78,7 @@ class Notifications extends MY_Controller
     public function chat(){
 
         $to = $this->uri->segment('2'); 
-        $this->load->admin_template('chat', array('user_id' => $this->user_id, 'to_user' => $to));
+        $this->load->admin_template('chat', '', array('user_id' => $this->user_id, 'to_user' => $to));
     }
 
     public function submit_chat($chat_text = '', $user_id = null)

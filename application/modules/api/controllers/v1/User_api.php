@@ -28,7 +28,7 @@ class User_api extends REST_Controller {
 		try{
 			$postParams  = $this->post();
 			
-			$user_id 	 = $this->User_model->registerUser($postParams, true);
+			$user_id 	 = $this->User_model->register_user($postParams, true);
 
 			if($user_id > 0){
 				// $result 	= $this->Plans_model->add_user_plan($user_id, $postParams['plan']);

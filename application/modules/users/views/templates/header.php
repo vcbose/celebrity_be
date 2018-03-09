@@ -19,7 +19,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link href="<?php echo asset_url('admin/vendors/tags/css/bootstrap-tags.css'); ?>" rel="stylesheet">
 
     <link href="<?php echo asset_url('admin/css/forms.css'); ?>" rel="stylesheet">
-
+    <style type="text/css">
+        /*.row {
+            margin: 0px !important;
+        }*/
+    </style>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>

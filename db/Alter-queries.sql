@@ -26,3 +26,20 @@ CREATE TABLE `cb_user_medias` (
  `status` tinyint(4) NOT NULL DEFAULT '1',
  PRIMARY KEY (`media_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8
+
+--vcb-- 04/03/2018 --
+-- cb_user_medias table create query --
+ALTER TABLE `cb_user_medias`
+ADD `uploaded_on` datetime NOT NULL AFTER `media_name`,
+ADD `moderate_on` datetime NOT NULL AFTER `moderate_status`;
+
+ALTER TABLE `cb_user_medias`
+ADD `dp` tinyint NOT NULL AFTER `media_name`;
+
+ALTER TABLE `cb_user_medias`
+ADD `modified_on` datetime NOT NULL AFTER `uploaded_on`;
+
+--vcb-- 05/03/2018 --
+-- cb_user_medias table create query --
+ALTER TABLE `cb_user_medias`
+ADD `in_plan` int(11) NOT NULL AFTER `modified_on`;

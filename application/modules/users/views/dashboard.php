@@ -251,7 +251,7 @@
                     <?php
                     foreach ($highligted_profiles as $key => $profiles) {
                         $name = $profiles['first_name'].' '.$profiles['middle_name'].' '.$profiles['last_name'];
-                        $dp = (isset($profiles['photos']) && !empty($profiles['photos']))?$profiles['photos'][0]:'http://kalubjarosh.com/wp-content/uploads/2013/10/testimonial121.jpg';
+                        $dp = (isset($profiles['dp']) && !empty($profiles['dp']))?$profiles['dp'][0]:site_url().'/assets/uploads/avatar.png';
                         
                         $a_tc = explode(',', $profiles['talent_category']);
                         $tc = '';

@@ -241,23 +241,6 @@
 												?>
 												</select>
 											</div>
-
-											<div class="col-md-6">
-												<label class="control-label">File input</label>
-													<input type="file" class="btn btn-default" id="photos" name="photos[]" multiple>
-													<p class="help-block">
-														You can upload photos.
-													</p>
-											</div>
-										</div>
-										<div class="form-group talent">
-											<div class="col-md-12">
-												<label>Embedded Videos</label>
-												<div id=video_add>
-													<div class="video_url" style="margin-bottom: 10px;"><input type="text" name="videos[]" id="videos" class="form-control" placeholder="https://youtu.be/YicuKTFPxX0"></div>
-												</div>
-												<a href="javascript:void(0);" id="add_more">Add More</a>
-											</div>
 										</div>
 								<!-- <hr> -->
 								<div>

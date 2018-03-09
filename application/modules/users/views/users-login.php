@@ -13,7 +13,7 @@
                         <!-- Font Awesome CSS-->
                         <link href="<?php echo asset_url('website/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet'); ?>">
                             <!-- Fontastic Custom icon font-->
-                            <link href="<?php echo asset_url('website/css/fontastic.css'); ?>" rel="stylesheet">
+                            <!-- <link href="<?php echo asset_url('website/css/fontastic.css'); ?>" rel="stylesheet"> -->
                                 <!-- Google fonts - Poppins -->
                                 <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700" rel="stylesheet">
                                     <!-- theme stylesheet-->
@@ -114,5 +114,5 @@
 <script src="<?php echo asset_url('website/vendor/jquery-validation/jquery.validate.min.js'); ?>">
 </script>
 <!-- Main File-->
-<script src="<?php echo asset_url('website/js/front.js') ?>">
+<!-- <script src="<?php echo asset_url('website/js/front.js') ?>"> -->
 </script>
