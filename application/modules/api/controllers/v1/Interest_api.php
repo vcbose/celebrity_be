@@ -54,7 +54,7 @@ class Interest_api extends REST_Controller {
 	}
 
     /**
-    * Get method for setting
+    * Get method for interest
     * @param string get params
     * @return json  api response
     */
@@ -99,7 +99,39 @@ class Interest_api extends REST_Controller {
 			$response = array('status'=>false, 'message'=> $message);
 			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
 		}
-	}	
+	}
+
+	/**
+    * Get method for interest
+    * @param string get params
+    * @return json  api response
+    */
+    public function interest_count_get()
+	{
+		try{			
+			$getParams 	 = $this->get();
+						
+			// Assign conditions for get notifications
+			$whereData 			 = $getParams;
+			$whereData['map_id'] = INTEREST_MAP_ID;
+
+			$data 	  = $this->Notification_model->get_notification_count($whereData);
+			
+			if($data !== false){
+				$response = array('status'=> true, 'data' => $data);
+				$this->response($response, parent::HTTP_OK);
+			}else{
+				throw new Exception("No activities found on this request!", 1);
+			}
+
+		}catch(Exception $ex){
+			
+			$message = $ex->getMessage();
+
+			$response = array('status'=>false, 'message'=> $message);
+			$this->response($response, parent::HTTP_INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	public function interests_put()
 	{

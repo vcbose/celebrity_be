@@ -759,4 +759,13 @@ class User_model extends CI_Model
         $this->db->where('users_id', $id);
         $this->db->delete('users');
     }
+    
+    /**
+     * Dp Image update
+     * @return <array> response
+     */
+    public function dpImageUpdate($userId, $dpImage)
+    {
+        $query = 'UPDATE `cb_user_medias` 
+                      ELSE 0
 }
