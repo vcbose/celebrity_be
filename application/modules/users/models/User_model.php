@@ -767,5 +767,13 @@ class User_model extends CI_Model
     public function dpImageUpdate($userId, $dpImage)
     {
         $query = 'UPDATE `cb_user_medias` 
+                    SET dp_image = 
+                    CASE 
+                      WHEN media_name="'.$dpImage.'" THEN  1
                       ELSE 0
+                    END
+                    WHERE user_id='.$userId.' AND media_type='.MEDIA_TYPE_IMAGE;
+        
+        return $this->db->query($query);
+    }
 }
