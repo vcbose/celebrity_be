@@ -4,8 +4,8 @@ class User_model extends CI_Model
     public function __construct()
     {
         parent::__construct();
-        $this->user_id = isset($this->session->get_userdata()['user_details'][0]->user_id) ? $this->session->get_userdata()['user_details'][0]->user_id : '1';
         $this->table   = 'cb_users';
+        $this->user_id = isset($this->session->get_userdata()['user_details'][0]->user_id) ? $this->session->get_userdata()['user_details'][0]->user_id : '1';
     }
 
     /**
@@ -285,7 +285,7 @@ class User_model extends CI_Model
 
     public function register_user($post_data, $api_flag = false)
     {
-        $user_id = '';
+        $user_id = 0;
 
         if (isset($post_data['user_name']) && ($post_data['password'] == $post_data['confirm_password'])) {
 
@@ -295,7 +295,7 @@ class User_model extends CI_Model
                 $user_data['password']    = password_hash($post_data['password'], PASSWORD_DEFAULT);
                 $user_data['user_type']   = $post_data['user_type'];
                 $user_data['created_on']  = date('y-m-d h:i:a');
-                $user_data['user_status'] = 0;
+                $user_data['user_status'] = (isset($post_data['approve']) && $post_data['approve'] == 1)?1:0;
                 $user_id                  = $this->insertRow('cb_users', $user_data);
             } else {
 
@@ -306,15 +306,14 @@ class User_model extends CI_Model
             return false;
         }
 
-        if ($user_id != '') {
+        if ($user_id != 0) {
 
-            if ($api_flag) {
+            /*if ($api_flag) {
                 $file_names = isset($post_data['photos']) ? $post_data['photos'] : '';
             } else {
                 $file_names = count($_FILES['photos']['name']) > 0 ? json_encode(cb_fileUpload('photos')) : '';
             }
-
-            $videos_urls = (isset($post_data['videos']) && !empty($post_data['videos'])) ? json_encode($post_data['videos']) : '';
+            $videos_urls = (isset($post_data['videos']) && !empty($post_data['videos'])) ? json_encode($post_data['videos']) : '';*/
 
             $user_details['user_id']         = $user_id;
             $user_details['first_name']      = isset($post_data['first_name']) ? $post_data['first_name'] : '';
@@ -335,8 +334,8 @@ class User_model extends CI_Model
             $user_details['description']     = isset($post_data['description']) ? $post_data['description'] : '';
             $user_details['talent_category'] = is_array($post_data['talent_category']) ? implode(',', $post_data['talent_category']) : '';
             $user_details['tags_interest']   = isset($post_data['tags_interest']) ? $post_data['tags_interest'] : '';
-            $user_details['photos']          = $file_names;
-            $user_details['videos']          = $videos_urls;
+            // $user_details['photos']          = $file_names;
+            // $user_details['videos']          = $videos_urls;
             $user_details['links']           = '';
             $user_details['experience']      = isset($post_data['experience']) ? $post_data['experience'] : '';
             $user_details['subscription_id'] = isset($post_data['subscription_id']) ? $post_data['subscription_id'] : '';
@@ -349,11 +348,13 @@ class User_model extends CI_Model
 
                 $tc_meta_status = false;
                 $talent_filters = unserialize(TALENT_RESTRICTION);
+                $intersect_result = array_intersect($post_data['talent_category'], $talent_filters);
 
-                foreach ($post_data['talent_category'] as $key => $value) {
+                /*foreach ($post_data['talent_category'] as $key => $value) {
+                    
                     $user_meta[] = array(
                         'user_id'    => $user_id,
-                        'meta_name'  => 'talent',
+                        'meta_name'  => 'talent_category',
                         'meta_value' => $value,
                     );
 
@@ -362,12 +363,11 @@ class User_model extends CI_Model
                         $tc_meta_status = true;
                     }
                 }
-                $this->db->insert_batch('cb_user_meta', $user_meta);
+                $this->db->insert_batch('cb_user_meta', $user_meta);*/
 
-                if ($tc_meta_status) {
+                if ( !empty($intersect_result) ) {
 
                     $user_meta_details['user_id'] = $user_id;
-
                     $user_meta_details['hair']      = isset($post_data['hair_colour']) ? $post_data['hair_colour'] : '';
                     $user_meta_details['eye']       = isset($post_data['eye_colour']) ? $post_data['eye_colour'] : '';
                     $user_meta_details['colour']    = isset($post_data['body_colour']) ? $post_data['body_colour'] : '';
@@ -382,7 +382,6 @@ class User_model extends CI_Model
                     $this->Plans_model->add_user_plan($user_id, $post_data['subscription_id']);
                 }
             }
-
             return $user_id;
 
         } else {
@@ -400,7 +399,7 @@ class User_model extends CI_Model
             $user_data_where['user_id'] = $user_id;
 
             /*Update user status*/
-            if (isset($post_data['approve'])) {
+            if ( isset($post_data['approve']) ) {
                 $a_status['user_status'] = 1;
             } else {
                 $a_status['user_status'] = 0;
@@ -425,10 +424,9 @@ class User_model extends CI_Model
             $user_details['mobile']          = isset($post_data['mobile_num']) ? $post_data['mobile_num'] : '';
             $user_details['email']           = isset($post_data['email']) ? $post_data['email'] : '';
             $user_details['description']     = isset($post_data['description']) ? $post_data['description'] : '';
-
             $user_details['talent_category'] = is_array($post_data['talent_category']) ? implode(',', $post_data['talent_category']) : '';
-
             $user_details['tags_interest']   = isset($post_data['tags_interest']) ? $post_data['tags_interest'] : '';
+
             // $user_details['photos']          = $file_names;
             // $user_details['videos']          = $videos_urls;
             $user_details['links']      = '';
@@ -443,24 +441,25 @@ class User_model extends CI_Model
                 $user_meta      = array();
                 $talent_filters = unserialize(TALENT_RESTRICTION);
 
-                foreach ($post_data['talent_category'] as $key => $value) {
+                $intersect_result = array_intersect($post_data['talent_category'], $talent_filters);
 
+                /*foreach ($post_data['talent_category'] as $key => $value) {
                     $user_meta = array(
                         'user_id'    => $user_id,
                         'meta_name'  => 'talent',
                         'meta_value' => $value,
                     );
 
-                    /*Update row based*/
+                    // Update row based
                     $this->replaceRow('cb_user_meta', $user_meta);
 
                     // Checking talents for user details meta table
                     if (in_array($value, $talent_filters)) {
                         $tc_meta_status = true;
                     }
-                }
+                }*/
 
-                if ($tc_meta_status) {
+                if ( !empty($intersect_result) ) {
 
                     $user_meta_details['hair']      = isset($post_data['hair_colour']) ? $post_data['hair_colour'] : '';
                     $user_meta_details['eye']       = isset($post_data['eye_colour']) ? $post_data['eye_colour'] : '';
@@ -493,94 +492,6 @@ class User_model extends CI_Model
     }
 
     /**
-     * Get media plan count
-     * @param integer userId
-     * @return boolean result
-     */
-    public function get_media_plan_count($userId)
-    {
-        $media_count = [];
-
-        $this->db->select('(CASE `cbpm`.`feature_type`
-                            WHEN ' . FEATURE_TYPE_IMAGE_ID . ' THEN "image"
-                            WHEN ' . FEATURE_TYPE_VIDEO_ID . ' THEN "video" END) AS media_type,
-                        `cbpm`.`feature_value` AS media_count');
-        $this->db->join('cb_plan_meta cbpm', 'cbpm.plan_id = cbs.plan_id', 'left');
-        $this->db->where('cbs.user_id=', $userId);
-        $this->db->where_in('cbpm.feature_type', array(FEATURE_TYPE_IMAGE_ID, FEATURE_TYPE_VIDEO_ID));
-        $this->db->group_by('cbpm.feature_type');
-        $result = $this->db->get('cb_subscriptions cbs')->result_array();
-
-        if (is_array($result) && !empty($result)) {
-
-            foreach ($result as $key => $value) {
-
-                if ($value['media_type'] == 'image') {
-                    $media_count['image'] = $value['media_count'];
-                }
-
-                if ($value['media_type'] == 'video') {
-                    $media_count['video'] = $value['media_count'];
-                }
-            }
-        }
-
-        return $media_count;
-    }
-
-    /**
-     * Update method for user's media
-     * @param integer userId
-     * @param array image names
-     * @param string video url
-     * @return boolean result
-     */
-    public function update_media_info($requestID, $imgNames = [], $userVideoUrl = [], $type = 'insert')
-    {
-        $imgRes   = true;
-        $videoRes = true;
-
-        $insertData['media_type'] = MEDIA_TYPE_IMAGE;
-
-        if (is_array($imgNames) && !empty($imgNames)) {
-
-            foreach ($imgNames as $key => $image) {
-
-                $insertData['media_name'] = $image;
-
-                if ($type == 'insert') {
-                    $insertData['user_id']     = $requestID;
-                    $insertData['uploaded_on'] = date('Y-m-d h:m:s');
-                    $imgRes                    = $this->db->insert('cb_user_medias', $insertData);
-                } else {
-                    $this->db->where('media_id', $requestID);
-
-                    $insertData['modified_on']     = date('Y-m-d h:m:s');
-                    $insertData['moderate_status'] = 0;
-                    $imgRes                        = $this->db->update('cb_user_medias', $insertData);
-                }
-            }
-        }
-
-        $insertData['media_type'] = MEDIA_TYPE_VIDEO;
-
-        if (is_array($userVideoUrl) && !empty($userVideoUrl)) {
-            foreach ($userVideoUrl as $key => $video) {
-
-                if ($type == 'insert') {
-                    $insertData['user_id']    = $requestID;
-                    $insertData['media_name'] = $video;
-                    $videoRes                 = $this->db->insert('cb_user_medias', $insertData);
-                } else {
-
-                }
-            }
-        }
-
-        return $imgRes + $videoRes;
-    }
-
-    /**
      * Get highlighted users
      * @param integer userId
      * @return boolean result
@@ -602,94 +513,6 @@ class User_model extends CI_Model
     }
 
     /**
-     * Get existing video
-     * @param integer userId
-     * @return boolean result
-     */
-    public function getMediaByUser($userId, $mediaType = '')
-    {
-        $whereData['user_id'] = $userId;
-        if ($mediaType != '') {
-            $whereData['media_type'] = $mediaType;
-        }
-
-        // $this->db->select('photos,videos');
-        $result = $this->db->get_where('cb_user_medias', $whereData)->result_array();
-
-        if ($result && isset($result)) {
-            return $result;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Get existing video
-     * @param integer userId
-     * @return boolean result
-     */
-    public function get_media($select = '', $where = array())
-    {
-        if ($select) {
-            $this->db->select($select);
-        }
-
-        // $this->db->select('photos,videos');
-        $result = $this->db->get_where('cb_user_medias', $where)->result_array();
-
-        if ($result && isset($result)) {
-            return $result;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Get existing video count
-     * @param integer userId
-     * @return boolean result
-     */
-    public function getVideoCount($userId)
-    {
-        $whereData['user_id']    = $userId;
-        $whereData['media_type'] = MEDIA_TYPE_VIDEO;
-
-        $result = $this->db->get_where('cb_user_medias', $whereData)->result_array();
-
-        $videoCount = count($result);
-        return $videoCount;
-    }
-
-    /**
-     * Update video url from given index
-     * @param integer userId
-     * @param string newUserVideo
-     * @param integer oldVideoIndx
-     * @return boolean response
-     */
-    public function updateVideoUrl($userId, $newUserVideo, $oldVideoIndx)
-    {
-        $videos = $this->getMediaByUser($userId, MEDIA_TYPE_VIDEO);
-
-        if (is_array($videos) && !empty($videos)) {
-
-            if (isset($videos[$oldVideoIndx]['media_name'])) {
-
-                $updateData['media_name'] = $newUserVideo;
-                $whereData['user_id']     = $userId;
-                $whereData['media_id']    = $videos[$oldVideoIndx]['media_id'];
-
-                return $this->updateRow('cb_user_medias', $updateData, $whereData);
-            } else {
-                throw new Exception("Provided video index not exists", 1);
-            }
-
-        } else {
-            throw new Exception("Could not read user video data", 1);
-        }
-    }
-
-    /**
      * Get user id by current token
      * @return boolean response
      */
@@ -703,10 +526,30 @@ class User_model extends CI_Model
     }
 
     /**
+     * Get user count
+     * @return <array> response
+     */
+    public function get_user_count($where = [])
+    {
+        $this->db->select('count(user_id) AS user_count');
+
+        // $this->db->join('cb_user_details cbud', 'cbud.user_id = cbs.user_id', 'left');
+        $this->db->where($where);
+
+        $result = $this->db->get_where('cb_users', $where)->result_array();
+
+        if (!empty($result) && isset($result[0])) {
+            return $result[0];
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Get user medias
      * @return <array> response
      */
-    public function getUserMedias($userId = null, $limit = null, $offset = null)
+    public function get_user_media($userId = null, $limit = null, $offset = null)
     {
         $condition   = "";
         $currentUser = $this->getUserByToken();
@@ -731,26 +574,6 @@ class User_model extends CI_Model
     }
 
     /**
-     * Get user count
-     * @return <array> response
-     */
-    public function get_user_count($where = [])
-    {
-        $this->db->select('count(user_id) AS user_count');
-
-        // $this->db->join('cb_user_details cbud', 'cbud.user_id = cbs.user_id', 'left');
-        $this->db->where($where);
-
-        $result = $this->db->get_where('cb_users', $where)->result_array();
-
-        if (!empty($result) && isset($result[0])) {
-            return $result[0];
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * This function is used to delete user
      * @param: $id - id of user table
      */
@@ -759,21 +582,5 @@ class User_model extends CI_Model
         $this->db->where('users_id', $id);
         $this->db->delete('users');
     }
-    
-    /**
-     * Dp Image update
-     * @return <array> response
-     */
-    public function dpImageUpdate($userId, $dpImage)
-    {
-        $query = 'UPDATE `cb_user_medias` 
-                    SET dp_image = 
-                    CASE 
-                      WHEN media_name="'.$dpImage.'" THEN  1
-                      ELSE 0
-                    END
-                    WHERE user_id='.$userId.' AND media_type='.MEDIA_TYPE_IMAGE;
-        
-        return $this->db->query($query);
-    }
+
 }

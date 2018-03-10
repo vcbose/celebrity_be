@@ -14,7 +14,7 @@
                     <li class="active"><a href="/profiles/3">All Talents</a></li>
                     <li><a href="/profiles/2">All Directors</a></li>
                     <li><a href="/register">Registration</a></li>
-                    <li><a href="/register">Media Apprvals</a></li>
+                    <li><a href="/media-moderate">Media Approvals</a></li>
                     <!-- <li><a href="signup.html">Subscriptions</a></li> -->
                 </ul>
             </li>

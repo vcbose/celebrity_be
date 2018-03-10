@@ -24,7 +24,7 @@
 						<div class="panel-title ">Profile Detail &raquo; <?php echo $userdata->display_name; ?></div>
 					
 						<div class="panel-options">
-							<a href="/profile-detail/<?php echo ($action == false)?'edit':'view'; ?>/<?php echo $user_id; ?>" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+							<a href="/profile-detail/<?php echo ($action == false)?'edit':'view'; ?>/<?php echo $userdata->user_type; ?>/<?php echo $user_id; ?>" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
 							<a href="#" data-rel="reload"><i class="glyphicon glyphicon-cog"></i></a>
 						</div>
 					</div>
@@ -203,7 +203,7 @@
 		  									<?php endif; ?>
 		  								</div>
 		  								<div class="col-sm-4">
-		  									<label>Description</label>
+		  									<label>About You</label>
 		  									<?php if($b_edit): ?>
 		  									<textarea class="form-control" name="description" placeholder="Description" rows="3"><?php echo $userdata->description; ?></textarea>
 		  									<?php else: ?>
@@ -211,6 +211,14 @@
 		  									<?php endif; ?>
 		  								</div>
 		  								<div class="col-sm-4">
+		  									<label>Experience</label>
+		  									<?php if($b_edit): ?>
+		  									<textarea class="form-control" name="experience" placeholder="experience" rows="3"><?php echo $userdata->experience; ?></textarea>
+		  									<?php else: ?>
+		  									<p><?php echo $userdata->experience; ?></p>
+		  									<?php endif; ?>
+		  								</div>
+		  								<div class="col-sm-12">
 		  									<label>Tags</label>
 		  									<?php if($b_edit): ?>
 		  									<div>

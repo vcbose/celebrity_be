@@ -126,8 +126,8 @@
 										<div class="form-group">
 											<label class="col-md-2 control-label">Registrtion type</label>
 											<div class="col-md-10">
-												<label class="radio-inline"><input name="register_type" value="talent" checked="checked" type="radio">Talent </label>
-												<label class="radio-inline"><input name="register_type" value="director" type="radio">Director </label>
+												<label class="radio-inline"><input name="user_type" value="3" checked="checked" type="radio">Talent </label>
+												<label class="radio-inline"><input name="user_type" value="2" type="radio">Director </label>
 											</div>
 										</div>
 									<hr class="talent">
@@ -145,12 +145,18 @@
 												</select>
 											</div>
 											<div class="col-md-6">
-												<label>Description</label>
+												<label>About You</label>
 												<textarea class="form-control" name="description" placeholder="Description" rows="4"></textarea>
 											</div>
 										</div>
 										<div class="form-group">
-											<div class="col-md-12">
+
+											<div class="col-md-6">
+												<label>Experiance</label>
+												<textarea class="form-control" name="experience" placeholder="Description" rows="4"></textarea>
+											</div>
+
+											<div class="col-md-6">
 						  						<label>Tags</label>
 						  						<p>
 						  							<div id="tags"></div>
@@ -230,7 +236,7 @@
 
 											<div class="col-md-6" id="plan_div">
 												<label>Plan <span class="mandatory">*</span></label>
-												<select name="plan" id="plan" class="form-control custom-scroll">
+												<select name="subscription_id" id="subscription_id" class="form-control custom-scroll">
 												<option value="">Selct Plan</option>											
 												<?php
 												if(!empty($plans)){
@@ -241,6 +247,17 @@
 												?>
 												</select>
 											</div>
+
+			  								<div class="col-md-6">
+			  									<br>
+				  								<div class="checkbox">
+				  								<label id="approve">
+					  								<input type="checkbox" name="approve" class="btn btn-primary" id="approve" checked="checked" value="1">
+					  								Profile Status. If, it is checked then profile is active
+					  							</label>
+					  							</div>
+			  								</div>
+
 										</div>
 								<!-- <hr> -->
 								<div>

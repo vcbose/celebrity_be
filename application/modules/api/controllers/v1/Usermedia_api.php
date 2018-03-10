@@ -15,6 +15,7 @@ class Usermedia_api extends REST_Controller {
     {
     	parent::__construct();
     	$this->load->model("users/User_model");
+    	$this->load->model("users/Media_model");
     }
 
     /**
@@ -25,6 +26,7 @@ class Usermedia_api extends REST_Controller {
     public function usermedia_post()
 	{
 		try{
+			
 			$postParams  	= $this->post();
 
 			$imgNames 		= [];
@@ -37,7 +39,7 @@ class Usermedia_api extends REST_Controller {
 			}
 
 			// Get image count from user plan
-			$planMediaCount = $this->User_model->get_media_plan_count($userId);
+			$planMediaCount = $this->Media_model->get_media_plan_count($userId);
 
 			if(isset($planMediaCount['image']) || $planMediaCount['image'] > 0){
 				
@@ -75,7 +77,7 @@ class Usermedia_api extends REST_Controller {
 
 			if(isset($planMediaCount['video']) && $planMediaCount['video'] > 0){
 
-				$existingVideoCount  = $this->User_model->getVideoCount($userId);
+				$existingVideoCount  = $this->Media_model->get_video_count($userId);
 				$availableVideoCount = $planMediaCount['video'] - $existingVideoCount;
 
 				// Check video url count
@@ -94,7 +96,7 @@ class Usermedia_api extends REST_Controller {
 			}
 
 			// Updating media information into user table
-			$result = $this->User_model->update_media_info($userId, $imgNames, $userVideoUrl);
+			$result = $this->Media_model->update_media_info($userId, $imgNames, $userVideoUrl);
 
 			if($result){
 				$response 	= array('status'=> true, 'message'=>'User media upload successfull');
@@ -142,7 +144,7 @@ class Usermedia_api extends REST_Controller {
 						throw new Exception("Provided image ".$dpImage." not exists", 1);
 					}
 
-					$resDpUpdate = $this->User_model->dpImageUpdate($userId, $dpImage);
+					$resDpUpdate = $this->Media_model->update_dp($userId, $dpImage);
 				}
 
 				if($oldImageName && $newUserImage){
@@ -156,7 +158,7 @@ class Usermedia_api extends REST_Controller {
 
 				if(($oldVideoIndx >= 0) && $newUserVideo){
 
-					$resVideo = $this->User_model->updateVideoUrl($userId, $newUserVideo, $oldVideoIndx);
+					$resVideo = $this->Media_model->update_video_url($userId, $newUserVideo, $oldVideoIndx);
 				}
 
 				if($resDpUpdate || $resImage || $resVideo){
@@ -215,7 +217,7 @@ class Usermedia_api extends REST_Controller {
 			}
 
 			// Get user media details from user model
-			$data 	  = $this->User_model->getUserMedias($userId, $limit, $offset);
+			$data 	  = $this->User_model->get_user_media($userId, $limit, $offset);
 
 			if($data){
 				$response = array('status'=>true, 'data' => $data);

@@ -13,6 +13,7 @@ class Media extends MY_Controller
         parent::__construct();
         $this->load->model('User_model');
         $this->load->model('plans/Plans_model');
+        $this->load->model('users/Media_model');
         $this->load->model('plans/Subscriptions_model');
         $this->load->helper('form');
         $this->user_id    = isset($this->session->get_userdata()['user_details'][0]->user_id) ? $this->session->get_userdata()['user_details'][0]->user_id : '1';
@@ -46,11 +47,12 @@ class Media extends MY_Controller
             foreach ($a_uf_plans as $p_key => $p_value) {
                 $a_plans[$p_value->plan_id] = $p_value->plan_name;
             }
+
             /*get user media*/
             $a_check_exists_where['user_id'] = $user_id;
             $a_check_exists_where['in_plan'] = $current_plan;
             // $a_check_exists_where['media_type'] = MEDIA_TYPE_IMAGE;
-            $check_exists = $this->User_model->get_media(' sum(case when media_type = 1 then 1 else 0 end) AS image_count , sum(case when media_type = 2 then 1 else 0 end) AS video_count ', $a_check_exists_where);
+            $check_exists = $this->Media_model->get_media_count( $a_check_exists_where );
 
             $uploaded_images = 0;
             $uploaded_videos = 0;
@@ -79,7 +81,7 @@ class Media extends MY_Controller
             }
 
             /*Fetch all user medias*/
-            $a_media['list'] = $this->User_model->getMediaByUser($user_id);
+            $a_media['list'] = $this->Media_model->get_media_by_user($user_id);
 
             /*Media render data settings*/
             $a_media['image_status']     = $image_status;
@@ -94,6 +96,36 @@ class Media extends MY_Controller
         endif;
 
         $this->load->admin_template('media', '', $a_media);
+    }
+
+    public function moderate_media()
+    {
+        is_login();
+        // $a_check_exists_where['media_type'] = MEDIA_TYPE_IMAGE;
+        if ($this->input->post('search')) {
+
+            $a_moderate_where['cbu.user_name'] = $this->input->post('user_name');
+            $a_moderate_where['cbu.user_status'] = $this->input->post('user_status');
+            $a_moderate_where['cbu.user_type'] = $this->input->post('user_type');
+            $a_moderate_where['cbm.dp'] = $this->input->post('dp');
+            $a_moderate_where['cbp.plan_id'] = $this->input->post('plan');
+            $a_moderate_where['cbm.date'] = $this->input->post('date');
+
+            $a_moderate_where = array_filter($a_moderate_where);
+        }
+        $a_moderate_where['cbm.moderate_status'] = 0;
+
+        $moderate_list = $this->Media_model->get_media( '', $a_moderate_where );
+
+        $a_all_plans = $this->Plans_model->get_plans();
+        foreach ($a_all_plans as $p_key => $p_value) {
+            $a_plans[$p_value->plan_id] = $p_value->plan_name;
+        }
+
+        $a_moderate_media['list'] = $moderate_list;
+        $a_moderate_media['plans'] = $a_plans;
+        
+        $this->load->admin_template('media-moderate', '', $a_moderate_media);
     }
 
     public function upload_media()
@@ -129,7 +161,7 @@ class Media extends MY_Controller
 
                         $data       = array('upload_data' => $this->upload->data());
                         $a_images[] = $data['upload_data']['file_name'];
-                        $this->User_model->update_media_info( $user_id, $a_images, $a_videos, 'insert',  $this->input->post('current_plan') );
+                        $this->Media_model->update_media_info( $user_id, $a_images, $a_videos, 'insert',  $this->input->post('current_plan') );
                         $a_reponse['success'][] = 'Image ' . $data['upload_data']['file_name'] . ' has been uploaded successfully & committed for the moderation !';
                     }
                 }
@@ -146,8 +178,9 @@ class Media extends MY_Controller
             foreach ($_FILES['replace'] as $file_info => $f_data) {
                 if ($file_info == 'name') {
                     foreach ($f_data as $m_id => $data) {
-                        $a_replace_where = array('media_id' => $m_id);
-                        $remove_media    = $this->User_model->get_media('', $a_replace_where);
+
+                        $a_replace_where = array('cbm.media_id' => $m_id);
+                        $remove_media    = $this->Media_model->get_media( '', $a_replace_where );
                         $replace_src     = isset($remove_media[0]['media_name']) ? $remove_media[0]['media_name'] : '';
 
                         if (!empty($remove_media) && $replace_src != '') {
@@ -174,7 +207,7 @@ class Media extends MY_Controller
                                     $data               = array('replace_data' => $this->upload->data());
                                     $a_replace_images[] = $data['replace_data']['file_name'];
 
-                                    $this->User_model->update_media_info($m_id, $a_replace_images, $a_videos, 'update', $this->input->post('current_plan'));
+                                    $this->Media_model->update_media_info($m_id, $a_replace_images, $a_videos, 'update', $this->input->post('current_plan'));
                                     $a_reponse['success'][] = 'Image ' . $data['replace_data']['file_name'] . ' replaced successfully & committed for the moderation !';
                                 }
                             }
@@ -190,7 +223,7 @@ class Media extends MY_Controller
 
                 if( '' != trim($v_value) ){
                     $a_new_videos[] = $v_value;
-                    $this->User_model->update_media_info($user_id, array(), $a_new_videos);
+                    $this->Media_model->update_media_info($user_id, array(), $a_new_videos);
                     $a_reponse['success'][] = 'Video ' . $v_value . 'updated successfully & committed for the moderation !';
                 }
             }
@@ -223,11 +256,11 @@ class Media extends MY_Controller
 
                 // $dp_url = implode(',', $dp);
                 $media_id = key($dp);
-                $this->User_model->updateRow('cb_user_details', array('dp' => $dp_url ), array('user_id' => $user_id));
+                $this->Media_model->updateRow('cb_user_details', array('dp' => $dp_url ), array('user_id' => $user_id));
 
                 /*Reset all dp values and set new value*/
-                $this->User_model->updateRow('cb_user_medias', array('dp' => 0), array('user_id' => $user_id));
-                $this->User_model->updateRow('cb_user_medias', array('dp' => 1), array('media_id' => $media_id));
+                $this->Media_model->updateRow('cb_user_medias', array('dp' => 0), array('user_id' => $user_id));
+                $this->Media_model->updateRow('cb_user_medias', array('dp' => 1), array('media_id' => $media_id));
                 return true;
             } else {
                 return false;

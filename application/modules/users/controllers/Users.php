@@ -16,7 +16,7 @@ class Users extends MY_Controller
         $this->load->model('plans/Subscriptions_model');
         $this->load->model('notifications/Notification_model');
 
-        $this->user_id  = isset($this->session->get_userdata()['user_details'][0]->user_id) ? $this->session->get_userdata()['user_details'][0]->user_id : '1';
+        $this->user_id    = isset($this->session->get_userdata()['user_details'][0]->user_id) ? $this->session->get_userdata()['user_details'][0]->user_id : '1';
         $this->permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : 0;
 
         $a_all_settings = setting_all();
@@ -43,7 +43,6 @@ class Users extends MY_Controller
 
             $this->session->set_userdata('last_segment', 'signin');
             $this->load->view('users-login');
-
         }
         // $this->auth_user();
     }
@@ -54,7 +53,7 @@ class Users extends MY_Controller
      */
     public function auth_user($page = '')
     {
-        $return = $this->User_model->auth_user();
+        $return     = $this->User_model->auth_user();
         $permission = 0;
 
         if (empty($return)) {
@@ -70,13 +69,15 @@ class Users extends MY_Controller
             } else {
 
                 $this->session->set_userdata('user_details', $return);
-                $permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : 0;
+                $this->permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : 0;
             }
 
-            if ($permission != 1) {
+            if ($this->permission != 1) {
+
                 redirect(base_url() . 'dashboard', 'refresh');
             } else {
-                redirect(base_url() . 'profiles', 'refresh');
+
+                redirect(base_url() . 'profiles/3', 'refresh');
             }
         }
     }
@@ -88,6 +89,10 @@ class Users extends MY_Controller
     public function registration()
     {
         is_login();
+
+        $this->user_id    = isset($this->session->get_userdata()['user_details'][0]->user_id) ? $this->session->get_userdata()['user_details'][0]->user_id : '1';
+        $this->permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : 0;
+
         //Check if admin allow to registration for user
         if (CheckPermission()) {
             if ($this->input->post()) {
@@ -112,49 +117,7 @@ class Users extends MY_Controller
         }
     }
 
-    public function add_user()
-    {
-        $user_id = '';
-        if ($this->input->post('register_submit')) {
-
-            $postParams = $this->input->post();
-
-            $user_id = $this->User_model->register_user($postParams);
-
-            if ($user_id > 0) {
-                $this->session->set_flashdata('messageSucces', 'Profile registrated in celebritybe!');
-            } else {
-                $this->session->set_flashdata('messagePr', 'Registration failed !');
-            }
-
-        }
-    }
-
-    public function edit_user()
-    {
-        $user_id = 0;
-        if ($this->input->post('update')) {
-
-            $postParams = $this->input->post();
-            $user_id = $this->input->post('user_id');
-
-            if($user_id){
-                $upd_status = $this->User_model->edit_user( $postParams );
-            } else {
-                $upd_status = false;
-            }
-
-            if ( $upd_status ) {
-
-                $this->session->set_flashdata('messageSucces', 'Profile details updated Successfully !');
-            } else {
-                $this->session->set_flashdata('messagePr', 'Registration failed !');
-            }
-            redirect(base_url() . 'profile-detail/edit/'.$user_id , 'refresh');
-        }
-    }
-
-    public function checkUserName()
+    public function check_username()
     {
         if ($this->input->post('user_name')) {
             $check = $this->User_model->check_exists('cb_users', 'user_name', $this->input->post('username'));
@@ -166,6 +129,56 @@ class Users extends MY_Controller
         }
     }
 
+    public function add_user()
+    {
+        $user_id = 0;
+        if ($this->input->post('register_submit')) {
+
+            $from_post = $this->input->post();
+
+            $user_id = $this->User_model->register_user($from_post);
+
+            if ($user_id > 0) {
+                $this->session->set_flashdata('messageSucces', 'Profile registrated in celebritybe!');
+            } else {
+                $this->session->set_flashdata('messagePr', 'Registration failed !');
+            }
+        } else {
+
+            $this->session->set_flashdata('messagePr', 'Invalid request !');
+            redirect(base_url() . 'profiles/' . $user_type, 'refresh');
+        }
+    }
+
+    public function edit_user()
+    {
+        $user_id = 0;
+        if ($this->input->post('update')) {
+
+            $from_post = $this->input->post();
+            $user_id   = $this->input->post('user_id');
+            $user_type = $this->input->post('user_type');
+
+            if ($user_id) {
+                $upd_status = $this->User_model->edit_user($from_post);
+            } else {
+                $upd_status = false;
+            }
+
+            if ($upd_status) {
+
+                $this->session->set_flashdata('messageSucces', 'Profile details updated Successfully !');
+            } else {
+                $this->session->set_flashdata('messagePr', 'Profile update failed !');
+            }
+            redirect(base_url() . 'profiles/' . $user_type, 'refresh');
+        } else {
+
+            $this->session->set_flashdata('messagePr', 'Invalid request !');
+            redirect(base_url() . 'profiles/' . $user_type, 'refresh');
+        }
+    }
+
     /**
      * This function is used to logout user
      * @return Void
@@ -173,12 +186,18 @@ class Users extends MY_Controller
     public function profiles()
     {
         is_login();
-        $user_type                     = $this->uri->segment('2');
-        $a_users = $this->User_model->get_users('', $this->permission, $user_type);
+        $this->user_id    = isset($this->session->get_userdata()['user_details'][0]->user_id) ? $this->session->get_userdata()['user_details'][0]->user_id : '1';
+        $this->permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : 0;
+
+        $user_type = $this->uri->segment('2');
+
+        $a_users    = $this->User_model->get_users('', $this->permission, $user_type);
         $a_uf_plans = $this->Plans_model->get_plans('plan_id, plan_name', array('plan_status' => 1));
+
         foreach ($a_uf_plans as $key => $value) {
             $a_plans[$value->plan_id] = $value->plan_name;
         }
+
         if ($this->permission == 1) {
             $this->load->admin_template('profiles', '', array('settings' => $this->a_settings, 'userdata' => $a_users, 'plans' => $a_plans));
         } else {
@@ -186,15 +205,18 @@ class Users extends MY_Controller
         }
     }
 
-    public function profile_detail($action, $user_id)
+    public function profile_detail($action = 'view', $user_id)
     {
         is_login();
+        $this->user_id    = isset($this->session->get_userdata()['user_details'][0]->user_id) ? $this->session->get_userdata()['user_details'][0]->user_id : '1';
+        $this->permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : 0;
+
         if (CheckPermission() || $this->permission == 2) {
 
             // $this->session->unset_userdata('user_deta ils');
-            $action                      = $this->uri->segment('2');
-            $user_id                     = $this->uri->segment('3');
-            $user_type                   = $this->uri->segment('4');
+            $action    = $this->uri->segment('2');
+            $user_type = $this->uri->segment('3');
+            $user_id   = $this->uri->segment('4');
 
             $noty_where['user_id']       = $user_id;
             $noty_where['triggerd_from'] = 3;
@@ -209,7 +231,7 @@ class Users extends MY_Controller
             $alrdy_notifyed       = array();
             $notifications        = array();
 
-            $a_users = $this->User_model->get_users( $user_id, 0, $user_type );
+            $a_users = $this->User_model->get_users($user_id, 0, $user_type);
 
             $a_post['permission'] = $this->permission;
             $a_post['from']       = $this->user_id;
@@ -282,7 +304,7 @@ class Users extends MY_Controller
             }
 
             /*All plan details*/
-            $a_plans = array();
+            $a_plans    = array();
             $a_uf_plans = $this->Plans_model->get_plans('plan_id, plan_name', array('plan_status' => 1));
             foreach ($a_uf_plans as $p_key => $p_value) {
                 $a_plans[$p_value->plan_id] = $p_value->plan_name;
