@@ -1,4 +1,6 @@
 
+
+
 --vivek-- 11/02/2018 --
 -- Added moderate field for photos and videos in user details table
 ALTER TABLE `cb_user_details`  ADD `photos_moderate` TINYINT NOT NULL  AFTER `videos`,  ADD `videos_moderate` TINYINT NOT NULL  AFTER `photos_moderate`;
