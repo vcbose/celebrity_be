@@ -546,34 +546,6 @@ class User_model extends CI_Model
     }
 
     /**
-     * Get user medias
-     * @return <array> response
-     */
-    public function get_user_media($userId = null, $limit = null, $offset = null)
-    {
-        $condition   = "";
-        $currentUser = $this->getUserByToken();
-
-        if (($currentUser != ADMIN_USER_ID) && ($userId != $currentUser)) {
-            $condition = " AND moderate_status = 1";
-        }
-
-        $query = "SELECT `cbu`.`user_id`, `user_name`,
-                (SELECT GROUP_CONCAT(media_name SEPARATOR ',') FROM cb_user_medias WHERE media_type=" . MEDIA_TYPE_IMAGE . $condition . " AND user_id=cbu.user_id) AS photos,
-                (SELECT GROUP_CONCAT(media_name SEPARATOR ',') FROM cb_user_medias WHERE media_type=" . MEDIA_TYPE_VIDEO . $condition . " AND user_id=cbu.user_id) AS videos,
-                CONCAT('" . USER_IMAGE_URL . "', `cbu`.`user_id`, '/') AS photo_dir_url
-                FROM `cb_users` `cbu`";
-
-        $query .= ($userId) ? " WHERE cbu.user_id = " . $userId : '';
-        $query .= ($limit) ? " limit " . $limit : '';
-        $query .= ($offset) ? " offset " . $offset : '';
-
-        $res = $this->db->query($query);
-
-        return $res->result_array();
-    }
-
-    /**
      * This function is used to delete user
      * @param: $id - id of user table
      */

@@ -45,8 +45,3 @@ ADD `modified_on` datetime NOT NULL AFTER `uploaded_on`;
 -- cb_user_medias table create query --
 ALTER TABLE `cb_user_medias`
 ADD `in_plan` int(11) NOT NULL AFTER `modified_on`;
-
---vivek-- 07/03/2018 --
--- cb_user_medias table added dp_image field --
-ALTER TABLE `cb_user_medias`  ADD `dp_image` TINYINT NOT NULL DEFAULT '0'  AFTER `media_name`;
-

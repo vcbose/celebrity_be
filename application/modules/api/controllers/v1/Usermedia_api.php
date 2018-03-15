@@ -217,7 +217,7 @@ class Usermedia_api extends REST_Controller {
 			}
 
 			// Get user media details from user model
-			$data 	  = $this->User_model->get_user_media($userId, $limit, $offset);
+			$data 	  = $this->Media_model->get_user_media($userId, $limit, $offset);
 
 			if($data){
 				$response = array('status'=>true, 'data' => $data);
