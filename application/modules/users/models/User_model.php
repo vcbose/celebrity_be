@@ -502,14 +502,20 @@ class User_model extends CI_Model
         if ($fields) {
             $this->db->select($fields);
         }
+        // Where for get active plan based details
+        $where['cbs.subscription_status'] = 1;
+        $where['cbpm.feature_type'] = HIGHLIGHT_USER_ID;
+        $where['cbpm.feature_value'] = 1;
+
         $this->db->join('cb_user_details cbud', 'cbud.user_id = cbs.user_id', 'left');
         // $this->db->join('cb_user_details_meta cbum', 'cbum.user_id = cbud.user_id', 'left');
         $this->db->join('cb_plan_meta cbpm', 'cbpm.plan_id = cbs.plan_id', 'left');
-        $this->db->where('cbpm.feature_type', HIGHLIGHT_USER_ID);
-        $this->db->where('cbpm.feature_value', 1);
+        // $this->db->where('cbpm.feature_type', HIGHLIGHT_USER_ID);
+        // $this->db->where('cbpm.feature_value', 1);
         // $result = $this->db->get('cb_subscriptions cbs')->result_array();
 
         return $this->db->get_where('cb_subscriptions cbs', $where, $limit, $offset)->result_array();
+        // echo $this->db->last_query();
     }
 
     /**

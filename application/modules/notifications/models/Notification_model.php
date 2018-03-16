@@ -269,6 +269,7 @@ class Notification_model extends CI_Model
      */
     public function get_notifications($fields = null, $a_where = array(), $limit = null, $offset = null, $permission = 0)
     {
+        // print_r($a_where);
         if ($fields == null) {
 
             $fields =  "un.user_id, un.triggerd_from, un.notify_id, un.map_id, un.notification_on, un.notification_note, un.notification_relation, un.notification_status, 
@@ -287,12 +288,12 @@ class Notification_model extends CI_Model
             /*Talent search, will list director details*/
             if (isset($a_where['triggerd_from'])) {
                 
-                if($permission != 2){
+                // if($permission != 2){
 
-                    $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name, " ", tu.middle_name, " ", tu.last_name) AS name ';
+                    $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name, " ", tu.middle_name, " ", tu.last_name) AS name, tu.dp ';
                     $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
                     $this->db->group_by('tu.user_id, un.map_id');
-                }
+                // }
                 
                 $this->db->where('un.triggerd_from =', $a_where['triggerd_from']);
                 unset($a_where['triggerd_from']);
@@ -301,7 +302,7 @@ class Notification_model extends CI_Model
             /*Admin / director search, it will list talents details*/
             if (isset($a_where['user_id'])) {
 
-                $fields .= ', fu.user_id AS d_id, CONCAT(fu.first_name, " ", fu.middle_name, " ", fu.last_name) AS name ';
+                $fields .= ', fu.user_id AS d_id, CONCAT(fu.first_name, " ", fu.middle_name, " ", fu.last_name) AS name, fu.dp ';
                 $this->db->join('cb_user_details AS fu', 'fu.user_id = un.triggerd_from', 'left');
                 $this->db->where('un.user_id =', $a_where['user_id']);
                 $this->db->group_by('fu.user_id, un.map_id'); 
@@ -309,8 +310,7 @@ class Notification_model extends CI_Model
             }
         } else {
 
-            $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name," ", tu.middle_name," ", tu.last_name) AS t_name ';
-            $fields .= ', fu.user_id AS d_id, CONCAT(fu.first_name," ", fu.middle_name," ", fu.last_name) AS d_name ';
+            $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name," ", tu.middle_name," ", tu.last_name) AS t_name, tu.dp ';
 
             $this->db->join('cb_user_details AS fu', 'fu.user_id = un.triggerd_from', 'left');
             $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
@@ -449,6 +449,7 @@ class Notification_model extends CI_Model
                     }
                     
                     $notifaction_response[$key]['to']                  = $notification['user_id'];
+                    $notifaction_response[$key]['dp']                  = $notification['dp'];
                     $notifaction_response[$key]['notification_on']     = $notification['notification_on'];
                     $notifaction_response[$key]['notification_note']   = $notification['notification_note'];
                     $notifaction_response[$key]['notification_status'] = $notification['notification_status'];

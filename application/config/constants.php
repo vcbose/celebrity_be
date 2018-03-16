@@ -91,22 +91,28 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 |--------------------------------------------------------------------------
 |
 */
-defined('USER_IMAGE_DIR')      		OR define('USER_IMAGE_DIR', getcwd().'/assets/admin/images/user-images/'); 
-defined('USER_IMAGE_URL')      		OR define('USER_IMAGE_URL', $_SERVER['SERVER_NAME'].'/assets/admin/images/user-images/');
+defined('USER_IMAGE_DIR')      		OR define('USER_IMAGE_DIR', getcwd().'/assets/uploads/'); 
+defined('USER_IMAGE_URL')      		OR define('USER_IMAGE_URL', $_SERVER['SERVER_NAME'].'/assets/uploads/');
+
+/*Mapping settings tbl value with constants*/
+defined('ADMIN_USER_ID')  			OR define('ADMIN_USER_ID', 1);
+defined('TALENT')  					OR define('TALENT', 3);
+defined('DIRECTOR')  				OR define('DIRECTOR', 2);
+defined('ADMIN')  					OR define('ADMIN', 1);
+
+defined('SPL_TALENT_CATEGORIES')  	OR define('SPL_TALENT_CATEGORIES', serialize( array(4, 5, 6) ));
+
+defined('VISITS_ID')  				OR define('VISITS_ID', 89);
+defined('INTERVIEW_ID')  			OR define('INTERVIEW_ID', 88);
+defined('INTERSTS_ID')  			OR define('INTERSTS_ID', 87);
+
+defined('VISITS_MAP_ID')  			OR define('VISITS_MAP_ID', 1);
+defined('INTEREST_MAP_ID')  		OR define('INTEREST_MAP_ID', 2);
+defined('INTERVIEW_MAP_ID')  		OR define('INTERVIEW_MAP_ID', 5);
 
 defined('FEATURE_TYPE_IMAGE_ID')  	OR define('FEATURE_TYPE_IMAGE_ID', 41);
 defined('FEATURE_TYPE_VIDEO_ID')  	OR define('FEATURE_TYPE_VIDEO_ID', 42);
-defined('HIGHLIGHT_USER_ID')  		OR define('HIGHLIGHT_USER_ID', 	   55);
-defined('INTEREST_MAP_ID')  		OR define('INTEREST_MAP_ID', 	   2);
-defined('VISITS_MAP_ID')  			OR define('VISITS_MAP_ID', 	   	   1);
-defined('INTERVIEW_MAP_ID')  		OR define('INTERVIEW_MAP_ID', 	   5);
+defined('HIGHLIGHT_USER_ID')  		OR define('HIGHLIGHT_USER_ID', 55);
 
-defined('TALENT_RESTRICTION')  		OR define('TALENT_RESTRICTION', serialize( array(4, 5, 6) ));
-
-defined('INTERSTS_ID')  		OR define('INTERSTS_ID', 		87);
-defined('VISITS_ID')  			OR define('VISITS_ID', 	   		89);
-defined('INTERVIEW_ID')  		OR define('INTERVIEW_ID', 		88);
-
-defined('MEDIA_TYPE_IMAGE')  	OR define('MEDIA_TYPE_IMAGE', 	1);
-defined('MEDIA_TYPE_VIDEO')  	OR define('MEDIA_TYPE_VIDEO', 	2);
-defined('ADMIN_USER_ID')  		OR define('ADMIN_USER_ID', 		1);
+defined('MEDIA_TYPE_IMAGE')  		OR define('MEDIA_TYPE_IMAGE', 1);
+defined('MEDIA_TYPE_VIDEO')  		OR define('MEDIA_TYPE_VIDEO', 2);

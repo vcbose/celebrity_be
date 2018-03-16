@@ -238,7 +238,7 @@ class Users extends MY_Controller
             $a_post['to']         = $user_id;
 
             if ($this->permission == 1) {
-
+                
                 switch ($a_users[0]->user_type) {
 
                     case 3:
@@ -290,6 +290,8 @@ class Users extends MY_Controller
                 /*Get all notification of a talent*/
                 $alrdy_notifyed_where['user_id'] = $user_id;
             }
+
+            // print_r($alrdy_notifyed_where);
 
             $check_exists = $this->Notification_model->get_notifications('', $alrdy_notifyed_where, '', '', $this->permission);
 

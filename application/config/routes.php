@@ -67,10 +67,13 @@ $route['media/(:num)']                         = 'users/media/list_media/user_id
 $route['uploads']                              = 'users/media/upload_media';
 $route['media-moderate']                              = 'users/media/moderate_media';
 
+
 $route['getplandata']                          = 'plans/getplandata';
 // $route['notifications']    = 'users/notifications';
 $route['checkUserName']        = 'users/check_username';
 $route['dashboard']            = 'users/talents/dashboard/';
+$route['activities']           = 'users/talents/activities';
+
 $route['plans/(:num)']         = 'plans/index';
 $route['subscriptions/(:num)'] = 'plans/subscriptions/user_id/$1';
 $route['notifications']        = 'notifications/manage_notification';

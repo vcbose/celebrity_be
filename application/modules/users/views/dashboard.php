@@ -90,6 +90,10 @@
         if( isset($noti_details['feature']['Interview']) && $noti_details['feature']['Interview'] == 1 ){
             $a_noti_count['interests'] = $interests++;
         }
+
+        if( isset($noti_details['feature']['Interview']) && $noti_details['feature']['Interview'] == 1 ){
+            $a_noti_count['interests'] = $interests++;
+        }
     }
     ?>
       <!-- Item -->
@@ -153,6 +157,39 @@
       </div>
    </div>
 </div>
+<?php 
+$a_high_noti = array();
+$activities = '';
+$latest = false;
+foreach ($recent_notifications as $key => $value) {
+    
+    if( !$latest && ($value['trigger'] == INTERSTS_ID || $value['trigger'] == INTERVIEW_ID) ){
+        $a_high_noti = $value;
+        $latest = true;
+    }
+
+    if($value['trigger'] == INTERSTS_ID)
+        $icon = site_url().'/assets/uploads/interest.png';
+    else if($value['trigger'] == INTERVIEW_ID)
+        $icon = site_url().'/assets/uploads/interview.png';
+    else
+        $icon = site_url().'/assets/uploads/visits.png';
+
+    $activities .= '<div class="item" style="border-right:none;">
+                     <div class="feed d-flex justify-content-between">
+                        <div class="feed-body d-flex justify-content-between">
+                           <a href="#" class="feed-profile"><img src="'.$icon.'" alt="person" class="img-fluid rounded-circle"></a>
+                           <div class="content">
+                              <h5>'.ucfirst($value['t_name']).'</h5>
+                              <span>'.ucfirst($value['type']).' New '.implode(',', array_keys($value['feature'])).' '.$value['action'].' </span>
+                              <div class="full-date"><small>'. date( 'l, F d', strtotime($value['notification_on'])).'</small></div>
+                           </div>
+                        </div>
+                        <div class="date text-right"><small>'. date( 'h:i:s', strtotime($value['notification_on'])).'</small></div>
+                     </div>
+                  </div>';
+}
+?>
 <!-- Projects Section-->
 <section class="projects no-padding-top">
    <div class="container-fluid">
@@ -161,16 +198,23 @@
       <div class="row bg-white has-shadow">
          <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
             <div class="project-title d-flex align-items-center">
-               <div class="image has-shadow"><img src="img/avatar-1.jpg" alt="..." class="img-fluid"></div>
-               <div class="text">
-                  <h3 class="h4">Project Title</h3>
-                  <small>Lorem Ipsum Dolor</small>
-               </div>
+               <div class="image has-shadow">
+                <?php
+                if($value['trigger'] == INTERSTS_ID)
+                    $icon = site_url().'/assets/uploads/interest.png';
+                else
+                    $icon = site_url().'/assets/uploads/interview.png';
+                ?>
+                <img src="<?php echo $icon; ?>" alt="..." class="img-fluid"></div>
+                <div class="text">
+                    <h3 class="h4"><?php echo ucfirst($a_high_noti['type']).' to '.ucfirst($a_high_noti['t_name']) ?> </h3>
+                    <medium><?php echo ' New '.implode(',', array_keys($a_high_noti['feature'])).' '.$a_high_noti['action']; ?></medium>
+                </div>
             </div>
-            <div class="project-date"><span class="hidden-sm-down">Today at 4:24 AM</span></div>
+            <div class="project-date"><span class="hidden-sm-down"><?php echo date( 'l, F d', strtotime($a_high_noti['notification_on'])); ?></span></div>
          </div>
          <div class="right-col col-lg-6 d-flex align-items-center">
-            <div class="time"><i class="fa fa-clock-o"></i>12:00 PM </div>
+            <div class="time"><i class="fa fa-clock-o"></i><?php echo date( 'h:i:s', strtotime($a_high_noti['notification_on'])); ?> </div>
             <div class="comments"><i class="fa fa-comment-o"></i>20</div>
             <div class="project-progress">
                <div class="progress">
@@ -181,6 +225,7 @@
       </div>
    </div>
 </section>
+
 <!-- Project-->
 <section class="updates no-padding-top">
    <div class="container-fluid">
@@ -190,53 +235,11 @@
          <div class="col-lg-4">
             <div class="daily-feeds card">
                <div class="card-header">
-                  <h3 class="h4">Recent Stories</h3>
+                  <h3 class="h4">Recent Activities</h3>
                </div>
                <div class="card-body no-padding">
                   <!-- Item-->
-                  <div class="item" style="border-right:none;">
-                     <div class="feed d-flex justify-content-between">
-                        <div class="feed-body d-flex justify-content-between">
-                           <a href="#" class="feed-profile"><img src="img/avatar-5.jpg" alt="person" class="img-fluid rounded-circle"></a>
-                           <div class="content">
-                              <h5>Aria Smith</h5>
-                              <span>Posted a new blog </span>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                           </div>
-                        </div>
-                        <div class="date text-right"><small>5min ago</small></div>
-                     </div>
-                  </div>
-                  <!-- Item-->
-                  <div class="item" style="border-right:none;">
-                     <div class="feed d-flex justify-content-between">
-                        <div class="feed-body d-flex justify-content-between">
-                           <a href="#" class="feed-profile"><img src="img/avatar-2.jpg" alt="person" class="img-fluid rounded-circle"></a>
-                           <div class="content">
-                              <h5>Frank Williams</h5>
-                              <span>Posted a new blog </span>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                              <div class="CTAs"></div>
-                           </div>
-                        </div>
-                        <div class="date text-right"><small>5min ago</small></div>
-                     </div>
-                  </div>
-                  <!-- Item-->
-                  <div class="item clearfix" style="border-right:none; border-bottom:none;">
-                     <div class="feed d-flex justify-content-between">
-                        <div class="feed-body d-flex justify-content-between">
-                           <a href="#" class="feed-profile"><img src="img/avatar-3.jpg" alt="person" class="img-fluid rounded-circle"></a>
-                           <div class="content">
-                              <h5>Ashley Wood</h5>
-                              <span>Posted a new blog </span>
-                              <div class="full-date"><small>Today 5:60 pm - 12.06.2014</small></div>
-                           </div>
-                        </div>
-                        <div class="date text-right"><small>5min ago</small></div>
-                     </div>
-                     <div class="quote has-shadow"> <small>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Over the years.</small></div>
-                  </div>
+                  <?php echo $activities; ?>
                </div>
             </div>
          </div>
@@ -273,4 +276,4 @@
          </div>
       </div>
    </div>
-</section>
+</setcion>

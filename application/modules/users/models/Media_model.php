@@ -102,6 +102,7 @@ class Media_model extends MY_Controller
         }
         /*Default where cluses*/
         $where['cbs.subscription_status'] = isset($where['cbs.subscription_status'])?$where['cbs.subscription_status']:1;
+        $where['cbm.moderate_status'] = isset($where['cbm.moderate_status'])?$where['cbm.moderate_status']:1;
 
         /*Join with users and subscriptions*/
         $this->db->join('cb_users AS cbu', 'cbu.user_id = cbm.user_id', 'left');
