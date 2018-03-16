@@ -325,7 +325,7 @@ class Media_model extends MY_Controller
     public function update_dp($userId, $dpImage)
     {
         $query = 'UPDATE `cb_user_medias` 
-                    SET dp_image = 
+                    SET dp = 
                     CASE 
                       WHEN media_name="'.$dpImage.'" THEN  1
                       ELSE 0
@@ -333,5 +333,34 @@ class Media_model extends MY_Controller
                     WHERE user_id='.$userId.' AND media_type='.MEDIA_TYPE_IMAGE;
         
         return $this->db->query($query);
+    }
+
+    /**
+     * Get user medias
+     * @return <array> response
+     */
+    public function get_user_media($userId = null, $limit = null, $offset = null)
+    {
+        $condition   = "";
+        $currentUser = $this->User_model->getUserByToken();
+
+        if (($currentUser != ADMIN_USER_ID) && ($userId != $currentUser)) {
+            $condition = " AND moderate_status = 1";
+        }
+
+        $query = "SELECT `cbu`.`user_id`, `user_name`,
+                (SELECT media_name FROM cb_user_medias WHERE media_type=1 AND user_id=cbu.user_id AND dp=1) AS dp_image,
+                (SELECT GROUP_CONCAT(media_name SEPARATOR ',') FROM cb_user_medias WHERE media_type=" . MEDIA_TYPE_IMAGE . $condition . " AND user_id=cbu.user_id) AS photos,
+                (SELECT GROUP_CONCAT(media_name SEPARATOR ',') FROM cb_user_medias WHERE media_type=" . MEDIA_TYPE_VIDEO . $condition . " AND user_id=cbu.user_id) AS videos,
+                CONCAT('" . USER_IMAGE_URL . "', `cbu`.`user_id`, '/') AS photo_dir_url
+                FROM `cb_users` `cbu`";
+
+        $query .= ($userId) ? " WHERE cbu.user_id = " . $userId : '';
+        $query .= ($limit) ? " limit " . $limit : '';
+        $query .= ($offset) ? " offset " . $offset : '';
+
+        $res = $this->db->query($query);
+
+        return $res->result_array();
     }
 }
