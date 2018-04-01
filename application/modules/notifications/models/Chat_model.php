@@ -131,14 +131,18 @@ class Chat_model extends CI_Model {
     {
         if ($fields) {
             $this->db->select($fields);
+        } else {
+            // $this->db->select('chat_id, chat_from AS director_id, chat_to AS talent_id, chat_text AS message, chat_on, chat_lock');
+        }
+        // $chatCondition = ($chatUserFlg) ? 'chat_to' : 'chat_from';
+        // $this->db->join('cb_user_details', 'cb_user_chats.chat_from = cb_user_details.user_id', 'left');
+        $this->db->order_by('chat_id', 'ASC');
+        if( !empty($where) ){
+            $s_where = " chat_to = '{$where['chat_to']}' AND chat_from = '{$where['chat_from']}' OR chat_to = '{$where['chat_from']}' AND chat_from = '{$where['chat_to']}' ";
+            $this->db->where($s_where);
         }
 
-        $chatCondition = ($chatUserFlg) ? 'chat_to' : 'chat_from';
-
-        $this->db->join('cb_user_details', 'cb_user_chats.'.$chatCondition.' = cb_user_details.user_id', 'left');
-        $this->db->order_by('chat_id', 'ASC');
-        return $this->db->get_where('cb_user_chats', $where, $limit, $offset)->result_array();
-        // echo $this->db->last_query();die;
+        return $this->db->get('cb_user_chats', $limit, $offset)->result_array();
     }
 
     /**
@@ -150,11 +154,21 @@ class Chat_model extends CI_Model {
     {
         if ($fields) {
             $this->db->select($fields);
-        }
+        } 
 
-        $this->db->join('cb_user_details', 'cb_user_chats.chat_from = cb_user_details.user_id', 'left');
-        $this->db->group_by('chat_from');
-        $this->db->order_by('chat_on', 'DESC');
+        if($where['user_type'] == 2){
+
+            $this->db->join('cb_user_details', 'cb_user_chats.chat_to = cb_user_details.user_id', 'left');
+            $this->db->group_by('chat_to');
+        } else {
+
+            $this->db->join('cb_user_details', 'cb_user_chats.chat_from = cb_user_details.user_id', 'left');
+            $this->db->group_by('chat_from');
+        }
+        $this->db->order_by('chat_id', 'DESC');
+
+        unset($where['user_id']);
+        unset($where['user_type']);
         return $this->db->get_where('cb_user_chats', $where, $limit, $offset)->result_array();
         // echo $this->db->last_query();die;
     }

@@ -286,6 +286,7 @@ class User_model extends CI_Model
     public function register_user($post_data, $api_flag = false)
     {
         $user_id = 0;
+        $a_return = array();
 
         if (isset($post_data['user_name']) && ($post_data['password'] == $post_data['confirm_password'])) {
 
@@ -298,12 +299,15 @@ class User_model extends CI_Model
                 $user_data['user_status'] = (isset($post_data['approve']) && $post_data['approve'] == 1)?1:0;
                 $user_id                  = $this->insertRow('cb_users', $user_data);
             } else {
-
-                return false;
+                $a_return['status'] = false;
+                $a_return['message'] = 'Username already exists!';
+                return $a_return;
             }
         } else {
 
-            return false;
+            $a_return['status'] = false;
+            $a_return['message'] = 'Empty or invalid username tryed';
+            return $a_return;
         }
 
         if ($user_id != 0) {
@@ -347,7 +351,7 @@ class User_model extends CI_Model
             if ($post_data['user_type'] == 3 && $post_data['talent_category']) {
 
                 $tc_meta_status = false;
-                $talent_filters = unserialize(TALENT_RESTRICTION);
+                $talent_filters = unserialize(SPL_TALENT_CATEGORIES);
                 $intersect_result = array_intersect($post_data['talent_category'], $talent_filters);
 
                 /*foreach ($post_data['talent_category'] as $key => $value) {
@@ -382,11 +386,17 @@ class User_model extends CI_Model
                     $this->Plans_model->add_user_plan($user_id, $post_data['subscription_id']);
                 }
             }
-            return $user_id;
+
+            $a_return['user_id'] = $user_id;
+            $a_return['status'] = true;
+            $a_return['message'] = 'User registration successfull';
+            return $a_return;
 
         } else {
 
-            return false;
+            $a_return['status'] = false;
+            $a_return['message'] = 'User registration failed, please try agin after sometime!';
+            return $a_return;
         }
     }
 
@@ -439,7 +449,7 @@ class User_model extends CI_Model
 
                 $tc_meta_status = false;
                 $user_meta      = array();
-                $talent_filters = unserialize(TALENT_RESTRICTION);
+                $talent_filters = unserialize(SPL_TALENT_CATEGORIES);
 
                 $intersect_result = array_intersect($post_data['talent_category'], $talent_filters);
 

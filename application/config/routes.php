@@ -113,8 +113,12 @@ $route['api/v1/interests']             = 'api/v1/Interest_api/interests';
 $route['api/v1/interests/(:num)']      = 'api/v1/Interest_api/interests/user_id/$1';
 $route['api/v1/interestcount/(:num)']  = 'api/v1/Interest_api/interest_count/user_id/$1';
 $route['api/v1/userchats']             = 'api/v1/Userchat_api/userchats';
-$route['api/v1/userchats/(:num)']      = 'api/v1/Userchat_api/userchats/chat_id/$1';
-$route['api/v1/chatusers/(:num)']      = 'api/v1/Userchat_api/chatusers/chat_to/$1';
+$route['api/v1/userchats/(:num)']      = 'api/v1/Userchat_api/userchats/chat_to/$1';
+$route['api/v1/userchats/(:num)/(:num)']      = 'api/v1/Userchat_api/userchats/chat_to/$1/chat_from/$2';
+
+// $route['api/v1/chatusers/(:num)']      = 'api/v1/Userchat_api/chatusers/user_id/$1';
+$route['api/v1/chatusers/(:num)/(:num)']      = 'api/v1/Userchat_api/chatusers/user_type/$1/user_id/$2';
+
 $route['api/v1/chatusercount/(:num)']  = 'api/v1/Userchat_api/chatuser_count/chat_to/$1';
 $route['api/v1/interviews']            = 'api/v1/Interview_api/interviews';
 $route['api/v1/interviews/(:num)']     = 'api/v1/Interview_api/interviews/user_id/$1';

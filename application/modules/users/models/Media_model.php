@@ -243,26 +243,42 @@ class Media_model extends MY_Controller
      * @param string video url
      * @return boolean result
      */
-    public function update_media_info($requestID, $imgNames = [], $userVideoUrl = [], $type = 'insert')
+    public function update_media_info($requestID, $imgNames = [], $userVideoUrl = [], $type = 'insert', $plan_id = 0)
     {
         $imgRes   = true;
         $videoRes = true;
 
         $insertData['media_type'] = MEDIA_TYPE_IMAGE;
 
+
         if (is_array($imgNames) && !empty($imgNames)) {
+
+            if(isset($imgNames['media_replace'])){
+                $replaceCount = $imgNames['media_replace'];
+                unset($imgNames['media_replace']);
+            }
 
             foreach ($imgNames as $key => $image) {
 
                 $insertData['media_name'] = $image;
 
                 if ($type == 'insert') {
+
                     $insertData['user_id']     = $requestID;
+                    if ($plan_id != 0) {
+                        $insertData['in_plan'] = $plan_id;
+                    }
                     $insertData['uploaded_on'] = date('Y-m-d h:m:s');
                     $imgRes                    = $this->db->insert('cb_user_medias', $insertData);
                 } else {
-                    $this->db->where('media_id', $requestID);
 
+                    $this->db->where('media_id', $requestID);
+                    if ($plan_id != 0) {
+                        $insertData['in_plan'] = $plan_id;
+                    }
+                    if($type == 'replace'){
+                        $insertData['media_replace'] = $replaceCount+1;
+                    }
                     $insertData['modified_on']     = date('Y-m-d h:m:s');
                     $insertData['moderate_status'] = 0;
                     $imgRes                        = $this->db->update('cb_user_medias', $insertData);
@@ -274,14 +290,35 @@ class Media_model extends MY_Controller
 
             $insertData['media_type'] = MEDIA_TYPE_VIDEO;
 
+            if(isset($userVideoUrl['media_replace'])){
+                $replaceCount = $userVideoUrl['media_replace'];
+                unset($userVideoUrl['media_replace']);
+            }
+
             foreach ($userVideoUrl as $key => $video) {
 
                 if ($type == 'insert') {
+                    if ($plan_id != 0) {
+                        $insertData['in_plan'] = $plan_id;
+                    }
                     $insertData['user_id']    = $requestID;
                     $insertData['media_name'] = $video;
                     $videoRes                 = $this->db->insert('cb_user_medias', $insertData);
                 } else {
 
+                    $this->db->where('media_id', $requestID);
+
+                    if ($plan_id != 0) {
+                        $insertData['in_plan'] = $plan_id;
+                    }
+
+                    if($type == 'replace'){
+                        $insertData['media_replace'] = $replaceCount+1;
+                    }
+
+                    // $insertData['user_id']    = $requestID;
+                    $insertData['media_name'] = $video;
+                    $videoRes                 = $this->db->update('cb_user_medias', $insertData);
                 }
             }
         }
@@ -322,16 +359,18 @@ class Media_model extends MY_Controller
      * Dp Image update
      * @return <array> response
      */
-    public function update_dp($userId, $dpImage)
+    public function update_dp($userId, $mediaId)
     {
-        $query = 'UPDATE `cb_user_medias` 
+        $query ='UPDATE `cb_user_medias` 
                     SET dp = 
                     CASE 
-                      WHEN media_name="'.$dpImage.'" THEN  1
-                      ELSE 0
+                        WHEN media_id='.$mediaId.' THEN  1
+                        ELSE 0
                     END
-                    WHERE user_id='.$userId.' AND media_type='.MEDIA_TYPE_IMAGE;
-        
+                    WHERE user_id = '.$userId.' AND media_type = '.MEDIA_TYPE_IMAGE;
+
+        /*$query = 'UPDATE `cb_user_medias` SET dp = 1 
+        WHERE user_id = '.$userId.' AND media_id ='.$mediaId;*/
         return $this->db->query($query);
     }
 
@@ -362,5 +401,36 @@ class Media_model extends MY_Controller
         $res = $this->db->query($query);
 
         return $res->result_array();
+    }
+
+    public function get_api_media($userId = null, $limit = null, $offset = null)
+    {
+        $where   = array();
+        $a_media_data = array();
+        $a_response = array();
+
+        $currentUser = $this->User_model->getUserByToken();
+        if (($currentUser != ADMIN_USER_ID) && ($userId != $currentUser)) {
+            $where['cum.moderate_status'] = 1;
+        }
+        $where['cu.user_id'] = $userId;
+
+        $this->db->join('cb_users cu', 'cu.user_id = cum.user_id', 'left');
+        $a_media_data = $this->db->get_where('cb_user_medias cum', $where, $limit, $offset)->result_array();
+
+        if(!empty($a_media_data)){
+            foreach ($a_media_data as $key => $value) {
+                $media_type = ($value['media_type'] == MEDIA_TYPE_IMAGE)?'images':'videos';
+                $a_response[$userId][$media_type][$value['media_id']] = array('file' => $value['media_name'], 'uploaded_on' => $value['uploaded_on'], 'moderate_status' => $value['moderate_status'], 'media_type' => $value['media_type'], 'is_dp' => $value['dp'], );
+            }
+
+            $a_response[$userId]['upload_path'] = USER_IMAGE_URL.$userId;
+            $a_response['media_status'] = true;
+            $a_response['message'] = 'Media listing successfull';
+
+        } else {
+            $a_response = array('media_status' => false, 'message' => 'No media uploads!' );
+        }
+        return $a_response;
     }
 }

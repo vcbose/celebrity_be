@@ -45,3 +45,8 @@ ADD `modified_on` datetime NOT NULL AFTER `uploaded_on`;
 -- cb_user_medias table create query --
 ALTER TABLE `cb_user_medias`
 ADD `in_plan` int(11) NOT NULL AFTER `modified_on`;
+
+--vcb-- 01/04/2018 --
+-- cb_user_medias table create query --
+ALTER TABLE `cb_user_medias`
+ADD `media_replace` int NOT NULL AFTER `dp`;

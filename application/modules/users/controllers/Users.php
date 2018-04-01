@@ -136,10 +136,17 @@ class Users extends MY_Controller
 
             $from_post = $this->input->post();
 
-            $user_id = $this->User_model->register_user($from_post);
+            $user_data = $this->User_model->register_user($from_post);
 
-            if ($user_id > 0) {
-                $this->session->set_flashdata('messageSucces', 'Profile registrated in celebritybe!');
+            if( !empty($user_data) ){
+
+                if(isset($user_data['user_id']) && $user_data['user_id'] > 0){
+                    
+                    $user_id = $user_data['user_id'];
+                    $this->session->set_flashdata('messageSucces', $user_data['message']);
+                } else {
+                    $this->session->set_flashdata('messagePr', $user_data['message']);
+                }
             } else {
                 $this->session->set_flashdata('messagePr', 'Registration failed !');
             }

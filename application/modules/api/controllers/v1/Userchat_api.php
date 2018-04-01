@@ -40,7 +40,7 @@ class Userchat_api extends REST_Controller {
 			
 			if($response['status']){
 				$a_response['status']  = true;
-				$a_response['message'] = 'Chat submitted successfully';
+				$a_response['message'] = 'Your message has been sent.';
 				$this->response($a_response, parent::HTTP_OK);
 			}else{
 				$err_msg = ($response['msg']) ? $response['msg'] : '';
@@ -81,7 +81,7 @@ class Userchat_api extends REST_Controller {
 				$limit  = $getParams['limit'];
 				unset($getParams['limit']);
 			}
-			
+
 			$data 	  = $this->Chat_model->get_user_chats($fields, $getParams, $limit, $offset);
 			// $data 	  = $this->Chat_model->get_chats($chat_to, $chat_from);
 			
@@ -89,7 +89,7 @@ class Userchat_api extends REST_Controller {
 				$response = array('status'=>true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
-				throw new Exception("Error on get chat", 1);
+				throw new Exception("No conversations with this profile", 1);
 			}
 
 		}catch(Exception $ex){
@@ -112,10 +112,11 @@ class Userchat_api extends REST_Controller {
 			$fields 	 = null;
 			$offset 	 = null;
 			$limit 		 = null;
+			$where = array();
 			$getParams 	 = $this->get();
 
 			// Verify user id param exists
-			if(!isset($getParams['chat_to'])){
+			if(!isset($getParams['user_id'])){
 				throw new Exception("Could not find user_id with the request", 1);
 			}
 			
@@ -128,15 +129,25 @@ class Userchat_api extends REST_Controller {
 				unset($getParams['limit']);
 			}
 
-			$fields   = 'user_id,first_name,middle_name,last_name,display_name,email,photos';
-			
+			$fields   = 'user_id, first_name, middle_name, last_name, display_name, email, dp, chat_on';
+			if(isset($getParams['user_type'])){
+
+				if($getParams['user_type'] == 2){
+					$getParams['chat_from'] = $getParams['user_id'];
+				} else if($getParams['user_type'] == 3) {
+					$getParams['chat_to'] = $getParams['user_id'];
+				} else {
+					throw new Exception("Invalid user type!", 1);
+				}
+			}
+
 			$data 	  = $this->Chat_model->get_chat_users($fields, $getParams, $limit, $offset);
 			
 			if($data){
 				$response = array('status'=>true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);
 			}else{
-				throw new Exception("Error on get chat", 1);
+				throw new Exception("No chat history", 1);
 			}
 
 		}catch(Exception $ex){

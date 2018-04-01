@@ -26,6 +26,9 @@ class Subscriptions_api extends REST_Controller {
     public function subscriptions_get()
 	{
 		try{
+			$fields 	 = null;
+			$offset 	 = null;
+			$limit 		 = null;
 			$getParams 	 = $this->get();
 			
 			// Verify user id param exists

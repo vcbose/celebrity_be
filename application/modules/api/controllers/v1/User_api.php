@@ -26,18 +26,23 @@ class User_api extends REST_Controller {
     public function register_post()
 	{
 		try{
-			$postParams  = $this->post();
 			
-			$user_id 	 = $this->User_model->register_user($postParams, true);
+			$postParams  = $this->post();
+			$user_data 	 = $this->User_model->register_user($postParams, true);
+			if( !empty($user_data) ){
 
-			if($user_id > 0){
-				// $result 	= $this->Plans_model->add_user_plan($user_id, $postParams['plan']);
+				if(isset($user_data['user_id']) && $user_data['user_id'] > 0){
+					// $result 	= $this->Plans_model->add_user_plan($user_id, $postParams['plan']);
+					$response 	= array('status'=> true, 'message'=>'User registration successful', 'user_id'=> $user_data['user_id']);
+					$this->response($response, parent::HTTP_CREATED);
+				} else {
 
-				$response 	= array('status'=> true, 'message'=>'User registration successfull', 'user_id'=>$user_id);
-				$this->response($response, parent::HTTP_CREATED);
+					$response 	= array('status'=> false, 'message'=> $user_data['message'], 'user_id'=> 0);
+					$this->response($response, parent::HTTP_BAD_REQUEST);
+				}
 			} else {
 
-				$response 	= array('status'=> false, 'message'=>'User registration failed! try after some times', 'user_id'=> 0);
+				$response 	= array('status'=> false, 'message'=>'User registration failed, please try again!', 'user_id'=> 0);
 				$this->response($response, parent::HTTP_BAD_REQUEST);
 			}			
 
