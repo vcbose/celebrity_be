@@ -104,14 +104,17 @@ class User_model extends CI_Model
     /**
      * This function is used Reset password
      */
-    public function reset_password()
+    public function reset_password( $post_data )
     {
-        $email = $this->input->post('email');
-        if ($this->input->post('password_confirmation') == $this->input->post('password')) {
-            $npass            = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
+        $user_name = isset($post_data['user_name'])?$post_data['user_name']:'';
+        if ( $user_name != '' && ( trim($post_data['password_confirmation']) == trim($post_data['password']) ) ) {
+
+            $npass            = password_hash($post_data['password'], PASSWORD_DEFAULT);
             $data['password'] = $npass;
-            $data['var_key']  = '';
-            return $this->db->update('users', $data, "email = '$email'");
+            // $data['var_key']  = '';
+            return $this->db->update($this->table, $data, "user_name = '$user_name'");
+        } else {
+            return false;
         }
     }
 
@@ -186,12 +189,51 @@ class User_model extends CI_Model
      */
     public function get_user_details($fields = null, $where = array(), $offset = null, $limit = null)
     {
-        if ($fields) {
-            $this->db->select($fields);
+        if ($fields == null) {
+            $fields = 'cbu.user_id AS u_id, cbu.user_type, cbu.created_on, cbu.user_status, cbud.*,  cbum.*';
+        }
+        $this->db->join('cb_user_details cbud', 'cbud.user_id = cbu.user_id', 'LEFT');
+
+        if( isset($where['user_type']) && $where['user_type'] == 2 ){
+            $where['cbu.user_type'] = 2;
+        } else {
+            $fields .= ', cbudm.*, cbus.* ';
+            $this->db->join('cb_user_details_meta cbudm', 'cbu.user_id = cbudm.user_id', 'LEFT');
+            $this->db->join('cb_subscriptions cbus', 'cbu.user_id = cbus.user_id AND cbus.subscription_status = 1', 'LEFT');
+            $where['cbu.user_type'] = 3;
         }
 
-        $this->db->join('cb_user_details cbud', 'cbud.user_id = cbu.user_id', 'left');
+        $this->db->join('cb_user_medias cbum', 'cbu.user_id = cbum.user_id AND cbum.dp = 1', 'LEFT OUTER');
+        $this->db->select( $fields );
+        $this->db->order_by("u_id", "DESC");
+        $this->db->group_by("cbu.user_id");
         return $this->db->get_where('cb_users cbu', $where, $limit, $offset)->result();
+        // echo $this->db->last_query();
+    }
+
+    /**
+     * Get highlighted users
+     * @param integer userId
+     * @return boolean result
+     */
+    public function get_highlight_users($fields = null, $where = array(), $offset = null, $limit = null)
+    {
+        // Check specified fields list
+        /*if ($fields) {
+            $this->db->select('cu.user_id, cbud.*, cbpm.*, cum.*');
+        }*/
+        $this->db->select("cu.user_name, cbud.first_name, cbud.middle_name, cbud.last_name, CONCAT(cbud.first_name, ' ', cbud.last_name) AS name, cbud.talent_category, cbud.description, cbud.tags_interest, cum.dp, cum.moderate_status");
+        
+        $this->db->join('cb_user_details cbud', 'cu.user_id = cbud.user_id', 'left');
+        $this->db->join('cb_subscriptions  cbs', 'cu.user_id = cbs.user_id AND cbs.subscription_status = 1', 'left');
+        // $this->db->join('cb_user_details_meta cbum', 'cbum.user_id = cbud.user_id', 'left');
+        $this->db->join('cb_plan_meta cbpm', 'cbs.plan_id = cbpm.plan_id AND cbpm.feature_type = '.HIGHLIGHT_USER_ID, 'left');
+        $this->db->join('cb_user_medias cum', 'cu.user_id = cum.user_id AND cbpm.plan_id = cum.in_plan AND cum.dp = 1', 'left outer');
+        $this->db->where('cbpm.feature_value', 1);
+        $this->db->where('cu.user_type', 3);
+        $this->db->where('cu.user_status', 1);
+        // $this->db->where('cbpm.feature_values, 1);
+        return $result = $this->db->get('cb_users cu')->result_array();
     }
 
     /**
@@ -404,10 +446,9 @@ class User_model extends CI_Model
     {
         $user_id = isset($post_data['user_id']) ? $post_data['user_id'] : 0;
 
-        if ($user_id != 0) {
+        if ($user_id != 0 && $user_id != 1) {
 
             $user_data_where['user_id'] = $user_id;
-
             /*Update user status*/
             if ( isset($post_data['approve']) ) {
                 $a_status['user_status'] = 1;
@@ -415,8 +456,8 @@ class User_model extends CI_Model
                 $a_status['user_status'] = 0;
             }
             $this->updateRow('cb_users', $a_status, $user_data_where);
-            // $videos_urls = (isset($post_data['videos']) && !empty($post_data['videos'])) ? json_encode($post_data['videos']) : '';
 
+            // $videos_urls = (isset($post_data['videos']) && !empty($post_data['videos'])) ? json_encode($post_data['videos']) : '';
             $user_details['user_id']         = $user_id;
             $user_details['first_name']      = isset($post_data['first_name']) ? $post_data['first_name'] : '';
             $user_details['middle_name']     = isset($post_data['middle_name']) ? $post_data['middle_name'] : '';
@@ -437,8 +478,6 @@ class User_model extends CI_Model
             $user_details['talent_category'] = is_array($post_data['talent_category']) ? implode(',', $post_data['talent_category']) : '';
             $user_details['tags_interest']   = isset($post_data['tags_interest']) ? $post_data['tags_interest'] : '';
 
-            // $user_details['photos']          = $file_names;
-            // $user_details['videos']          = $videos_urls;
             $user_details['links']      = '';
             $user_details['experience'] = isset($post_data['experience']) ? $post_data['experience'] : '';
 
@@ -468,7 +507,7 @@ class User_model extends CI_Model
                         $tc_meta_status = true;
                     }
                 }*/
-
+                /*Updates meta information*/
                 if ( !empty($intersect_result) ) {
 
                     $user_meta_details['hair']      = isset($post_data['hair_colour']) ? $post_data['hair_colour'] : '';
@@ -483,7 +522,13 @@ class User_model extends CI_Model
 
                 /*Chekc subscription_id is valid and insert 0 means director*/
                 $requested_plan = isset($post_data['plan']) ? $post_data['plan'] : 0;
-                $current_plan   = isset($post_data['plan_id']) ? $post_data['plan_id'] : 0;
+                
+                if( isset($post_data['subscription_id']) )
+                    $current_plan   = isset($post_data['subscription_id']) ? $post_data['subscription_id'] : 0;
+                else
+                    $current_plan   = isset($post_data['plan_id']) ? $post_data['plan_id'] : 0;
+
+
                 if ($requested_plan != 0 && ($requested_plan != $current_plan)) {
                     $subscription_id                 = $this->Plans_model->add_user_plan($user_id, $requested_plan, $post_data['subscription_id']);
                     $user_details['subscription_id'] = $subscription_id;
@@ -493,39 +538,16 @@ class User_model extends CI_Model
                 $this->updateRow('cb_user_details', $user_details, $user_data_where);
             }
 
-            return $user_id;
-
+            $a_return['user_id'] = $user_id;
+            $a_return['status'] = true;
+            $a_return['message'] = 'User details has been successfully updated';
+            return $a_return;
         } else {
 
-            return false;
+            $a_return['status'] = false;
+            $a_return['message'] = 'User details not exists!';
+            return $a_return;
         }
-    }
-
-    /**
-     * Get highlighted users
-     * @param integer userId
-     * @return boolean result
-     */
-    public function get_highlight_users($fields = null, $where = array(), $offset = null, $limit = null)
-    {
-        // Check specified fields list
-        if ($fields) {
-            $this->db->select($fields);
-        }
-        // Where for get active plan based details
-        $where['cbs.subscription_status'] = 1;
-        $where['cbpm.feature_type'] = HIGHLIGHT_USER_ID;
-        $where['cbpm.feature_value'] = 1;
-
-        $this->db->join('cb_user_details cbud', 'cbud.user_id = cbs.user_id', 'left');
-        // $this->db->join('cb_user_details_meta cbum', 'cbum.user_id = cbud.user_id', 'left');
-        $this->db->join('cb_plan_meta cbpm', 'cbpm.plan_id = cbs.plan_id', 'left');
-        // $this->db->where('cbpm.feature_type', HIGHLIGHT_USER_ID);
-        // $this->db->where('cbpm.feature_value', 1);
-        // $result = $this->db->get('cb_subscriptions cbs')->result_array();
-
-        return $this->db->get_where('cb_subscriptions cbs', $where, $limit, $offset)->result_array();
-        // echo $this->db->last_query();
     }
 
     /**

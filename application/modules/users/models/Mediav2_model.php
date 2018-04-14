@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Media_model extends MY_Controller
+class Mediav2_model extends MY_Controller
 {
 
     public $a_settings;
@@ -268,6 +268,7 @@ class Media_model extends MY_Controller
                         $insertData['in_plan'] = $plan_id;
                     }
                     $insertData['uploaded_on'] = date('Y-m-d h:m:s');
+                    $insertData['moderate_status'] = 0;
                     $imgRes                    = $this->db->insert('cb_user_medias', $insertData);
                 } else {
 
@@ -302,6 +303,8 @@ class Media_model extends MY_Controller
                     }
                     $insertData['user_id']    = $requestID;
                     $insertData['media_name'] = $video;
+                    $insertData['uploaded_on'] = date('Y-m-d h:m:s');
+                    $insertData['moderate_status'] = 0;
                     $videoRes                 = $this->db->insert('cb_user_medias', $insertData);
                 } else {
 
@@ -317,6 +320,8 @@ class Media_model extends MY_Controller
 
                     // $insertData['user_id']    = $requestID;
                     $insertData['media_name'] = $video;
+                    $insertData['modified_on']     = date('Y-m-d h:m:s');
+                    $insertData['moderate_status'] = 0;
                     $videoRes                 = $this->db->update('cb_user_medias', $insertData);
                 }
             }

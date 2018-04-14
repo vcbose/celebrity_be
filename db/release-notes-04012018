@@ -1,0 +1,78 @@
+/*
+Releae note media API requset changes
+01/04/2018 
+*/
+
+1. Add media response changed to like this: POST requset
+	{
+	    "images": {
+	        "status": true,
+	        "message": "Media has been uploaded successfully"
+	    },
+	    "videos": {
+	        "status": true,
+	        "message": "Media has been uploaded successfully"
+	    }
+	}
+
+2. Get user media respobse chnaged : GET requset 
+	There are two status 1 for API status and another one is media_satus this will refere the media exists or not 
+
+	{
+	    "status": true,
+	    "message" : "text";
+
+	    "data": { // this will have all media data
+	    	"user_id":{ // this is current user's id
+		    	"images":{ // this will have all the images
+		    		"media_id":{ // a unique identifier of media
+		    			"file": "17_1.jpg",
+		    			"uploaded_on": "2018-04-01 10:04:21",
+		    			"moderate_status": "0",
+		    			"media_type": "1",
+		    			"is_dp": "1"
+		    		},
+			    	"media_status": true,
+			    	"message": "Media listing successfull"
+			    },
+			    "videos":{ // this will have all the videos
+				    "media_id": {
+				        "file": "https://www.youtube.com/watch?v=X6SMr_IFVTg",
+				        "uploaded_on": "2018-04-01 10:04:21",
+				        "moderate_status": "0",
+				        "media_type": "2",
+				        "is_dp": "0"
+				    },
+			    }
+
+		    }
+		    }
+	}
+3. Media replace PUT body request changed : PUT request
+	
+	1. To set profile picture
+		{
+		  	"user_id": "17", // user id
+		  	"media_id": "23", // unique identifier of media
+		  	"set_dp": "1", // dp status
+		  	"file": "17_2.jpg", // media name to be replace
+		  	"media_type": 1 // if type is 1 then its image else it's 0
+		}
+
+	2. Replace an image with new
+		{
+		 	"user_id": "17",
+		 	"set_dp": "0", // If same image wants to set as DP then set value to 1 else  0
+		 	"media_id": "23", // Specific id of media
+		 	"file": "17_1.jpg", // Reaplceing media name
+		 	"media_type": 1, // image media type is 1
+		 	"media_replace": "base_64()" // base64 of image encoded
+		}
+	3. Replace video urls
+		{
+		  "user_id": "17",
+		  "media_id": "23", // pecific id of replacing media
+		  "file": "https://www.youtube.com/watch?v=iz0wKv9mDJI", // Video media url to be replace
+		  "media_type": 2, // video mdedia type is 2
+		  "media_replace": "https://www.youtube.com/watch?v=X6SMr_IFVTg" // New video url
+		}

@@ -27,8 +27,13 @@ class Talents extends MY_Controller
         $permission = isset($this->session->get_userdata()['user_details'][0]->user_type) ? $this->session->get_userdata()['user_details'][0]->user_type : '';
 
         /*User data*/
-        $a_dashboard['userdata']    = $this->User_model->get_users($this->user_id, 0, TALENT)[0];
-        
+        $userdata    = $this->User_model->get_users($this->user_id, 0, $permission);
+        if(isset($userdata[0])){
+            $a_dashboard['userdata'] = $userdata[0];
+        } else {
+            $a_dashboard['userdata'] = array();
+        }
+
         $a_dashboard['user_id']     = $this->user_id;
         $a_dashboard['user_name']   = $this->session->get_userdata()['user_details'][0]->user_name;
         $a_dashboard['role']        = ($permission == DIRECTOR) ? 'Director' : 'Talent';

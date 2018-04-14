@@ -1,0 +1,112 @@
+{
+	"variables": [],
+	"info": {
+		"name": "CB-updates",
+		"_postman_id": "c0f88bf3-5f6d-591c-129f-7d53fb3826b6",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "All notification count",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/notificationcount/56",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "19aec56e8e7ca72ecdf8349c6fbad223",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Talent profile update",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/userupdate",
+				"method": "POST",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "19aec56e8e7ca72ecdf8349c6fbad223",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"user_id\" : 17,\r\n \"first_name\"     : \"Ranveer\",\r\n \"middle_name\"    : \"\",\r\n \"last_name\"      : \"K\",\r\n \"display_name\"   : \"Ranveer\",\r\n \"dob\"       : \"1990-08-03\",\r\n \"gender\"      : \"male\",\r\n \"nationality\"    : \"Indian\",\r\n \"state\"         : \"67\",\r\n \"city\"       : \"Kottayam\",\r\n \"location\"      : \"CVM\",\r\n \"address\"      : \"Lam place, PRA123\",\r\n \"phone\"      : \"9048809090\",\r\n \"mobile\"       : \"9048809090\",\r\n \"email\"      : \"ranveer@cb.com\",\r\n \"associations\"   : \"\",\r\n \"talent_category\"  : [4,6],\r\n \"hair_colour\" : \"43\",\r\n \"eye_colour\" : \"48\",\r\n \"body_colour\" : \"47\",\r\n \"body_type\" : \"53\",\r\n \"weight\" : \"72\",\r\n \"hight\" : \"175\",\r\n \"description\"   : \"Great confidence\",\r\n \"tags_interest\"  : \"acting, film\",\r\n \"links\"    : \"\",\r\n \"experience\"   : \"no experiance\",\r\n \"subscription_id\"  : 1,\r\n \"user_type\"   : 3\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Check username",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/checkusername",
+				"method": "POST",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "9bbee98e19db5ebf5d92d8b8a8d9232c",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"user_name\" : \"mini@cb.com\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Reset password",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/resetpassword",
+				"method": "POST",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "9bbee98e19db5ebf5d92d8b8a8d9232c",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"user_name\" : \"mini@cb.com\",\r\n \"password_confirmation\": \"Mini@18\",\r\n \"password\": \"Mini@19\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

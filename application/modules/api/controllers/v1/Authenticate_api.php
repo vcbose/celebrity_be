@@ -60,11 +60,9 @@ class Authenticate_api extends REST_Controller {
 		if ((empty($username)) || ($password === FALSE)){
             return FALSE;
         }
-        
 		$result = $this->User_model->check_user($username, $password);
 
 		if($result){
-
 			$this->userDetails = $result;
 			return TRUE;
 		}else

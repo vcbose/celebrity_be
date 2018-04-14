@@ -167,7 +167,8 @@ class Users extends MY_Controller
             $user_type = $this->input->post('user_type');
 
             if ($user_id) {
-                $upd_status = $this->User_model->edit_user($from_post);
+                $a_status = $this->User_model->edit_user($from_post);
+                $upd_status = $a_status['status'];
             } else {
                 $upd_status = false;
             }

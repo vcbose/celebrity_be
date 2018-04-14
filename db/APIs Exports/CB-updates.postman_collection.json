@@ -1,0 +1,36 @@
+{
+	"variables": [],
+	"info": {
+		"name": "CB-updates",
+		"_postman_id": "c0f88bf3-5f6d-591c-129f-7d53fb3826b6",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "All notification count",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/notificationcount/56",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "19aec56e8e7ca72ecdf8349c6fbad223",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

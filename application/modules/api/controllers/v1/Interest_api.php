@@ -106,17 +106,16 @@ class Interest_api extends REST_Controller {
     * @param string get params
     * @return json  api response
     */
-    public function interest_count_get()
+    public function notification_count_get()
 	{
 		try{			
 			$getParams 	 = $this->get();
 						
 			// Assign conditions for get notifications
 			$whereData 			 = $getParams;
-			$whereData['map_id'] = INTEREST_MAP_ID;
-
+			// $whereData['map_id'] = INTEREST_MAP_ID;
 			$data 	  = $this->Notification_model->get_notification_count($whereData);
-			
+
 			if($data !== false){
 				$response = array('status'=> true, 'data' => $data);
 				$this->response($response, parent::HTTP_OK);

@@ -65,14 +65,13 @@ $route['profile-detail/([a-z]+)/(\d+)']        = 'users/profile_detail/$1/id_$2'
 $route['profile-detail/([a-z]+)/(\d+)/(:num)'] = 'users/profile_detail/$1/id_$2/id_$3';
 $route['media/(:num)']                         = 'users/media/list_media/user_id/$1';
 $route['uploads']                              = 'users/media/upload_media';
-$route['media-moderate']                              = 'users/media/moderate_media';
+$route['media-moderate']                       = 'users/media/moderate_media';
 
-
-$route['getplandata']                          = 'plans/getplandata';
+$route['getplandata'] = 'plans/getplandata';
 // $route['notifications']    = 'users/notifications';
-$route['checkUserName']        = 'users/check_username';
-$route['dashboard']            = 'users/talents/dashboard/';
-$route['activities']           = 'users/talents/activities';
+$route['checkUserName'] = 'users/check_username';
+$route['dashboard']     = 'users/talents/dashboard/';
+$route['activities']    = 'users/talents/activities';
 
 $route['plans/(:num)']         = 'plans/index';
 $route['subscriptions/(:num)'] = 'plans/subscriptions/user_id/$1';
@@ -92,32 +91,44 @@ $route['translate_uri_dashes'] = false;
 | REST API Routes
 | -------------------------------------------------------------------------
  */
-$route['api/v1/auth']                  = 'api/v1/Authenticate_api/auth';
-$route['api/v1/settings']              = 'api/v1/Setting_api/setting';
-$route['api/v1/settings/(:num)']       = 'api/v1/Setting_api/setting/setting_id/$1';
-$route['api/v1/register']              = 'api/v1/User_api/register';
-$route['api/v1/users']                 = 'api/v1/User_api/user';
-$route['api/v1/usercount']             = 'api/v1/User_api/usercount';
-$route['api/v1/users/(:num)']          = 'api/v1/User_api/user/cbu.user_id/$1';
+$route['api/v1/auth']            = 'api/v1/Authenticate_api/auth';
+$route['api/v1/settings']        = 'api/v1/Setting_api/setting';
+$route['api/v1/settings/(:num)'] = 'api/v1/Setting_api/setting/setting_id/$1';
+$route['api/v1/register']        = 'api/v1/User_api/register';
+$route['api/v1/checkusername']   = 'api/v1/User_api/checkusername';
+$route['api/v1/userupdate']      = 'api/v1/User_api/userupdate';
+$route['api/v1/resetpassword']      = 'api/v1/User_api/resetpassword';
+
+$route['api/v1/users']           = 'api/v1/User_api/user';
+$route['api/v1/users/(:num)']    = 'api/v1/User_api/user/cbu.user_id/$1';
+
+$route['api/v1/usercount']       = 'api/v1/User_api/usercount';
 $route['api/v1/highlightusers']        = 'api/v1/User_api/hightlight_user';
 $route['api/v1/highlightusers/(:num)'] = 'api/v1/User_api/hightlight_user/cbs.user_id/$1';
-$route['api/v1/usermedias']            = 'api/v1/Usermedia_api/usermedia';
-$route['api/v1/usermedias/(:num)']     = 'api/v1/Usermedia_api/usermedia/user_id/$1';
-$route['api/v1/plans']                 = 'api/v1/Plans_api/plans';
-$route['api/v1/plans/(:num)']          = 'api/v1/Plans_api/plans/plan_id/$1';
+
+$route['api/v1/testimonials']          = 'api/v1/User_api/testimonials';
+$route['api/v1/testimonials/(:num)']   = 'api/v1/User_api/testimonials/cbs.user_id/$1';
+
+$route['api/v1/usermedias']        = 'api/v1/Usermedia_api/usermedia';
+$route['api/v1/usermedias/(:num)'] = 'api/v1/Usermedia_api/usermedia/user_id/$1';
+$route['api/v2/usermedias']        = 'api/v2/Usermedia_api/usermedia';
+$route['api/v2/usermedias/(:num)'] = 'api/v2/Usermedia_api/usermedia/user_id/$1';
+
+$route['api/v1/plans']        = 'api/v1/Plans_api/plans';
+$route['api/v1/plans/(:num)'] = 'api/v1/Plans_api/plans/plan_id/$1';
 // $route['api/v1/features']                 = 'api/v1/Subscriptions_api/features';
 $route['api/v1/features/(:num)'] = 'api/v1/Subscriptions_api/features/user_id/$1';
 // $route['api/v1/subscriptions']             = 'api/v1/Subscriptions_api/subscriptions';
-$route['api/v1/subscriptions/(:num)']  = 'api/v1/Subscriptions_api/subscriptions/user_id/$1';
-$route['api/v1/interests']             = 'api/v1/Interest_api/interests';
-$route['api/v1/interests/(:num)']      = 'api/v1/Interest_api/interests/user_id/$1';
-$route['api/v1/interestcount/(:num)']  = 'api/v1/Interest_api/interest_count/user_id/$1';
-$route['api/v1/userchats']             = 'api/v1/Userchat_api/userchats';
-$route['api/v1/userchats/(:num)']      = 'api/v1/Userchat_api/userchats/chat_to/$1';
-$route['api/v1/userchats/(:num)/(:num)']      = 'api/v1/Userchat_api/userchats/chat_to/$1/chat_from/$2';
+$route['api/v1/subscriptions/(:num)']     = 'api/v1/Subscriptions_api/subscriptions/user_id/$1';
+$route['api/v1/interests']                = 'api/v1/Interest_api/interests';
+$route['api/v1/interests/(:num)']         = 'api/v1/Interest_api/interests/user_id/$1';
+$route['api/v1/notificationcount/(:num)'] = 'api/v1/Interest_api/notification_count/user_id/$1';
+$route['api/v1/userchats']                = 'api/v1/Userchat_api/userchats';
+$route['api/v1/userchats/(:num)']         = 'api/v1/Userchat_api/userchats/chat_to/$1';
+$route['api/v1/userchats/(:num)/(:num)']  = 'api/v1/Userchat_api/userchats/chat_to/$1/chat_from/$2';
 
 // $route['api/v1/chatusers/(:num)']      = 'api/v1/Userchat_api/chatusers/user_id/$1';
-$route['api/v1/chatusers/(:num)/(:num)']      = 'api/v1/Userchat_api/chatusers/user_type/$1/user_id/$2';
+$route['api/v1/chatusers/(:num)/(:num)'] = 'api/v1/Userchat_api/chatusers/user_type/$1/user_id/$2';
 
 $route['api/v1/chatusercount/(:num)']  = 'api/v1/Userchat_api/chatuser_count/chat_to/$1';
 $route['api/v1/interviews']            = 'api/v1/Interview_api/interviews';
