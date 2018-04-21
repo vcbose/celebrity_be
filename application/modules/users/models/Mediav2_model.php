@@ -243,7 +243,7 @@ class Mediav2_model extends MY_Controller
      * @param string video url
      * @return boolean result
      */
-    public function update_media_info($requestID, $imgNames = [], $userVideoUrl = [], $type = 'insert', $plan_id = 0)
+    public function update_media_info($requestID, $imgNames = [], $userVideoUrl = [], $type = 'insert', $plan_id = 0, $set_as_dp = 0)
     {
         $imgRes   = true;
         $videoRes = true;
@@ -268,6 +268,9 @@ class Mediav2_model extends MY_Controller
                         $insertData['in_plan'] = $plan_id;
                     }
                     $insertData['uploaded_on'] = date('Y-m-d h:m:s');
+                    if($set_as_dp == 1){
+                        $insertData['dp'] = 1;
+                    }
                     $insertData['moderate_status'] = 0;
                     $imgRes                    = $this->db->insert('cb_user_medias', $insertData);
                 } else {
@@ -423,12 +426,15 @@ class Mediav2_model extends MY_Controller
         $a_media_data = $this->db->get_where('cb_user_medias cum', $where, $limit, $offset)->result_array();
 
         if (!empty($a_media_data)) {
+
             foreach ($a_media_data as $key => $value) {
+
                 $media_type                                           = ($value['media_type'] == MEDIA_TYPE_IMAGE) ? 'images' : 'videos';
-                $a_response[$userId][$media_type][$value['media_id']] = array('file' => $value['media_name'], 'uploaded_on' => $value['uploaded_on'], 'moderate_status' => $value['moderate_status'], 'media_type' => $value['media_type'], 'is_dp' => $value['dp']);
+                $a_response[$media_type][] = array('media_id' => $value['media_id'], 'file' => $value['media_name'], 'uploaded_on' => $value['uploaded_on'], 'moderate_status' => $value['moderate_status'], 'media_type' => $value['media_type'], 'is_dp' => $value['dp']);
             }
 
-            $a_response[$userId]['upload_path'] = USER_IMAGE_URL . $userId;
+            $a_response['user_id'] = $userId;
+            $a_response['upload_path'] = USER_IMAGE_URL . $userId;
             $a_response['media_status']         = true;
             $a_response['message']              = 'Media listing successfull';
 

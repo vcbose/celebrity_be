@@ -301,7 +301,7 @@ class Notification_model extends CI_Model
 
                 $prefix = 'tu';
                 // if($permission != 2){
-                    $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name, " ", tu.middle_name, " ", tu.last_name) AS name, tu.dp ';
+                    $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name, " ", tu.middle_name, " ", tu.last_name) AS name ';
                     $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
                 // }
                 $this->db->where('un.triggerd_from =', $a_where['triggerd_from']);
@@ -311,7 +311,7 @@ class Notification_model extends CI_Model
             if (isset($a_where['user_id'])) {
 
                 $prefix = 'fu';
-                $fields .= ', fu.user_id AS d_id, CONCAT(fu.first_name, " ", fu.middle_name, " ", fu.last_name) AS name, fu.dp ';
+                $fields .= ', fu.user_id AS d_id, CONCAT(fu.first_name, " ", fu.middle_name, " ", fu.last_name) AS name ';
                 $this->db->join('cb_user_details AS fu', 'fu.user_id = un.triggerd_from', 'left');
                 $this->db->where('un.user_id =', $a_where['user_id']);
             }
@@ -330,13 +330,22 @@ class Notification_model extends CI_Model
                 }
                 $this->db->where('un.map_id =', $a_where['map_id']);
             }
+
+            // $this->db->join('cb_plan_meta cbpm', 'cb_user_notifications.plan_id = cbpm.plan_id', 'left');
+            $this->db->join('cb_user_medias cum', 'fu.user_id = cum.user_id AND fu.subscription_id = cum.in_plan AND cum.dp = 1', 'left outer');
         } else {
             $prefix = 'tu';
-            $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name," ", tu.middle_name," ", tu.last_name) AS t_name, tu.dp ';
+            $fields .= ', tu.user_id AS t_id, CONCAT(tu.first_name," ", tu.middle_name," ", tu.last_name) AS t_name ';
 
             $this->db->join('cb_user_details AS fu', 'fu.user_id = un.triggerd_from', 'left');
             $this->db->join('cb_user_details AS tu', 'tu.user_id = un.user_id', 'left');
+
+            // $this->db->join('cb_plan_meta cbpm', 'cb_user_notifications.plan_id = cbpm.plan_id', 'left');
+            $this->db->join('cb_user_medias cum', 'tu.user_id = cum.user_id AND tu.subscription_id = cum.in_plan AND cum.dp = 1', 'left outer');
         }
+
+        $media_data = ", CONCAT('".site_url()."assets/uploads/',{$prefix}.user_id,'/', cum.media_name ) AS dp_path,  cum.moderate_status";
+        $fields .= $media_data;
 
         $this->db->select($fields);
         $this->db->from('cb_user_notifications AS un');

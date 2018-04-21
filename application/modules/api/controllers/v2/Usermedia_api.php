@@ -31,6 +31,7 @@ class Usermedia_api extends REST_Controller
             $postParams           = $this->post();
             $images               = [];
             $user_id              = isset($postParams['user_id']) ? $postParams['user_id'] : 0;
+            $set_dp               = isset($postParams['set_dp']) ? $postParams['set_dp'] : null;
             $user_post_image_data = isset($postParams['user_image']) ? $postParams['user_image'] : [];
             $user_post_video_urls = isset($postParams['user_video']) ? $postParams['user_video'] : [];
             $response             = array();
@@ -48,13 +49,13 @@ class Usermedia_api extends REST_Controller
             foreach ($a_uf_user_features as $f_key => $f_value) {
                 $a_user_features[$f_value['setting_name']] = $f_value;
             }
+            // print_r($a_user_features);
 
             /*Get user media*/
             $a_check_exists_where['user_id'] = $user_id;
             $a_check_exists_where['in_plan'] = $current_plan;
             // $a_check_exists_where['media_type'] = MEDIA_TYPE_IMAGE;
             $check_exists = $this->Mediav2_model->get_media_count($a_check_exists_where);
-
             $uploaded_images = 0;
             $uploaded_videos = 0;
 
@@ -81,7 +82,7 @@ class Usermedia_api extends REST_Controller
                 $remaining_videos = $a_user_features['Videos']['feature_value'] - $uploaded_videos;
             } else {
 
-                throw new Exception("User plan not support image upload", 1);
+                throw new Exception("Not available on you current subscription plan", 1);
             }
 
             // Base64 to image convertion
@@ -101,7 +102,7 @@ class Usermedia_api extends REST_Controller
                     }
 
                     if(!empty($images)){
-                        $result = $this->Mediav2_model->update_media_info($user_id, $images, array(), 'insert', $current_plan);
+                        $result = $this->Mediav2_model->update_media_info($user_id, $images, array(), 'insert', $current_plan, $set_dp);
                         if ($result) {
 
                             $response['status']     = $i_response['images']['status'];
@@ -274,41 +275,40 @@ class Usermedia_api extends REST_Controller
                             $a_response['message'] = 'As per your current plan, video replace limit exceeded';
                         }
                     }
+
+                    //Set user DP
+                    $upload_path = USER_IMAGE_DIR . $user_id . '/';
+                    
+                    if ($set_dp) {
+
+                        if ( !$image_status ) {
+
+                            $dp_status             = false;
+                            $a_response['status']  = false;
+                            $a_response['message'] .= ' and can\'t update profile picture now!';
+                        } else {
+
+                            // update current DP
+                            $dp_status             = $this->Mediav2_model->update_dp($user_id, $media_id);
+                            if($dp_status){
+                                $a_response['message'] .= ' and profile picture updated';
+                            } else {
+                                $a_response['message'] .= ' and profile picture upadte failed';
+                            }
+                        }
+                    }
+
                 } else {
 
                     $a_response['status']  = false;
-                    $a_response['message'] = 'No media found to replace!';
-                }
-
-                //Set user DP
-                $upload_path = USER_IMAGE_DIR . $user_id . '/';
-                if ($set_dp) {
-
-                    /*if (!file_exists($upload_path . $media)) {
-                        throw new Exception("Provided image " . $media . " not exists", 1);
-                    }*/
-                    if ( !$image_status ) {
-
-                        $dp_status             = false;
-                        $a_response['status']  = false;
-                        $a_response['message'] .= ' and can\'t update profile picture now!';
-                    } else {
-
-                        // update current DP
-                        $dp_status             = $this->Mediav2_model->update_dp($user_id, $media_id);
-                        if($dp_status){
-                            $a_response['message'] .= ' and profile picture updated';
-                        } else {
-                            $a_response['message'] .= ' and profile picture upadte failed';
-                        }
-                    }
+                    $a_response['message'] = 'Sorry, we are unable to locate any results matching your request.';
                 }
 
                 if ($dp_status || $image_status || $video_status) {
                     // $response     = array('status'=>true, 'message'=>'User media update successful');
                     $this->response($a_response, parent::HTTP_OK);
                 } else {
-                    throw new Exception("User media update failed", 1);
+                    throw new Exception("Sorry, we can't procees your media request now!", 1);
                 }
 
             } else {
@@ -360,6 +360,7 @@ class Usermedia_api extends REST_Controller
 
             // Get user media details from user model
             $data = $this->Mediav2_model->get_api_media($user_id, $limit, $offset);
+
             if ( $data ) {
                 $response = array('status' => true, 'data' => $data, 'message' => 'Media listing successful!');
                 $this->response($response, parent::HTTP_OK);

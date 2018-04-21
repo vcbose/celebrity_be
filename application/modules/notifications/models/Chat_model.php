@@ -153,23 +153,26 @@ class Chat_model extends CI_Model {
     public function get_chat_users($fields = null, $where = array(), $offset = null, $limit = null)
     {
         if ($fields) {
-            $this->db->select($fields);
+            
+            $media_name = " CONCAT('".site_url()."assets/uploads/',cbd.user_id,'/', cbum.media_name ) AS dp_path ";
+            $this->db->select('cbd.user_id, cbd.first_name, cbd.middle_name, cbd.last_name, cbd.display_name, cbd.email, cbd.dp, cuc.chat_on, cbum.dp, cbum.moderate_status, '. $media_name);
         } 
 
         if($where['user_type'] == 2){
 
-            $this->db->join('cb_user_details', 'cb_user_chats.chat_to = cb_user_details.user_id', 'left');
+            $this->db->join('cb_user_details AS cbd', 'cuc.chat_to = cbd.user_id', 'left');
             $this->db->group_by('chat_to');
         } else {
 
-            $this->db->join('cb_user_details', 'cb_user_chats.chat_from = cb_user_details.user_id', 'left');
+            $this->db->join('cb_user_details AS cbd', 'cuc.chat_from = cbd.user_id', 'left');
             $this->db->group_by('chat_from');
         }
+        $this->db->join('cb_user_medias cbum', 'cbd.user_id = cbum.user_id AND cbum.dp = 1', 'LEFT OUTER');
         $this->db->order_by('chat_id', 'DESC');
 
         unset($where['user_id']);
         unset($where['user_type']);
-        return $this->db->get_where('cb_user_chats', $where, $limit, $offset)->result_array();
+        return $this->db->get_where('cb_user_chats AS cuc', $where, $limit, $offset)->result_array();
         // echo $this->db->last_query();die;
     }
 

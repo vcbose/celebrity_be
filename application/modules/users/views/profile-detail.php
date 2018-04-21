@@ -149,7 +149,7 @@
 		  								<div class="col-sm-4">
 		  									<label>Mobile</label>
 		  									<?php if($b_edit): ?>
-		  									<input type="text" name="mobile_num" class="form-control" value="<?php echo $userdata->mobile; ?>" placeholder="">
+		  									<input type="text" name="mobile" class="form-control" value="<?php echo $userdata->mobile; ?>" placeholder="">
 		  									<?php else: ?>
 		  									<p><?php echo $userdata->mobile; ?></p>
 		  									<?php endif; ?>
@@ -157,7 +157,7 @@
 		  								<div class="col-sm-4">
 		  									<label>Phone</label>
 		  									<?php if($b_edit): ?>
-		  									<input type="text" name="phone_num" class="form-control" value="<?php echo $userdata->phone; ?>" placeholder="">
+		  									<input type="text" name="phone" class="form-control" value="<?php echo $userdata->phone; ?>" placeholder="">
 		  									<?php else: ?>
 		  									<p><?php echo $userdata->phone; ?></p>
 		  									<?php endif; ?>

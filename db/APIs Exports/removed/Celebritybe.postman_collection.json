@@ -1,0 +1,137 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Celebritybe",
+		"_postman_id": "15f7656f-53b7-b2da-04ab-a29fd3d327fd",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Registration",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/highlightusers",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "11b91f147fa8ffb222340228ac4b163e",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"first_name\"    \t: \"Shone\",\r\n\t\"middle_name\"   \t: \"P\",\r\n\t\"last_name\"     \t: \"K\",\r\n\t\"display_name\"  \t: \"Shone\",\r\n\t\"user_name\"     \t: \"Shone@1\",\r\n\t\"password\"      \t: \"Shone@123\",\r\n\t\"confirm_password\"  : \"Shone@123\",\r\n\t\"dob\" \t\t  \t\t: \"25/12/1992\",\r\n\t\"gender\" \t\t  \t: \"male\",\r\n\t\"nationality\"   \t: \"Indian\",\r\n\t\"state\" \t   \t  \t: \"67\",\r\n\t\"city\" \t\t  \t\t: \"Thrissur\",\r\n\t\"location\" \t  \t\t: \"Thrissur\",\r\n\t\"address\" \t  \t\t: \"Thrissur\",\r\n\t\"phone_num\" \t\t  \t: \"9656598665\",\r\n\t\"mobile_num\"  \t  \t\t: \"9656598665\",\r\n\t\"email\" \t\t  \t: \"vivekprabhakar2010@gmail.com\",\r\n\t\"register_type\"  \t: \"talent\",\r\n\t\"talent_category\" \t: [4],\r\n\t\"description\" \t\t: \"Lorem Ipsum is simply dummy text of the printing and typesetting industry.\",\r\n\t\"hair_colour\"       : \"43\",\r\n\t\"eye_colour\"        : \"49\",\r\n\t\"body_colour\"       : \"46\",\r\n\t\"body_type\"         : \"54\",\r\n\t\"hight\"     \t    : \"54\",\r\n\t\"weight\"            : \"54\",\r\n\t\"plan\"\t\t\t\t: \"2\",\r\n\t\"tags_interest\" \t: \"testtags\",\r\n\t\"photos\" \t\t\t: \"testphotos\",\r\n\t\"videos\" \t\t\t: \"testvideos\",\r\n\t\"links\" \t\t\t: \"testlinks\",\r\n\t\"experience\" \t\t: \"testexperience\",\r\n\t\"subscription_id\" \t: \"testsubscription\",\r\n\t\"user_type\" \t\t: \"testusertype\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Auth",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/auth",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic U2hvbmVAMTpTaG9uZUAxMjM=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Settings",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/settings",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Highlightusers",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/highlightusers",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "54d85d6fd8470d4e4574a88886a701a7",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Plans",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/plans",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "54d85d6fd8470d4e4574a88886a701a7",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Subscriptions",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/subscriptions",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "54d85d6fd8470d4e4574a88886a701a7",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Interests",
+			"request": {
+				"url": "http://staging.celebritybe.com/api/v1/interests/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "ACCESS-TOKEN",
+						"value": "54d85d6fd8470d4e4574a88886a701a7",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

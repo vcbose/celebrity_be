@@ -31,9 +31,12 @@ class Usermedia_api extends REST_Controller
             $images               = [];
             $user_id              = isset($postParams['user_id']) ? $postParams['user_id'] : 0;
             $user_post_image_data = isset($postParams['user_image']) ? $postParams['user_image'] : [];
+            $set_dp               = isset($putParams['set_dp']) ? $putParams['set_dp'] : null;
             $user_post_video_urls = isset($postParams['user_video']) ? $postParams['user_video'] : [];
             $response             = array();
-
+            print_r($postParams);
+            die();
+            
             if (!$user_id) {
                 throw new Exception("Invalid user id requested", 1);
             }
@@ -80,7 +83,7 @@ class Usermedia_api extends REST_Controller
                 $remaining_videos = $a_user_features['Videos']['feature_value'] - $uploaded_videos;
             } else {
 
-                throw new Exception("User plan not support image upload", 1);
+                throw new Exception("Not available on you current subscription plan", 1);
             }
 
             // Base64 to image convertion
@@ -91,17 +94,19 @@ class Usermedia_api extends REST_Controller
                     foreach ($user_post_image_data as $key => $img_data) {
                         $images[] = $this->base64_to_image($user_id, $img_data);
                     }
+                    if(!empty($images)){
+                        // Updating media information into user table
+                        $result = $this->Media_model->update_media_info($user_id, $images, array(), 'insert', $current_plan, $set_dp);
+                        if ($result) {
 
-                    // Updating media information into user table
-                    $result = $this->Media_model->update_media_info($user_id, $images, array(), 'insert', $current_plan);
-                    if ($result) {
-
-                        $response['status']     = true;
-                        $response['message']    = 'Image has been uploaded successfully';
-                        // $this->response($response, parent::HTTP_OK);
+                            $response['status']     = true;
+                            $response['message']    = 'Image has been uploaded successfully';
+                            // $this->response($response, parent::HTTP_OK);
+                        } else {
+                            throw new Exception("Can't proceed media upload action now, please try after sometimes!", 1);
+                        }
                     } else {
-
-                        throw new Exception("Image upload failed", 1);
+                        throw new Exception("Can't process images upload now, please try after sometimes!", 1);
                     }
                 } else {
 
@@ -135,7 +140,7 @@ class Usermedia_api extends REST_Controller
                         }
 
                     } else {
-                        throw new Exception("Video upload failed", 1);
+                        throw new Exception("Can't process video upload now, please try after sometimes!", 1);
                     }
                 } else {
 
@@ -161,7 +166,7 @@ class Usermedia_api extends REST_Controller
             if (!empty($response)) {
                 $this->response($response, parent::HTTP_OK);
             } else {
-                throw new Exception("Empty media upload request", 1);
+                throw new Exception("Oops! empty media upload request", 1);
             }
 
         } catch (Exception $ex) {
@@ -234,7 +239,7 @@ class Usermedia_api extends REST_Controller
 
                             $image_status          = false;
                             $a_response['status']  = $image_status;
-                            $a_response['message'] = 'As per your current plan, image replace limit exceeded';
+                            $a_response['message'] = 'As per your current subscription plan, image replace limit exceeded';
                         }
                     }
 
@@ -251,7 +256,7 @@ class Usermedia_api extends REST_Controller
 
                             $video_status          = false;
                             $a_response['status']  = $video_status;
-                            $a_response['message'] = 'As per your current plan, video replace limit exceeded';
+                            $a_response['message'] = 'As per your current subscription plan, video replace limit exceeded';
                         }
                     }
                 } else {

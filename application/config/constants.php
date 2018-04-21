@@ -91,8 +91,14 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 |--------------------------------------------------------------------------
 |
 */
-defined('USER_IMAGE_DIR')      		OR define('USER_IMAGE_DIR', getcwd().'/assets/uploads/'); 
-defined('USER_IMAGE_URL')      		OR define('USER_IMAGE_URL', $_SERVER['SERVER_NAME'].'/assets/uploads/');
+defined('USER_IMAGE_DIR')      		OR define('USER_IMAGE_DIR', getcwd().'/assets/uploads/');
+
+$site_url = sprintf(
+    "%s://%s",
+    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+    $_SERVER['SERVER_NAME']
+);
+defined('USER_IMAGE_URL')      		OR define('USER_IMAGE_URL', $site_url.'/assets/uploads/');
 defined('USER_IMAGE_MAX_UPLOAD')      		OR define('USER_IMAGE_MAX_UPLOAD', 4);//4MB
 
 /*Mapping settings tbl value with constants*/

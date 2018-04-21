@@ -50,11 +50,19 @@ class Plans_model extends CI_Model {
 	 * This function is used to get plans
 	 */
 	public function get_plans($fields = null, $where = array(), $offset = null, $limit = null) {
-		
-		if($fields){
+
+		/*if($fields){
 			$this->db->select($fields);
-		}
+		}*/
+        $concat_result = "CONCAT('{', GROUP_CONCAT( CONCAT( CONCAT('\"', cs.setting_id, '\"'), ':{\"', cs.setting_name, '\":\"', cpm.feature_value, '\",', '\"setting_id\":\"',cs.setting_id, '\"}') ), '}') AS plan_features ";
+        $this->db->select('cb_plans.*, '. $concat_result);
+        $this->db->join('cb_plan_meta AS cpm', 'cpm.plan_id = cb_plans.plan_id', 'left');
+        $this->db->join('cb_setting AS cs', "cs.setting_id = cpm.feature_type AND cs.setting_status", 'left');
+
+        $this->db->order_by("cb_plans.plan_id", "ASC");
+        $this->db->group_by("cb_plans.plan_id");
 		return $this->db->get_where($this->table, $where, $limit, $offset)->result();
+        // echo $this->db->last_query();
     }
 
     public function get_plan_data( $id )
@@ -74,15 +82,15 @@ class Plans_model extends CI_Model {
   		$plan_data['user_id']           = $user_id;
         $plan_data['plan_id']           = $plan;
 
-        $a_where = array("plan_id" => $plan_data['plan_id']);
-        $a_all_plans                    = $this->Plans_model->get_plans('', $a_where);
+        $a_where        = array("cb_plans.plan_id" => $plan_data['plan_id']);
+        $a_all_plans    = $this->Plans_model->get_plans('', $a_where);
 
-        $duration = $a_all_plans[0]->plan_duration;
-        $duration_term = $a_all_plans[0]->plan_duration_in;
+        $duration       = $a_all_plans[0]->plan_duration;
+        $duration_term  = $a_all_plans[0]->plan_duration_in;
 
-        $date = date('Y-m-d');
-        $ends_on = date('Y-m-d', strtotime($date. " + {$duration} {$duration_term}"));
-        $time = date('H:i:s');
+        $date       = date('Y-m-d');
+        $ends_on    = date('Y-m-d', strtotime($date. " + {$duration} {$duration_term}"));
+        $time       = date('H:i:s');
 
         /*Update previouse subscription*/
         if($current_subscription != 0){
@@ -95,7 +103,6 @@ class Plans_model extends CI_Model {
         $plan_data['subscription_status'] = 1;
 
         $result = $this->insertRow('cb_subscriptions', $plan_data);
-
         return $result;
   	}
 

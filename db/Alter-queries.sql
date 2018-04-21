@@ -50,3 +50,12 @@ ADD `in_plan` int(11) NOT NULL AFTER `modified_on`;
 -- cb_user_medias table create query --
 ALTER TABLE `cb_user_medias`
 ADD `media_replace` int NOT NULL AFTER `dp`;
+
+--vcb-- 21/04/2018 --
+-- cb_user_details table create query --
+ALTER TABLE `cb_user_details`
+CHANGE `nationality` `nationality` varchar(255) NOT NULL AFTER `gender`;
+
+ALTER TABLE `cb_user_details`
+DROP `photos`,
+DROP `videos`;

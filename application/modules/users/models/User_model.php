@@ -190,8 +190,12 @@ class User_model extends CI_Model
     public function get_user_details($fields = null, $where = array(), $offset = null, $limit = null)
     {
         if ($fields == null) {
-            $fields = 'cbu.user_id AS u_id, cbu.user_type, cbu.created_on, cbu.user_status, cbud.*,  cbum.*';
-        }
+            
+            $media_name = " CONCAT('".site_url()."assets/uploads/',cbu.user_id,'/', cbum.media_name ) AS dp_path ";
+            $fields = 'cbu.user_id AS u_id, cbu.user_type, cbu.created_on, cbu.user_status, cbud.user_id, cbud.first_name, cbud.middle_name, cbud.last_name, cbud.display_name, cbud.dob, cbud.gender, 
+            cbud.nationality, cbud.state, cbud.city, cbud.location, cbud.address, cbud.phone, cbud.mobile, cbud.email, cbud.associations, cbud.talent_category, cbud.description, cbud.tags_interest, 
+            cbud.links, cbud.experience, cbud.subscription_id, cbud.modified_on, cbud.modified_by, '.$media_name.', cbum.*';
+        } 
         $this->db->join('cb_user_details cbud', 'cbud.user_id = cbu.user_id', 'LEFT');
 
         if( isset($where['user_type']) && $where['user_type'] == 2 ){
@@ -222,7 +226,8 @@ class User_model extends CI_Model
         /*if ($fields) {
             $this->db->select('cu.user_id, cbud.*, cbpm.*, cum.*');
         }*/
-        $this->db->select("cu.user_name, cbud.first_name, cbud.middle_name, cbud.last_name, CONCAT(cbud.first_name, ' ', cbud.last_name) AS name, cbud.talent_category, cbud.description, cbud.tags_interest, cum.dp, cum.moderate_status");
+        $media_name = " CONCAT('".site_url()."assets/uploads/',cbud.user_id,'/', cum.media_name ) AS dp_path ";
+        $this->db->select("cu.user_name, cbud.first_name, cbud.middle_name, cbud.last_name, CONCAT(cbud.first_name, ' ', cbud.last_name) AS name, cbud.talent_category, cbud.description, cbud.tags_interest, ".$media_name.", cum.moderate_status");
         
         $this->db->join('cb_user_details cbud', 'cu.user_id = cbud.user_id', 'left');
         $this->db->join('cb_subscriptions  cbs', 'cu.user_id = cbs.user_id AND cbs.subscription_status = 1', 'left');
@@ -285,7 +290,7 @@ class User_model extends CI_Model
      */
     public function check_user($username, $password)
     {
-        $this->db->select('user_id, user_name, password, user_status');
+        $this->db->select('user_id, user_name, password, user_type, user_status');
         $this->db->where(" (user_name='$username') ");
         $result = $this->db->get('cb_users')->result_array();
 
@@ -374,8 +379,8 @@ class User_model extends CI_Model
             $user_details['city']            = isset($post_data['city']) ? $post_data['city'] : '';
             $user_details['location']        = isset($post_data['location']) ? $post_data['location'] : '';
             $user_details['address']         = isset($post_data['address']) ? $post_data['address'] : '';
-            $user_details['phone']           = isset($post_data['phone_num']) ? $post_data['phone_num'] : '';
-            $user_details['mobile']          = isset($post_data['mobile_num']) ? $post_data['mobile_num'] : '';
+            $user_details['phone']           = isset($post_data['phone']) ? $post_data['phone'] : '';
+            $user_details['mobile']          = isset($post_data['mobile']) ? $post_data['mobile'] : '';
             $user_details['email']           = isset($post_data['email']) ? $post_data['email'] : '';
             $user_details['description']     = isset($post_data['description']) ? $post_data['description'] : '';
             $user_details['talent_category'] = is_array($post_data['talent_category']) ? implode(',', $post_data['talent_category']) : '';
@@ -471,8 +476,8 @@ class User_model extends CI_Model
             $user_details['city']            = isset($post_data['city']) ? $post_data['city'] : '';
             $user_details['location']        = isset($post_data['location']) ? $post_data['location'] : '';
             $user_details['address']         = isset($post_data['address']) ? $post_data['address'] : '';
-            $user_details['phone']           = isset($post_data['phone_num']) ? $post_data['phone_num'] : '';
-            $user_details['mobile']          = isset($post_data['mobile_num']) ? $post_data['mobile_num'] : '';
+            $user_details['phone']           = isset($post_data['phone']) ? $post_data['phone'] : '';
+            $user_details['mobile']          = isset($post_data['mobile']) ? $post_data['mobile'] : '';
             $user_details['email']           = isset($post_data['email']) ? $post_data['email'] : '';
             $user_details['description']     = isset($post_data['description']) ? $post_data['description'] : '';
             $user_details['talent_category'] = is_array($post_data['talent_category']) ? implode(',', $post_data['talent_category']) : '';

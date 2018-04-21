@@ -29,6 +29,7 @@ class Authenticate_api extends REST_Controller {
 		try{
 			$userId   	 = $this->userDetails['user_id'];
 			$userName 	 = $this->userDetails['user_name'];
+			$userType 	 = $this->userDetails['user_type'];
 
 			// Generate access token
 			$accessToken = $this->generate_token($userId, $userName);
@@ -36,7 +37,7 @@ class Authenticate_api extends REST_Controller {
 			// Insert access token into keys table
 			$this->insert_access_token($userId, $accessToken);
 
-			$response 	 = array('status'=> TRUE, 'message'=>'Authentication successfull', 'user_id'=> $userId, 'access_token'=>$accessToken);
+			$response 	 = array('status'=> TRUE, 'message'=>'Authentication successfull', 'user_id'=> $userId, 'user_type' => $userType, 'access_token'=>$accessToken);
 			$this->response($response, parent::HTTP_OK);
 
 		}catch(Exception $ex){
@@ -60,9 +61,11 @@ class Authenticate_api extends REST_Controller {
 		if ((empty($username)) || ($password === FALSE)){
             return FALSE;
         }
+        
 		$result = $this->User_model->check_user($username, $password);
 
 		if($result){
+
 			$this->userDetails = $result;
 			return TRUE;
 		}else
